@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Plugin", "Plugin\Plugin.vcxproj", "{A48593C7-7CC3-4C46-9705-9BD264A8E95A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PluginTest", "PluginTest\PluginTest.vcxproj", "{324AAA44-A8C8-4F9E-A71F-DF424E485BFA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A48593C7-7CC3-4C46-9705-9BD264A8E95A} = {A48593C7-7CC3-4C46-9705-9BD264A8E95A}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{70BF8799-0202-41ED-8D9F-3CE7BDCF5985}"
+	ProjectSection(SolutionItems) = preProject
+		MARS.runsettings = MARS.runsettings
 	EndProjectSection
 EndProject
 Global
