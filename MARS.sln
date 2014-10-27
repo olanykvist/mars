@@ -20,6 +20,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanel", "ControlPane
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadioPanel", "RadioPanel\RadioPanel.csproj", "{E9382183-2D9B-46A7-9C0F-17DF192EDD58}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{9BD33D6F-C6DB-4782-9FAA-47D96B0B4B6A}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Export.lua = Scripts\Export.lua
+		Scripts\JSON.lua = Scripts\JSON.lua
+		Scripts\MARS.lua = Scripts\MARS.lua
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
