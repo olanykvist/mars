@@ -18,18 +18,9 @@
     <ClInclude Include="Radio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Transmission.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Modulation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Radio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Transmission.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

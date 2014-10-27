@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace MARS.RadioPanel
+namespace RadioPanel
 {
     /// <summary>
     /// Interaction logic for App.xaml
