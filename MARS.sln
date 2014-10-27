@@ -13,6 +13,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{70BF8799-0202-41ED-8D9F-3CE7BDCF5985}"
 	ProjectSection(SolutionItems) = preProject
 		MARS.runsettings = MARS.runsettings
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanel", "ControlPanel\ControlPanel.csproj", "{27E79867-CF73-4851-BD24-BAF6AC95ACB0}"
