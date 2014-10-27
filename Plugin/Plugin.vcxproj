@@ -109,10 +109,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Modulation.h" />
     <ClInclude Include="Radio.h" />
+    <ClInclude Include="Transmission.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Radio.cpp" />
+    <ClCompile Include="Transmission.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
