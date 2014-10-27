@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{9BD3
 		Scripts\MARS.lua = Scripts\MARS.lua
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -56,6 +58,12 @@ Global
 		{E9382183-2D9B-46A7-9C0F-17DF192EDD58}.Release|x64.Build.0 = Release|x64
 		{E9382183-2D9B-46A7-9C0F-17DF192EDD58}.Test|x64.ActiveCfg = Release|x64
 		{E9382183-2D9B-46A7-9C0F-17DF192EDD58}.Test|x64.Build.0 = Release|x64
+		{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}.Debug|x64.ActiveCfg = Debug|x64
+		{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}.Debug|x64.Build.0 = Debug|x64
+		{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}.Release|x64.ActiveCfg = Release|x64
+		{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}.Release|x64.Build.0 = Release|x64
+		{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}.Test|x64.ActiveCfg = Release|x64
+		{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}.Test|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
