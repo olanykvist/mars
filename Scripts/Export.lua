@@ -1,2 +1,2 @@
 -- Enable MARS
-dofile(lfs.writedir() .. "Scripts/MARS/MARS.lua")
+dofile(lfs.writedir() .. "Scripts/MARS.lua")
