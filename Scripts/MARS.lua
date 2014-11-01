@@ -18,7 +18,21 @@ MARS =
 	data =
 	{
 		name = "",
-		unit = ""
+		unit = "",
+		radio = nil
+	},
+	
+	Radio =
+	{
+		name = "",
+		primary = 0,
+		secondary = 0
+		new = function(object)
+			object = object or {}
+			setmetatable(object, self)
+			self.__index = self
+			return object
+		end
 	},
 	
 	JSON = nil,
@@ -29,12 +43,46 @@ MARS =
 	end,
 	
 	Update = function()
+
+	end,
+	
+	ExportCommon = function()
 		local data = LoGetSelfData()
 		local id = LoGetPlayerPlaneId()
 		
 		-- Fill export table
 		MARS.data.name = data.UnitName   -- Player name
 		MARS.data.unit = data.Name       -- Type of unit
+		
+		local r = MARS.Radio:new{name = "AN/ARC"}
+		r.primary = 12750000
+		
+		MARS.data.radio = r
+		
+	end,
+	
+	ExportA10 = function()
+	end,
+	
+	ExportP51 = function()
+	end,
+	
+	ExportMI8 = function()
+	end,
+	
+	ExportKA50 = function()
+	end,
+	
+	ExportUH1 = function()
+	end,
+	
+	ExportF86 = function()
+	end,
+	
+	ExportFW190 = function()
+	end,
+	
+	ExportMIG21 = function()
 	end,
 	
 	Quit = function()
