@@ -55,15 +55,18 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>MARS</TargetName>
+    <IncludePath>C:\Users\Ola\AppData\Local\TeamSpeak 3 Client 3.0.15\pluginsdk\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>MARS</TargetName>
     <TargetExt>.lib</TargetExt>
+    <IncludePath>C:\Users\Ola\AppData\Local\TeamSpeak 3 Client 3.0.15\pluginsdk\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>MARS</TargetName>
+    <IncludePath>C:\Users\Ola\AppData\Local\TeamSpeak 3 Client 3.0.15\pluginsdk\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -109,11 +112,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MARS.h" />
     <ClInclude Include="Modulation.h" />
+    <ClInclude Include="Plugin.h" />
     <ClInclude Include="Radio.h" />
     <ClInclude Include="Transmission.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MARS.cpp" />
+    <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="Radio.cpp" />
     <ClCompile Include="Transmission.cpp" />
   </ItemGroup>

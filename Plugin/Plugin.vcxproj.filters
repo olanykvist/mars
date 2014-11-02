@@ -24,12 +24,24 @@
     <ClInclude Include="Modulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Plugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MARS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Radio.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Transmission.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Plugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MARS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
