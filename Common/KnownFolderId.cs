@@ -11,7 +11,7 @@ namespace MARS.Common
     /// <summary>
     /// This class contains Guids that identify standard folders registered with the system
     /// </summary>
-    public class KnownFolderId
+    public static class KnownFolderId
     {
         /// <summary>
         /// Default path: %USERPROFILE%\Saved Games

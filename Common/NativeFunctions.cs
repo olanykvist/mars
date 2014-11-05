@@ -13,7 +13,7 @@ namespace MARS.Common
     /// <summary>
     /// This class contains external Win32 API functions
     /// </summary>
-    public static class NativeFunctions
+    internal static class NativeFunctions
     {
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         internal static extern uint SHGetKnownFolderPath(ref Guid id, int flags, IntPtr token, out StringBuilder path);
