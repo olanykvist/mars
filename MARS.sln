@@ -16,10 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanel", "ControlPanel\ControlPanel.csproj", "{27E79867-CF73-4851-BD24-BAF6AC95ACB0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RadioPanel", "RadioPanel\RadioPanel.csproj", "{E9382183-2D9B-46A7-9C0F-17DF192EDD58}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{9BD33D6F-C6DB-4782-9FAA-47D96B0B4B6A}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\Export.lua = Scripts\Export.lua
@@ -45,18 +41,6 @@ Global
 		{324AAA44-A8C8-4F9E-A71F-DF424E485BFA}.Release|x64.ActiveCfg = Release|x64
 		{324AAA44-A8C8-4F9E-A71F-DF424E485BFA}.Test|x64.ActiveCfg = Debug|x64
 		{324AAA44-A8C8-4F9E-A71F-DF424E485BFA}.Test|x64.Build.0 = Debug|x64
-		{27E79867-CF73-4851-BD24-BAF6AC95ACB0}.Debug|x64.ActiveCfg = Debug|x64
-		{27E79867-CF73-4851-BD24-BAF6AC95ACB0}.Debug|x64.Build.0 = Debug|x64
-		{27E79867-CF73-4851-BD24-BAF6AC95ACB0}.Release|x64.ActiveCfg = Release|x64
-		{27E79867-CF73-4851-BD24-BAF6AC95ACB0}.Release|x64.Build.0 = Release|x64
-		{27E79867-CF73-4851-BD24-BAF6AC95ACB0}.Test|x64.ActiveCfg = Release|x64
-		{27E79867-CF73-4851-BD24-BAF6AC95ACB0}.Test|x64.Build.0 = Release|x64
-		{E9382183-2D9B-46A7-9C0F-17DF192EDD58}.Debug|x64.ActiveCfg = Debug|x64
-		{E9382183-2D9B-46A7-9C0F-17DF192EDD58}.Debug|x64.Build.0 = Debug|x64
-		{E9382183-2D9B-46A7-9C0F-17DF192EDD58}.Release|x64.ActiveCfg = Release|x64
-		{E9382183-2D9B-46A7-9C0F-17DF192EDD58}.Release|x64.Build.0 = Release|x64
-		{E9382183-2D9B-46A7-9C0F-17DF192EDD58}.Test|x64.ActiveCfg = Release|x64
-		{E9382183-2D9B-46A7-9C0F-17DF192EDD58}.Test|x64.Build.0 = Release|x64
 		{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}.Debug|x64.ActiveCfg = Debug|x64
 		{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}.Debug|x64.Build.0 = Debug|x64
 		{66BA848B-01E8-48D1-A49F-64ACBC8FC86F}.Release|x64.ActiveCfg = Release|x64
