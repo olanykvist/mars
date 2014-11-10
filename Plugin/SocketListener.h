@@ -2,25 +2,35 @@
 #define MARS_SOCKETLISTENER_H
 
 #include <WinSock2.h>
-#include <WS2tcpip.h>
+#include <vector>
+#include <thread>
 
-#pragma comment(lib, "ws2_32.lib")
+using std::vector;
+using std::thread;
+
+#pragma comment(lib, "Ws2_32.lib")
 
 namespace MARS
 {
 	class SocketListener
 	{
 	public:
-		typedef int(MESSAGE_RECEIVED)();
 		SocketListener();
-		virtual ~SocketListener();
+		~SocketListener();
 		void Initialize();
-		void Accept();
+		void Start();
+		void Stop();
+		void Destroy();
 
 	private:
+		bool isListening;
 		WSADATA wsaData;
-		SOCKET serverSocket;
-		MESSAGE_RECEIVED OnMessageReceived;
+		SOCKET listenSocket;
+		vector<SOCKET> clientSockets;
+		thread listenThread;
+		vector<thread> receiveThreads;
+		void AcceptConnections();
+		void HandleConnection(SOCKET client);
 	};
 };
 
