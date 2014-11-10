@@ -116,12 +116,14 @@
     <ClInclude Include="Modulation.h" />
     <ClInclude Include="Plugin.h" />
     <ClInclude Include="Radio.h" />
+    <ClInclude Include="SocketListener.h" />
     <ClInclude Include="Transmission.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MARS.cpp" />
     <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="Radio.cpp" />
+    <ClCompile Include="SocketListener.cpp" />
     <ClCompile Include="Transmission.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

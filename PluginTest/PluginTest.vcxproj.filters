@@ -29,5 +29,8 @@
     <ClCompile Include="RadioTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SocketListenerTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
