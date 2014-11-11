@@ -15,12 +15,14 @@ namespace MARS
 	class SocketListener
 	{
 	public:
+		typedef void(*OnMessage)(const char*);
 		SocketListener();
 		~SocketListener();
 		void Initialize();
 		void Start();
 		void Stop();
 		void Destroy();
+		OnMessage onMessage;
 
 	private:
 		bool isListening;

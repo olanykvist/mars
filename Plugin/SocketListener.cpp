@@ -7,6 +7,7 @@ namespace MARS
 		: wsaData({ 0 })
 		, listenSocket(INVALID_SOCKET)
 		, isListening(false)
+		, onMessage(nullptr)
 	{
 	}
 
@@ -123,6 +124,10 @@ namespace MARS
 			if (count > 0)
 			{
 				// buffer holds received message
+				if (this->onMessage != nullptr)
+				{
+					this->onMessage(buffer);
+				}
 			}
 			else if (count == 0)
 			{

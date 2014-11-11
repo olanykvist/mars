@@ -8,7 +8,14 @@ namespace MARS
 	const String PLUGIN_DESCRIPTION = "MARS, Master Arms Radio System, integrates the radios in DCS World with TeamSpeak for a more realistic radio experience.";
 	const String PLUGIN_KEYWORD = "mars";
 	const int PLUGIN_API_LEVEL = 20;
+	const unsigned short PORT = 2000;
 	String pluginId = "";
 	TS3Functions ts = { 0 };
 	SocketListener listener;
+
+	// Callback
+	void OnMessageReceived(const char* message)
+	{
+		ts.printMessageToCurrentTab(message);
+	}
 }

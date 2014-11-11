@@ -52,6 +52,7 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs)
 int ts3plugin_init()
 {
 	MARS::listener.Initialize();
+	MARS::listener.onMessage = MARS::OnMessageReceived;
 	MARS::listener.Start();
 	return 0;
 	/* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
@@ -86,9 +87,9 @@ const char* ts3plugin_commandKeyword()
 /* Plugin processes console command. Return 0 if plugin handled the command, 1 if not handled. */
 int ts3plugin_processCommand(uint64 serverConnectionHandlerID, const char* command)
 {
-	// No commands atm...
-	if (strcmp(command, "apa") == 0)
+	if (strcmp(command, "test") == 0)
 	{
+		MARS::ts.printMessageToCurrentTab("Testkommando!");
 		return 0;
 	}
 
