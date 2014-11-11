@@ -6,11 +6,8 @@
 #include "public_definitions.h"
 #include "public_rare_definitions.h"
 #include "ts3_functions.h"
-
 #include "Plugin.h"
 #include "MARS.h"
-
-static TS3Functions ts = { 0 };
 
 /* Unique name identifying this plugin */
 const char* ts3plugin_name()
@@ -54,6 +51,8 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs)
 */
 int ts3plugin_init()
 {
+	MARS::listener.Initialize();
+	MARS::listener.Start();
 	return 0;
 	/* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
 	/* -2 is a very special case and should only be used if a plugin displays a dialog (e.g. overlay) asking the user to disable
@@ -64,29 +63,8 @@ int ts3plugin_init()
 /* Custom code called right before the plugin is unloaded */
 void ts3plugin_shutdown()
 {
-	/* Free pluginID if we registered it */
-	//if (pluginId) {
-	//	free(pluginId);
-	//	pluginId = nullptr;
-	//}
-}
-
-
-/* Tell client if plugin offers a configuration window. If this function is not implemented, it's an assumed "does not offer" (PLUGIN_OFFERS_NO_CONFIGURE). */
-int ts3plugin_offersConfigure()
-{
-	/*
-	* Return values:
-	* PLUGIN_OFFERS_NO_CONFIGURE         - Plugin does not implement ts3plugin_configure
-	* PLUGIN_OFFERS_CONFIGURE_NEW_THREAD - Plugin does implement ts3plugin_configure and requests to run this function in an own thread
-	* PLUGIN_OFFERS_CONFIGURE_QT_THREAD  - Plugin does implement ts3plugin_configure and requests to run this function in the Qt GUI thread
-	*/
-	return PLUGIN_OFFERS_NO_CONFIGURE;  /* In this case ts3plugin_configure does not need to be implemented */
-}
-
-/* Plugin might offer a configuration window. If ts3plugin_offersConfigure returns 0, this function does not need to be implemented. */
-void ts3plugin_configure(void* handle, void* qParentWidget)
-{
+	MARS::listener.Stop();
+	MARS::listener.Destroy();
 }
 
 /*
@@ -109,6 +87,11 @@ const char* ts3plugin_commandKeyword()
 int ts3plugin_processCommand(uint64 serverConnectionHandlerID, const char* command)
 {
 	// No commands atm...
+	if (strcmp(command, "apa") == 0)
+	{
+		return 0;
+	}
+
 	return 1;
 }
 
@@ -131,20 +114,15 @@ const char* ts3plugin_infoTitle()
 */
 void ts3plugin_infoData(uint64 serverConnectionHandlerID, uint64 id, enum PluginItemType type, char** data)
 {
+	if (type == PLUGIN_CLIENT)
+	{
+		*data = new char[255];
+		sprintf_s(*data, 255, "Info here...");
+	}
 }
 
 /* Required to release the memory for parameter "data" allocated in ts3plugin_infoData and ts3plugin_initMenus */
 void ts3plugin_freeMemory(void* data)
 {
-	free(data);
-}
-
-/*
-* Plugin requests to be always automatically loaded by the TeamSpeak 3 client unless
-* the user manually disabled it in the plugin dialog.
-* This function is optional. If missing, no autoload is assumed.
-*/
-int ts3plugin_requestAutoload()
-{
-	return 0;  /* 1 = request autoloaded, 0 = do not request autoload */
+	delete[] data;
 }

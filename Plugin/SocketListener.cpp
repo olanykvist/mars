@@ -18,7 +18,7 @@ namespace MARS
 	void SocketListener::Initialize()
 	{
 		// Initialize WinSock
-		int result = WSAStartup(MAKEWORD(2, 2), &(this->wsaData));
+		int result = WSAStartup(WINSOCK_VERSION, &(this->wsaData));
 		if (result != 0)
 		{
 			// Fail
@@ -93,7 +93,6 @@ namespace MARS
 
 	void SocketListener::Destroy()
 	{
-		this->Stop();
 		WSACleanup();
 	}
 

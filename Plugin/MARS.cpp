@@ -10,4 +10,5 @@ namespace MARS
 	const int PLUGIN_API_LEVEL = 20;
 	String pluginId = "";
 	TS3Functions ts = { 0 };
+	SocketListener listener;
 }

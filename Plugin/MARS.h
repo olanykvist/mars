@@ -3,6 +3,7 @@
 
 #include <string>
 #include <ts3_functions.h>
+#include "SocketListener.h"
 
 typedef std::string String;
 
@@ -16,6 +17,7 @@ namespace MARS
 	extern const int PLUGIN_API_LEVEL;
 	extern String pluginId;
 	extern TS3Functions ts;
+	extern SocketListener listener;
 };
 
 #endif

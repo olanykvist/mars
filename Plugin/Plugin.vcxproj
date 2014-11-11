@@ -110,6 +110,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(TargetPath)" "$(LOCALAPPDATA)\TeamSpeak 3 Client 3.0.15\plugins" /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="MARS.h" />
