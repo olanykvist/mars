@@ -17,22 +17,17 @@ MARS =
 	
 	data =
 	{
-		name = "",
+		id = 0,
+		player = "",
 		unit = "",
-		radio = nil
-	},
-	
-	Radio =
-	{
-		name = "",
-		primary = 0,
-		secondary = 0
-		new = function(object)
-			object = object or {}
-			setmetatable(object, self)
-			self.__index = self
-			return object
-		end
+		pos = {x = 0, y = 0, z = 0},
+		radio =
+		{
+			["1"] = {name = "", primary = 0, secondary = 0, modulation = 0},
+			["2"] = {name = "", primary = 0, secondary = 0, modulation = 0},
+			["3"] = {name = "", primary = 0, secondary = 0, modulation = 0},
+			selected = 0,
+		}
 	},
 	
 	JSON = nil,
@@ -43,25 +38,23 @@ MARS =
 	end,
 	
 	Update = function()
-
+		MARS.ExportCommon()
 	end,
 	
 	ExportCommon = function()
-		local data = LoGetSelfData()
 		local id = LoGetPlayerPlaneId()
+		local player = LoGetPilotName()
+		local self = LoGetSelfData()
 		
-		-- Fill export table
-		MARS.data.name = data.UnitName   -- Player name
-		MARS.data.unit = data.Name       -- Type of unit
-		
-		local r = MARS.Radio:new{name = "AN/ARC"}
-		r.primary = 12750000
-		
-		MARS.data.radio = r
+		MARS.data.id = id
+		MARS.data.player = player
+		MARS.data.unit = self.Name
+		MARS.data.pos = {x = self.Position.x, y = self.Position.y, z = self.Position.z}
 		
 	end,
 	
 	ExportA10 = function()
+		local vhf_am = GetDevice();
 	end,
 	
 	ExportP51 = function()
@@ -89,6 +82,10 @@ MARS =
 		log("MARS Quit")
 		local data = MARS.JSON:encode(MARS.data)
 		log(data)
+	end,
+	
+	NearEqual = function(a, b, epsilon)
+		return math.abs(a - b) < epsilon
 	end
 }
 
