@@ -1,4 +1,5 @@
 #include "MARS.h"
+#include "json/json.h"
 
 namespace MARS
 {
@@ -16,6 +17,16 @@ namespace MARS
 	// Callback
 	void OnMessageReceived(const char* message)
 	{
-		ts.printMessageToCurrentTab(message);
+		Json::Value root;
+		Json::Reader reader;
+		if (!reader.parse(message, root, false))
+		{
+			ts.printMessageToCurrentTab("JSON parsing of message failed");
+		}
+		else
+		{
+			std::string val = root.get("encoding", "default").asString();
+			ts.printMessageToCurrentTab(val.c_str());
+		}
 	}
 }

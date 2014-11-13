@@ -80,6 +80,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(TargetPath)" "$(LOCALAPPDATA)\TeamSpeak 3 Client 3.0.15\plugins" /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <ClCompile>
@@ -115,6 +118,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="json\json-forwards.h" />
+    <ClInclude Include="json\json.h" />
     <ClInclude Include="MARS.h" />
     <ClInclude Include="Modulation.h" />
     <ClInclude Include="Plugin.h" />
@@ -123,6 +128,7 @@
     <ClInclude Include="Transmission.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="jsoncpp.cpp" />
     <ClCompile Include="MARS.cpp" />
     <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="Radio.cpp" />
