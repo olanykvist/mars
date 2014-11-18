@@ -7,6 +7,7 @@
 namespace MARS.Common
 {
     using System;
+    using System.IO;
     using System.Text;
 
     /// <summary>
@@ -38,6 +39,30 @@ namespace MARS.Common
         public static void WriteConfigurationString(string appName, string keyName, string value, string fileName)
         {
             NativeFunctions.WritePrivateProfileString(appName, keyName, value, fileName);
+        }
+
+        public static bool FilesAreEqual(FileInfo firstFile, FileInfo secondFile)
+        {
+            if (firstFile.Length != secondFile.Length)
+            {
+                return false;
+            }
+
+            using (var firstStream = firstFile.OpenRead())
+            {
+                using (var secondStream = secondFile.OpenRead())
+                {
+                    for (int i = 0; i < firstFile.Length; i++)
+                    {
+                        if (firstStream.ReadByte() != secondStream.ReadByte())
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
