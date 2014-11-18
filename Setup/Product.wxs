@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" RequiredVersion="3.9.1006.0">
+  <Product Id="{F9AF699C-76BE-4D60-9D3B-678B8DCDC58A}" Name="MARS" Language="1033" Version="0.9.0.0" Manufacturer="Master Arms" UpgradeCode="{9B36C710-11BE-4828-9274-4540C306F6BE}">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate />
+    <Feature Id="MainFeature">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="Scripts" />
+      <ComponentGroupRef Id="Plugin" />
+    </Feature>
+  </Product>
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="ManufacturerFolder" Name="Master Arms">
+          <Directory Id="INSTALLFOLDER" Name="MARS">
+            <Directory Id="PluginFolder" Name="Plugin" />
+            <Directory Id="ScriptsFolder" Name="Scripts" />
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER" >
+      <Component>
+        <File Source="$(var.ControlPanel.TargetPath)" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(var.RadioPanel.TargetPath)" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(var.Common.TargetPath)" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+    <ComponentGroup Id="Scripts" Directory="ScriptsFolder">
+      <Component>
+        <File Source="$(var.SolutionDir)\Scripts\MARS.lua" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(var.SolutionDir)\Scripts\Export.lua" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+    <ComponentGroup Id="Plugin" Directory="PluginFolder">
+      <Component>
+        <File Source="$(var.Plugin.TargetPath)" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>
