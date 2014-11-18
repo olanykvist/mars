@@ -43,6 +43,11 @@ namespace MARS.Common
 
         public static bool FilesAreEqual(FileInfo firstFile, FileInfo secondFile)
         {
+            if (!firstFile.Exists || !secondFile.Exists)
+            {
+                return false;
+            }
+
             if (firstFile.Length != secondFile.Length)
             {
                 return false;
