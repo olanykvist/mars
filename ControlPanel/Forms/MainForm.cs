@@ -174,11 +174,15 @@ namespace MARS.ControlPanel.Forms
             this.SaveConfiguration();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void CheckInstallation()
         {
-            IsScriptInstalled();
-            IsExportEnabled();
-            InstallScript();
+            this.pluginInstalledLabel.Text = this.IsPluginInstalled().ToString();
+            this.exportEnabledLabel.Text = this.IsExportEnabled().ToString();
+        }
+
+        private void teamSpeakPathTextBox_TextChanged(object sender, EventArgs e)
+        {
+            this.CheckInstallation();
         }
     }
 }
