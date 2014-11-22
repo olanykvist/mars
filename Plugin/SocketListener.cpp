@@ -70,9 +70,9 @@ namespace MARS
 			const size_t BUFFER_SIZE = 256;
 			char buffer[BUFFER_SIZE];
 			memset(buffer, 0, BUFFER_SIZE);
-			while (recv(s, buffer, BUFFER_SIZE, 0) > 0);
 			closesocket(s);
 		}
+
 		this->clientSockets.clear();
 
 		for (auto& t : this->receiveThreads)
