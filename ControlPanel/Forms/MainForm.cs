@@ -6,15 +6,25 @@ namespace MARS.ControlPanel.Forms
     using System.Windows.Forms;
     using MARS.Common;
     using Microsoft.Win32;
+    using SharpDX.DirectInput;
+    using System.ComponentModel;
+    using System.Threading;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+
+
 
     public partial class MainForm : Form
     {
         private Configuration configuration;
+        private DirectInput input;
+        private IList<Device> devices;
 
         public MainForm()
         {
             InitializeComponent();
             this.LoadConfiguration();
+            this.InitInput();
         }
 
         private void LoadConfiguration()
@@ -184,5 +194,115 @@ namespace MARS.ControlPanel.Forms
         {
             this.CheckInstallation();
         }
+
+        private void setPTT1Button_Click(object sender, EventArgs e)
+        {
+            this.inputListener.RunWorkerAsync(1);
+        }
+
+        private void inputListener_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var initial = new bool[devices.Count, 128];
+
+            for (int i = 0; i < devices.Count; i++)
+            {
+                devices[i].Acquire();
+                devices[i].Poll();
+                var state = (devices[i] as Joystick).GetCurrentState();
+                for (int j = 0; j < 128; j++)
+                {
+                    initial[i, j] = state.Buttons[j];
+                }
+            }
+
+            string device = string.Empty;
+            int button = 0;
+            bool exit = false;
+            do
+            {
+                for (int i = 0; i < devices.Count; i++)
+                {
+                    devices[i].Poll();
+                    var state = (devices[i] as Joystick).GetCurrentState();
+                    for (int j = 0; j < 128; j++)
+                    {
+                        if (state.Buttons[j] == true && initial[i, j] == false)
+                        {
+                            exit = true;
+                            device = devices[i].Information.ProductName;
+                            button = j;
+                            break;
+                        }
+                    }
+                    if (exit)
+                    {
+                        break;
+                    }
+                }
+                Thread.Sleep(10);
+            } while (!exit);
+
+            e.Result = new InputAssignment { Device = device, Button = button };
+        }
+
+        private void inputListener_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            InputAssignment assignment = e.Result as InputAssignment;
+            this.button1DeviceLabel.Text = assignment.Device;
+            this.button1ButtonLabel.Text = assignment.Button.ToString();
+        }
+
+        private void InitInput()
+        {
+            this.input = new DirectInput();
+            this.devices = new List<Device>();
+
+            var instances = input.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
+
+            foreach (var instance in instances)
+            {
+                this.devices.Add(new Joystick(input, instance.ProductGuid));
+            }
+
+            foreach (var device in devices)
+            {
+                device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+            }
+        }
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+
+            foreach (var device in this.devices)
+            {
+                if (device != null)
+                {
+                    device.Unacquire();
+                    device.Dispose();
+                }
+            }
+
+            if (this.input != null)
+            {
+                this.input.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+    }
+
+    class InputAssignment
+    {
+        public string Device { get; set; }
+
+        public int Button { get; set; }
     }
 }

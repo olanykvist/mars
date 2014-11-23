@@ -7,19 +7,6 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -35,9 +22,31 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.pluginInstalledLabel = new System.Windows.Forms.Label();
             this.exportEnabledLabel = new System.Windows.Forms.Label();
+            this.setPTT1Button = new System.Windows.Forms.Button();
+            this.inputListener = new System.ComponentModel.BackgroundWorker();
+            this.button1DeviceLabel = new System.Windows.Forms.Label();
+            this.button1ButtonLabel = new System.Windows.Forms.Label();
             exportEnabledCaption = new System.Windows.Forms.Label();
             pluginInstalledCaption = new System.Windows.Forms.Label();
             this.SuspendLayout();
+            // 
+            // exportEnabledCaption
+            // 
+            exportEnabledCaption.AutoSize = true;
+            exportEnabledCaption.Location = new System.Drawing.Point(12, 50);
+            exportEnabledCaption.Name = "exportEnabledCaption";
+            exportEnabledCaption.Size = new System.Drawing.Size(81, 13);
+            exportEnabledCaption.TabIndex = 4;
+            exportEnabledCaption.Text = "Export enabled:";
+            // 
+            // pluginInstalledCaption
+            // 
+            pluginInstalledCaption.AutoSize = true;
+            pluginInstalledCaption.Location = new System.Drawing.Point(12, 36);
+            pluginInstalledCaption.Name = "pluginInstalledCaption";
+            pluginInstalledCaption.Size = new System.Drawing.Size(80, 13);
+            pluginInstalledCaption.TabIndex = 5;
+            pluginInstalledCaption.Text = "Plugin installed:";
             // 
             // teamSpeakPathTextBox
             // 
@@ -68,24 +77,6 @@
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
-            // exportEnabledCaption
-            // 
-            exportEnabledCaption.AutoSize = true;
-            exportEnabledCaption.Location = new System.Drawing.Point(12, 50);
-            exportEnabledCaption.Name = "exportEnabledCaption";
-            exportEnabledCaption.Size = new System.Drawing.Size(81, 13);
-            exportEnabledCaption.TabIndex = 4;
-            exportEnabledCaption.Text = "Export enabled:";
-            // 
-            // pluginInstalledCaption
-            // 
-            pluginInstalledCaption.AutoSize = true;
-            pluginInstalledCaption.Location = new System.Drawing.Point(12, 36);
-            pluginInstalledCaption.Name = "pluginInstalledCaption";
-            pluginInstalledCaption.Size = new System.Drawing.Size(80, 13);
-            pluginInstalledCaption.TabIndex = 5;
-            pluginInstalledCaption.Text = "Plugin installed:";
-            // 
             // pluginInstalledLabel
             // 
             this.pluginInstalledLabel.AutoSize = true;
@@ -104,11 +95,47 @@
             this.exportEnabledLabel.TabIndex = 7;
             this.exportEnabledLabel.Text = "X";
             // 
+            // setPTT1Button
+            // 
+            this.setPTT1Button.Location = new System.Drawing.Point(275, 116);
+            this.setPTT1Button.Name = "setPTT1Button";
+            this.setPTT1Button.Size = new System.Drawing.Size(75, 23);
+            this.setPTT1Button.TabIndex = 8;
+            this.setPTT1Button.Text = "Set";
+            this.setPTT1Button.UseVisualStyleBackColor = true;
+            this.setPTT1Button.Click += new System.EventHandler(this.setPTT1Button_Click);
+            // 
+            // inputListener
+            // 
+            this.inputListener.DoWork += new System.ComponentModel.DoWorkEventHandler(this.inputListener_DoWork);
+            this.inputListener.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.inputListener_RunWorkerCompleted);
+            // 
+            // button1DeviceLabel
+            // 
+            this.button1DeviceLabel.AutoSize = true;
+            this.button1DeviceLabel.Location = new System.Drawing.Point(15, 125);
+            this.button1DeviceLabel.Name = "button1DeviceLabel";
+            this.button1DeviceLabel.Size = new System.Drawing.Size(22, 13);
+            this.button1DeviceLabel.TabIndex = 9;
+            this.button1DeviceLabel.Text = "xxx";
+            // 
+            // button1ButtonLabel
+            // 
+            this.button1ButtonLabel.AutoSize = true;
+            this.button1ButtonLabel.Location = new System.Drawing.Point(15, 138);
+            this.button1ButtonLabel.Name = "button1ButtonLabel";
+            this.button1ButtonLabel.Size = new System.Drawing.Size(22, 13);
+            this.button1ButtonLabel.TabIndex = 10;
+            this.button1ButtonLabel.Text = "xxx";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(545, 312);
+            this.Controls.Add(this.button1ButtonLabel);
+            this.Controls.Add(this.button1DeviceLabel);
+            this.Controls.Add(this.setPTT1Button);
             this.Controls.Add(this.exportEnabledLabel);
             this.Controls.Add(this.pluginInstalledLabel);
             this.Controls.Add(pluginInstalledCaption);
@@ -130,5 +157,9 @@
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Label pluginInstalledLabel;
         private System.Windows.Forms.Label exportEnabledLabel;
+        private System.Windows.Forms.Button setPTT1Button;
+        private System.ComponentModel.BackgroundWorker inputListener;
+        private System.Windows.Forms.Label button1DeviceLabel;
+        private System.Windows.Forms.Label button1ButtonLabel;
     }
 }
