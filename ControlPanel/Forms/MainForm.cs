@@ -2,23 +2,22 @@
 namespace MARS.ControlPanel.Forms
 {
     using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
     using System.IO;
+    using System.Threading;
     using System.Windows.Forms;
     using MARS.Common;
     using Microsoft.Win32;
     using SharpDX.DirectInput;
-    using System.ComponentModel;
-    using System.Threading;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-
-
+    using SharpDX.Multimedia;
 
     public partial class MainForm : Form
     {
         private Configuration configuration;
         private DirectInput input;
         private IList<Device> devices;
+        private bool[,] initial;
 
         public MainForm()
         {
@@ -195,21 +194,16 @@ namespace MARS.ControlPanel.Forms
             this.CheckInstallation();
         }
 
-        private void setPTT1Button_Click(object sender, EventArgs e)
-        {
-            this.inputListener.RunWorkerAsync(1);
-        }
-
         private void inputListener_DoWork(object sender, DoWorkEventArgs e)
         {
-            var initial = new bool[devices.Count, 128];
+            bool[,] initial = new bool[devices.Count, 128];
 
-            for (int i = 0; i < devices.Count; i++)
+            for (int i = 0; i < this.devices.Count; i++)
             {
-                devices[i].Acquire();
-                devices[i].Poll();
+                this.devices[i].Poll();
                 var state = (devices[i] as Joystick).GetCurrentState();
-                for (int j = 0; j < 128; j++)
+
+                for (int j = 0; j < state.Buttons.Length; j++)
                 {
                     initial[i, j] = state.Buttons[j];
                 }
@@ -217,39 +211,57 @@ namespace MARS.ControlPanel.Forms
 
             string device = string.Empty;
             int button = 0;
-            bool exit = false;
-            do
+            bool found = false;
+
+            while (!found)
             {
-                for (int i = 0; i < devices.Count; i++)
+                Thread.Sleep(100);
+
+                for (int i = 0; i < this.devices.Count; i++)
                 {
-                    devices[i].Poll();
+                    this.devices[i].Poll();
                     var state = (devices[i] as Joystick).GetCurrentState();
-                    for (int j = 0; j < 128; j++)
+
+                    for (int j = 0; j < state.Buttons.Length; j++)
                     {
-                        if (state.Buttons[j] == true && initial[i, j] == false)
+                        if (state.Buttons[j] && !initial[i, j])
                         {
-                            exit = true;
-                            device = devices[i].Information.ProductName;
+                            found = true;
                             button = j;
+                            device = devices[i].Information.ProductName;
                             break;
                         }
                     }
-                    if (exit)
+
+                    if (found)
                     {
                         break;
                     }
                 }
-                Thread.Sleep(10);
-            } while (!exit);
+            }
 
-            e.Result = new InputAssignment { Device = device, Button = button };
+            e.Result = new InputAssignment { AssignmentName = e.Argument.ToString(), Device = device, Button = button };
         }
 
         private void inputListener_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            InputAssignment assignment = e.Result as InputAssignment;
-            this.button1DeviceLabel.Text = assignment.Device;
-            this.button1ButtonLabel.Text = assignment.Button.ToString();
+            var assignment = e.Result as InputAssignment;
+
+            if (assignment.AssignmentName.Equals("SELECT_PTT_1", StringComparison.InvariantCulture))
+            {
+                this.selectPttOneDeviceLabel.Text = assignment.Device;
+                this.selectPttOneButtonLabel.Text = assignment.Button.ToString();
+            }
+            else if (assignment.AssignmentName.Equals("SELECT_PTT_2", StringComparison.InvariantCulture))
+            {
+                this.selectPttTwoDeviceLabel.Text = assignment.Device;
+                this.selectPttTwoButtonLabel.Text = assignment.Button.ToString();
+            }
+            else if (assignment.AssignmentName.Equals("SELECT_PTT_3", StringComparison.InvariantCulture))
+            {
+                this.selectPttThreeDeviceLabel.Text = assignment.Device;
+                this.selectPttThreeButtonLabel.Text = assignment.Button.ToString();
+            }
         }
 
         private void InitInput()
@@ -261,12 +273,15 @@ namespace MARS.ControlPanel.Forms
 
             foreach (var instance in instances)
             {
-                this.devices.Add(new Joystick(input, instance.ProductGuid));
-            }
+                if (instance.Usage == UsageId.GenericJoystick)
+                {
+                    var device = new Joystick(input, instance.ProductGuid);
+                    device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+                    device.Acquire();
 
-            foreach (var device in devices)
-            {
-                device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+                    this.devices.Add(device);
+                    this.devicesListBox.Items.Add(instance.ProductName);
+                }
             }
         }
 
@@ -297,12 +312,18 @@ namespace MARS.ControlPanel.Forms
 
             base.Dispose(disposing);
         }
+
+        private void SetSelectPttButton_Click(object sender, EventArgs e)
+        {
+            var assigment = (sender as Control).Tag.ToString();
+            this.inputListener.RunWorkerAsync(assigment);
+        }
     }
 
     class InputAssignment
     {
+        public string AssignmentName { get; set; }
         public string Device { get; set; }
-
         public int Button { get; set; }
     }
 }

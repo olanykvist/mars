@@ -17,17 +17,39 @@
         {
             System.Windows.Forms.Label exportEnabledCaption;
             System.Windows.Forms.Label pluginInstalledCaption;
+            System.Windows.Forms.Label selectPttOneDeviceCaption;
+            System.Windows.Forms.Label selectPttOneButtonCaption;
+            System.Windows.Forms.Label selectPttTwoButtonCaption;
+            System.Windows.Forms.Label selectPttTwoDeviceCaption;
+            System.Windows.Forms.Label selectPttThreeButtonCaption;
+            System.Windows.Forms.Label selectPttThreeDeviceCaption;
             this.teamSpeakPathTextBox = new System.Windows.Forms.TextBox();
             this.selectPathButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.pluginInstalledLabel = new System.Windows.Forms.Label();
             this.exportEnabledLabel = new System.Windows.Forms.Label();
-            this.setPTT1Button = new System.Windows.Forms.Button();
+            this.setSelectPttOneButton = new System.Windows.Forms.Button();
             this.inputListener = new System.ComponentModel.BackgroundWorker();
-            this.button1DeviceLabel = new System.Windows.Forms.Label();
-            this.button1ButtonLabel = new System.Windows.Forms.Label();
+            this.selectPttOneDeviceLabel = new System.Windows.Forms.Label();
+            this.selectPttOneButtonLabel = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.selectPttThreeButtonLabel = new System.Windows.Forms.Label();
+            this.selectPttThreeDeviceLabel = new System.Windows.Forms.Label();
+            this.setSelectPttThreeButton = new System.Windows.Forms.Button();
+            this.selectPttTwoButtonLabel = new System.Windows.Forms.Label();
+            this.selectPttTwoDeviceLabel = new System.Windows.Forms.Label();
+            this.setSelectPttTwoButton = new System.Windows.Forms.Button();
+            this.devicesListBox = new System.Windows.Forms.ListBox();
+            this.label1 = new System.Windows.Forms.Label();
             exportEnabledCaption = new System.Windows.Forms.Label();
             pluginInstalledCaption = new System.Windows.Forms.Label();
+            selectPttOneDeviceCaption = new System.Windows.Forms.Label();
+            selectPttOneButtonCaption = new System.Windows.Forms.Label();
+            selectPttTwoButtonCaption = new System.Windows.Forms.Label();
+            selectPttTwoDeviceCaption = new System.Windows.Forms.Label();
+            selectPttThreeButtonCaption = new System.Windows.Forms.Label();
+            selectPttThreeDeviceCaption = new System.Windows.Forms.Label();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // exportEnabledCaption
@@ -47,6 +69,60 @@
             pluginInstalledCaption.Size = new System.Drawing.Size(80, 13);
             pluginInstalledCaption.TabIndex = 5;
             pluginInstalledCaption.Text = "Plugin installed:";
+            // 
+            // selectPttOneDeviceCaption
+            // 
+            selectPttOneDeviceCaption.AutoSize = true;
+            selectPttOneDeviceCaption.Location = new System.Drawing.Point(30, 43);
+            selectPttOneDeviceCaption.Name = "selectPttOneDeviceCaption";
+            selectPttOneDeviceCaption.Size = new System.Drawing.Size(44, 13);
+            selectPttOneDeviceCaption.TabIndex = 9;
+            selectPttOneDeviceCaption.Text = "Device:";
+            // 
+            // selectPttOneButtonCaption
+            // 
+            selectPttOneButtonCaption.AutoSize = true;
+            selectPttOneButtonCaption.Location = new System.Drawing.Point(30, 60);
+            selectPttOneButtonCaption.Name = "selectPttOneButtonCaption";
+            selectPttOneButtonCaption.Size = new System.Drawing.Size(41, 13);
+            selectPttOneButtonCaption.TabIndex = 10;
+            selectPttOneButtonCaption.Text = "Button:";
+            // 
+            // selectPttTwoButtonCaption
+            // 
+            selectPttTwoButtonCaption.AutoSize = true;
+            selectPttTwoButtonCaption.Location = new System.Drawing.Point(30, 105);
+            selectPttTwoButtonCaption.Name = "selectPttTwoButtonCaption";
+            selectPttTwoButtonCaption.Size = new System.Drawing.Size(41, 13);
+            selectPttTwoButtonCaption.TabIndex = 15;
+            selectPttTwoButtonCaption.Text = "Button:";
+            // 
+            // selectPttTwoDeviceCaption
+            // 
+            selectPttTwoDeviceCaption.AutoSize = true;
+            selectPttTwoDeviceCaption.Location = new System.Drawing.Point(30, 88);
+            selectPttTwoDeviceCaption.Name = "selectPttTwoDeviceCaption";
+            selectPttTwoDeviceCaption.Size = new System.Drawing.Size(44, 13);
+            selectPttTwoDeviceCaption.TabIndex = 13;
+            selectPttTwoDeviceCaption.Text = "Device:";
+            // 
+            // selectPttThreeButtonCaption
+            // 
+            selectPttThreeButtonCaption.AutoSize = true;
+            selectPttThreeButtonCaption.Location = new System.Drawing.Point(30, 151);
+            selectPttThreeButtonCaption.Name = "selectPttThreeButtonCaption";
+            selectPttThreeButtonCaption.Size = new System.Drawing.Size(41, 13);
+            selectPttThreeButtonCaption.TabIndex = 20;
+            selectPttThreeButtonCaption.Text = "Button:";
+            // 
+            // selectPttThreeDeviceCaption
+            // 
+            selectPttThreeDeviceCaption.AutoSize = true;
+            selectPttThreeDeviceCaption.Location = new System.Drawing.Point(30, 134);
+            selectPttThreeDeviceCaption.Name = "selectPttThreeDeviceCaption";
+            selectPttThreeDeviceCaption.Size = new System.Drawing.Size(44, 13);
+            selectPttThreeDeviceCaption.TabIndex = 18;
+            selectPttThreeDeviceCaption.Text = "Device:";
             // 
             // teamSpeakPathTextBox
             // 
@@ -95,47 +171,147 @@
             this.exportEnabledLabel.TabIndex = 7;
             this.exportEnabledLabel.Text = "X";
             // 
-            // setPTT1Button
+            // setSelectPttOneButton
             // 
-            this.setPTT1Button.Location = new System.Drawing.Point(275, 116);
-            this.setPTT1Button.Name = "setPTT1Button";
-            this.setPTT1Button.Size = new System.Drawing.Size(75, 23);
-            this.setPTT1Button.TabIndex = 8;
-            this.setPTT1Button.Text = "Set";
-            this.setPTT1Button.UseVisualStyleBackColor = true;
-            this.setPTT1Button.Click += new System.EventHandler(this.setPTT1Button_Click);
+            this.setSelectPttOneButton.Location = new System.Drawing.Point(295, 55);
+            this.setSelectPttOneButton.Name = "setSelectPttOneButton";
+            this.setSelectPttOneButton.Size = new System.Drawing.Size(75, 23);
+            this.setSelectPttOneButton.TabIndex = 8;
+            this.setSelectPttOneButton.Tag = "SELECT_PTT_1";
+            this.setSelectPttOneButton.Text = "Set";
+            this.setSelectPttOneButton.UseVisualStyleBackColor = true;
+            this.setSelectPttOneButton.Click += new System.EventHandler(this.SetSelectPttButton_Click);
             // 
             // inputListener
             // 
             this.inputListener.DoWork += new System.ComponentModel.DoWorkEventHandler(this.inputListener_DoWork);
             this.inputListener.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.inputListener_RunWorkerCompleted);
             // 
-            // button1DeviceLabel
+            // selectPttOneDeviceLabel
             // 
-            this.button1DeviceLabel.AutoSize = true;
-            this.button1DeviceLabel.Location = new System.Drawing.Point(15, 125);
-            this.button1DeviceLabel.Name = "button1DeviceLabel";
-            this.button1DeviceLabel.Size = new System.Drawing.Size(22, 13);
-            this.button1DeviceLabel.TabIndex = 9;
-            this.button1DeviceLabel.Text = "xxx";
+            this.selectPttOneDeviceLabel.AutoSize = true;
+            this.selectPttOneDeviceLabel.Location = new System.Drawing.Point(81, 43);
+            this.selectPttOneDeviceLabel.Name = "selectPttOneDeviceLabel";
+            this.selectPttOneDeviceLabel.Size = new System.Drawing.Size(22, 13);
+            this.selectPttOneDeviceLabel.TabIndex = 9;
+            this.selectPttOneDeviceLabel.Text = "xxx";
             // 
-            // button1ButtonLabel
+            // selectPttOneButtonLabel
             // 
-            this.button1ButtonLabel.AutoSize = true;
-            this.button1ButtonLabel.Location = new System.Drawing.Point(15, 138);
-            this.button1ButtonLabel.Name = "button1ButtonLabel";
-            this.button1ButtonLabel.Size = new System.Drawing.Size(22, 13);
-            this.button1ButtonLabel.TabIndex = 10;
-            this.button1ButtonLabel.Text = "xxx";
+            this.selectPttOneButtonLabel.AutoSize = true;
+            this.selectPttOneButtonLabel.Location = new System.Drawing.Point(81, 60);
+            this.selectPttOneButtonLabel.Name = "selectPttOneButtonLabel";
+            this.selectPttOneButtonLabel.Size = new System.Drawing.Size(22, 13);
+            this.selectPttOneButtonLabel.TabIndex = 10;
+            this.selectPttOneButtonLabel.Text = "xxx";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(selectPttThreeButtonCaption);
+            this.groupBox1.Controls.Add(this.selectPttThreeButtonLabel);
+            this.groupBox1.Controls.Add(selectPttThreeDeviceCaption);
+            this.groupBox1.Controls.Add(this.selectPttThreeDeviceLabel);
+            this.groupBox1.Controls.Add(this.setSelectPttThreeButton);
+            this.groupBox1.Controls.Add(selectPttTwoButtonCaption);
+            this.groupBox1.Controls.Add(this.selectPttTwoButtonLabel);
+            this.groupBox1.Controls.Add(selectPttTwoDeviceCaption);
+            this.groupBox1.Controls.Add(this.selectPttTwoDeviceLabel);
+            this.groupBox1.Controls.Add(this.setSelectPttTwoButton);
+            this.groupBox1.Controls.Add(this.devicesListBox);
+            this.groupBox1.Controls.Add(selectPttOneButtonCaption);
+            this.groupBox1.Controls.Add(this.selectPttOneButtonLabel);
+            this.groupBox1.Controls.Add(selectPttOneDeviceCaption);
+            this.groupBox1.Controls.Add(this.selectPttOneDeviceLabel);
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.setSelectPttOneButton);
+            this.groupBox1.Location = new System.Drawing.Point(56, 155);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(376, 267);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Buttons";
+            // 
+            // selectPttThreeButtonLabel
+            // 
+            this.selectPttThreeButtonLabel.AutoSize = true;
+            this.selectPttThreeButtonLabel.Location = new System.Drawing.Point(81, 151);
+            this.selectPttThreeButtonLabel.Name = "selectPttThreeButtonLabel";
+            this.selectPttThreeButtonLabel.Size = new System.Drawing.Size(22, 13);
+            this.selectPttThreeButtonLabel.TabIndex = 21;
+            this.selectPttThreeButtonLabel.Text = "xxx";
+            // 
+            // selectPttThreeDeviceLabel
+            // 
+            this.selectPttThreeDeviceLabel.AutoSize = true;
+            this.selectPttThreeDeviceLabel.Location = new System.Drawing.Point(81, 134);
+            this.selectPttThreeDeviceLabel.Name = "selectPttThreeDeviceLabel";
+            this.selectPttThreeDeviceLabel.Size = new System.Drawing.Size(22, 13);
+            this.selectPttThreeDeviceLabel.TabIndex = 19;
+            this.selectPttThreeDeviceLabel.Text = "xxx";
+            // 
+            // setSelectPttThreeButton
+            // 
+            this.setSelectPttThreeButton.Location = new System.Drawing.Point(295, 146);
+            this.setSelectPttThreeButton.Name = "setSelectPttThreeButton";
+            this.setSelectPttThreeButton.Size = new System.Drawing.Size(75, 23);
+            this.setSelectPttThreeButton.TabIndex = 17;
+            this.setSelectPttThreeButton.Tag = "SELECT_PTT_3";
+            this.setSelectPttThreeButton.Text = "Set";
+            this.setSelectPttThreeButton.UseVisualStyleBackColor = true;
+            this.setSelectPttThreeButton.Click += new System.EventHandler(this.SetSelectPttButton_Click);
+            // 
+            // selectPttTwoButtonLabel
+            // 
+            this.selectPttTwoButtonLabel.AutoSize = true;
+            this.selectPttTwoButtonLabel.Location = new System.Drawing.Point(81, 105);
+            this.selectPttTwoButtonLabel.Name = "selectPttTwoButtonLabel";
+            this.selectPttTwoButtonLabel.Size = new System.Drawing.Size(22, 13);
+            this.selectPttTwoButtonLabel.TabIndex = 16;
+            this.selectPttTwoButtonLabel.Text = "xxx";
+            // 
+            // selectPttTwoDeviceLabel
+            // 
+            this.selectPttTwoDeviceLabel.AutoSize = true;
+            this.selectPttTwoDeviceLabel.Location = new System.Drawing.Point(81, 88);
+            this.selectPttTwoDeviceLabel.Name = "selectPttTwoDeviceLabel";
+            this.selectPttTwoDeviceLabel.Size = new System.Drawing.Size(22, 13);
+            this.selectPttTwoDeviceLabel.TabIndex = 14;
+            this.selectPttTwoDeviceLabel.Text = "xxx";
+            // 
+            // setSelectPttTwoButton
+            // 
+            this.setSelectPttTwoButton.Location = new System.Drawing.Point(295, 100);
+            this.setSelectPttTwoButton.Name = "setSelectPttTwoButton";
+            this.setSelectPttTwoButton.Size = new System.Drawing.Size(75, 23);
+            this.setSelectPttTwoButton.TabIndex = 12;
+            this.setSelectPttTwoButton.Tag = "SELECT_PTT_2";
+            this.setSelectPttTwoButton.Text = "Set";
+            this.setSelectPttTwoButton.UseVisualStyleBackColor = true;
+            this.setSelectPttTwoButton.Click += new System.EventHandler(this.SetSelectPttButton_Click);
+            // 
+            // devicesListBox
+            // 
+            this.devicesListBox.FormattingEnabled = true;
+            this.devicesListBox.Location = new System.Drawing.Point(9, 192);
+            this.devicesListBox.Name = "devicesListBox";
+            this.devicesListBox.Size = new System.Drawing.Size(361, 69);
+            this.devicesListBox.TabIndex = 11;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(79, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Select + PTT 1";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(545, 312);
-            this.Controls.Add(this.button1ButtonLabel);
-            this.Controls.Add(this.button1DeviceLabel);
-            this.Controls.Add(this.setPTT1Button);
+            this.ClientSize = new System.Drawing.Size(545, 434);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.exportEnabledLabel);
             this.Controls.Add(this.pluginInstalledLabel);
             this.Controls.Add(pluginInstalledCaption);
@@ -145,6 +321,8 @@
             this.Controls.Add(this.teamSpeakPathTextBox);
             this.Name = "MainForm";
             this.Text = "MainForm";
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -157,9 +335,18 @@
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Label pluginInstalledLabel;
         private System.Windows.Forms.Label exportEnabledLabel;
-        private System.Windows.Forms.Button setPTT1Button;
+        private System.Windows.Forms.Button setSelectPttOneButton;
         private System.ComponentModel.BackgroundWorker inputListener;
-        private System.Windows.Forms.Label button1DeviceLabel;
-        private System.Windows.Forms.Label button1ButtonLabel;
+        private System.Windows.Forms.Label selectPttOneDeviceLabel;
+        private System.Windows.Forms.Label selectPttOneButtonLabel;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label selectPttThreeButtonLabel;
+        private System.Windows.Forms.Label selectPttThreeDeviceLabel;
+        private System.Windows.Forms.Button setSelectPttThreeButton;
+        private System.Windows.Forms.Label selectPttTwoButtonLabel;
+        private System.Windows.Forms.Label selectPttTwoDeviceLabel;
+        private System.Windows.Forms.Button setSelectPttTwoButton;
+        private System.Windows.Forms.ListBox devicesListBox;
     }
 }
