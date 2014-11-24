@@ -74,11 +74,30 @@ namespace MARS.ControlPanel.Forms
             }
 
             this.teamSpeakPathTextBox.Text = this.configuration.TeamSpeakPath;
+
+            this.selectPttOneDeviceLabel.Text = this.configuration.SelectPttOneDevice;
+            this.selectPttOneButtonLabel.Text = this.configuration.SelectPttOneButton.ToString();
+
+            this.selectPttTwoDeviceLabel.Text = this.configuration.SelectPttTwoDevice;
+            this.selectPttTwoButtonLabel.Text = this.configuration.SelectPttTwoButton.ToString();
+
+            this.selectPttThreeDeviceLabel.Text = this.configuration.SelectPttThreeDevice;
+            this.selectPttThreeButtonLabel.Text = this.configuration.SelectPttThreeButton.ToString();
         }
 
         private void SaveConfiguration()
         {
             this.configuration.TeamSpeakPath = this.teamSpeakPathTextBox.Text.Trim();
+
+            this.configuration.SelectPttOneDevice = this.selectPttOneDeviceLabel.Text;
+            this.configuration.SelectPttOneButton = Convert.ToInt32(this.selectPttOneButtonLabel.Text);
+
+            this.configuration.SelectPttTwoDevice = this.selectPttTwoDeviceLabel.Text;
+            this.configuration.SelectPttTwoButton = Convert.ToInt32(this.selectPttTwoButtonLabel.Text);
+
+            this.configuration.SelectPttThreeDevice = this.selectPttThreeDeviceLabel.Text;
+            this.configuration.SelectPttThreeButton = Convert.ToInt32(this.selectPttThreeButtonLabel.Text);
+
             this.configuration.Save();
         }
 
