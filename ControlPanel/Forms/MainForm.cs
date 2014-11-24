@@ -317,11 +317,4 @@ namespace MARS.ControlPanel.Forms
             this.inputListener.RunWorkerAsync(assigment);
         }
     }
-
-    class InputAssignment
-    {
-        public string AssignmentName { get; set; }
-        public string Device { get; set; }
-        public int Button { get; set; }
-    }
 }
