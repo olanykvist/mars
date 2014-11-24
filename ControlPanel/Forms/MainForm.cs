@@ -20,9 +20,37 @@ namespace MARS.ControlPanel.Forms
 
         public MainForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             this.LoadConfiguration();
             this.InitializeInput();
+        }
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                this.components.Dispose();
+            }
+
+            foreach (var device in this.devices)
+            {
+                if (device != null)
+                {
+                    device.Unacquire();
+                    device.Dispose();
+                }
+            }
+
+            if (this.input != null)
+            {
+                this.input.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
 
         private void LoadConfiguration()
@@ -45,7 +73,7 @@ namespace MARS.ControlPanel.Forms
                 }
             }
 
-            this.teamSpeakPathTextBox.Text = configuration.TeamSpeakPath;
+            this.teamSpeakPathTextBox.Text = this.configuration.TeamSpeakPath;
         }
 
         private void SaveConfiguration()
@@ -125,14 +153,13 @@ namespace MARS.ControlPanel.Forms
         private void EnableExport()
         {
             var export = new FileInfo(Path.Combine(this.GetScriptsPath(), "Export.lua"));
-
         }
 
         private void InstallScript()
         {
             var file = "MARS.lua";
-            var scriptsPath = EnsureScriptsPath();
-            var installPath = GetInstallPath();
+            var scriptsPath = this.EnsureScriptsPath();
+            var installPath = this.GetInstallPath();
             var source = Path.Combine(installPath, file);
             var target = Path.Combine(scriptsPath, file);
             File.Copy(source, target, true);
@@ -195,12 +222,12 @@ namespace MARS.ControlPanel.Forms
 
         private void OnInputListenerDoWork(object sender, DoWorkEventArgs e)
         {
-            bool[,] initial = new bool[devices.Count, 128];
+            bool[,] initial = new bool[this.devices.Count, 128];
 
             for (int i = 0; i < this.devices.Count; i++)
             {
                 this.devices[i].Poll();
-                var state = (devices[i] as Joystick).GetCurrentState();
+                var state = (this.devices[i] as Joystick).GetCurrentState();
 
                 for (int j = 0; j < state.Buttons.Length; j++)
                 {
@@ -219,7 +246,7 @@ namespace MARS.ControlPanel.Forms
                 for (int i = 0; i < this.devices.Count; i++)
                 {
                     this.devices[i].Poll();
-                    var state = (devices[i] as Joystick).GetCurrentState();
+                    var state = (this.devices[i] as Joystick).GetCurrentState();
 
                     for (int j = 0; j < state.Buttons.Length; j++)
                     {
@@ -227,7 +254,7 @@ namespace MARS.ControlPanel.Forms
                         {
                             found = true;
                             button = j;
-                            device = devices[i].Information.ProductName;
+                            device = this.devices[i].Information.ProductName;
                             break;
                         }
                     }
@@ -268,13 +295,13 @@ namespace MARS.ControlPanel.Forms
             this.input = new DirectInput();
             this.devices = new List<Device>();
 
-            var instances = input.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
+            var instances = this.input.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
 
             foreach (var instance in instances)
             {
                 if (instance.Usage == UsageId.GenericJoystick)
                 {
-                    var device = new Joystick(input, instance.ProductGuid);
+                    var device = new Joystick(this.input, instance.ProductGuid);
                     device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
                     device.Acquire();
 
@@ -282,34 +309,6 @@ namespace MARS.ControlPanel.Forms
                     this.devicesListBox.Items.Add(instance.ProductName);
                 }
             }
-        }
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-
-            foreach (var device in this.devices)
-            {
-                if (device != null)
-                {
-                    device.Unacquire();
-                    device.Dispose();
-                }
-            }
-
-            if (this.input != null)
-            {
-                this.input.Dispose();
-            }
-
-            base.Dispose(disposing);
         }
 
         private void OnSetSelectPttButtonClick(object sender, EventArgs e)
