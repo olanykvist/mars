@@ -28,7 +28,16 @@
         <File Source="$(var.ControlPanel.TargetPath)" KeyPath="yes" />
       </Component>
       <Component>
+        <File Source="$(var.ControlPanel.TargetDir)\SharpDX.dll" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(var.ControlPanel.TargetDir)\SharpDX.DirectInput.dll" KeyPath="yes" />
+      </Component>
+      <Component>
         <File Source="$(var.RadioPanel.TargetPath)" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(var.RadioPanel.TargetDir)\Newtonsoft.Json.dll" KeyPath="yes" />
       </Component>
       <Component>
         <File Source="$(var.Common.TargetPath)" KeyPath="yes" />
