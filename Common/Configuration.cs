@@ -67,7 +67,18 @@ namespace MARS.Common
         {
             var config = new Configuration();
             var path = Configuration.GetIniFilePath();
+
             config.TeamSpeakPath = Utility.ReadConfigurationString("General", "TeamSpeakPath", string.Empty, path);
+
+            config.SelectPttOneDevice = Utility.ReadConfigurationString("SELECT_PTT_1", "Device", string.Empty, path);
+            config.SelectPttOneButton = Utility.ReadConfigurationInteger("SELECT_PTT_1", "Button", 0, path);
+
+            config.SelectPttTwoDevice = Utility.ReadConfigurationString("SELECT_PTT_2", "Device", string.Empty, path);
+            config.SelectPttTwoButton = Utility.ReadConfigurationInteger("SELECT_PTT_2", "Button", 0, path);
+
+            config.SelectPttThreeDevice = Utility.ReadConfigurationString("SELECT_PTT_3", "Device", string.Empty, path);
+            config.SelectPttThreeButton = Utility.ReadConfigurationInteger("SELECT_PTT_3", "Button", 0, path);
+
             return config;
         }
 
@@ -89,6 +100,15 @@ namespace MARS.Common
             }
 
             Utility.WriteConfigurationString("General", "TeamSpeakPath", this.TeamSpeakPath, path);
+
+            Utility.WriteConfigurationString("SELECT_PTT_1", "Device", this.SelectPttOneDevice, path);
+            Utility.WriteConfigurationString("SELECT_PTT_1", "Button", this.SelectPttOneButton.ToString(), path);
+
+            Utility.WriteConfigurationString("SELECT_PTT_2", "Device", this.SelectPttTwoDevice, path);
+            Utility.WriteConfigurationString("SELECT_PTT_2", "Button", this.SelectPttTwoButton.ToString(), path);
+
+            Utility.WriteConfigurationString("SELECT_PTT_3", "Device", this.SelectPttThreeDevice, path);
+            Utility.WriteConfigurationString("SELECT_PTT_3", "Button", this.SelectPttThreeButton.ToString(), path);
         }
 
         /// <summary>

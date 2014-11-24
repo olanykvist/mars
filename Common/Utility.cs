@@ -36,6 +36,22 @@ namespace MARS.Common
             return builder.ToString();
         }
 
+        public static int ReadConfigurationInteger(string appName, string keyName, int defaultValue, string fileName)
+        {
+            var temp = Utility.ReadConfigurationString(appName, keyName, defaultValue.ToString(), fileName);
+            var value = defaultValue;
+
+            try
+            {
+                value = Convert.ToInt32(temp);
+            }
+            catch (Exception)
+            {
+            }
+
+            return value;
+        }
+
         public static void WriteConfigurationString(string appName, string keyName, string value, string fileName)
         {
             NativeFunctions.WritePrivateProfileString(appName, keyName, value, fileName);
