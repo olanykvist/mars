@@ -131,7 +131,7 @@
             this.teamSpeakPathTextBox.ReadOnly = true;
             this.teamSpeakPathTextBox.Size = new System.Drawing.Size(256, 20);
             this.teamSpeakPathTextBox.TabIndex = 0;
-            this.teamSpeakPathTextBox.TextChanged += new System.EventHandler(this.teamSpeakPathTextBox_TextChanged);
+            this.teamSpeakPathTextBox.TextChanged += new System.EventHandler(this.OnTeamSpeakPathTextBoxTextChanged);
             // 
             // selectPathButton
             // 
@@ -141,7 +141,7 @@
             this.selectPathButton.TabIndex = 1;
             this.selectPathButton.Text = "Select";
             this.selectPathButton.UseVisualStyleBackColor = true;
-            this.selectPathButton.Click += new System.EventHandler(this.selectPathButton_Click);
+            this.selectPathButton.Click += new System.EventHandler(this.OnSelectPathButtonClick);
             // 
             // saveButton
             // 
@@ -151,7 +151,7 @@
             this.saveButton.TabIndex = 2;
             this.saveButton.Text = "Save";
             this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            this.saveButton.Click += new System.EventHandler(this.OnSaveButtonClick);
             // 
             // pluginInstalledLabel
             // 
@@ -180,12 +180,12 @@
             this.setSelectPttOneButton.Tag = "SELECT_PTT_1";
             this.setSelectPttOneButton.Text = "Set";
             this.setSelectPttOneButton.UseVisualStyleBackColor = true;
-            this.setSelectPttOneButton.Click += new System.EventHandler(this.SetSelectPttButton_Click);
+            this.setSelectPttOneButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
             // 
             // inputListener
             // 
-            this.inputListener.DoWork += new System.ComponentModel.DoWorkEventHandler(this.inputListener_DoWork);
-            this.inputListener.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.inputListener_RunWorkerCompleted);
+            this.inputListener.DoWork += new System.ComponentModel.DoWorkEventHandler(this.OnInputListenerDoWork);
+            this.inputListener.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.OnInputListenerRunWorkerCompleted);
             // 
             // selectPttOneDeviceLabel
             // 
@@ -258,7 +258,7 @@
             this.setSelectPttThreeButton.Tag = "SELECT_PTT_3";
             this.setSelectPttThreeButton.Text = "Set";
             this.setSelectPttThreeButton.UseVisualStyleBackColor = true;
-            this.setSelectPttThreeButton.Click += new System.EventHandler(this.SetSelectPttButton_Click);
+            this.setSelectPttThreeButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
             // 
             // selectPttTwoButtonLabel
             // 
@@ -287,7 +287,7 @@
             this.setSelectPttTwoButton.Tag = "SELECT_PTT_2";
             this.setSelectPttTwoButton.Text = "Set";
             this.setSelectPttTwoButton.UseVisualStyleBackColor = true;
-            this.setSelectPttTwoButton.Click += new System.EventHandler(this.SetSelectPttButton_Click);
+            this.setSelectPttTwoButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
             // 
             // devicesListBox
             // 

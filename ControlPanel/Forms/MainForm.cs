@@ -17,13 +17,12 @@ namespace MARS.ControlPanel.Forms
         private Configuration configuration;
         private DirectInput input;
         private IList<Device> devices;
-        private bool[,] initial;
 
         public MainForm()
         {
             InitializeComponent();
             this.LoadConfiguration();
-            this.InitInput();
+            this.InitializeInput();
         }
 
         private void LoadConfiguration()
@@ -161,7 +160,7 @@ namespace MARS.ControlPanel.Forms
             return @"C:\Program Files\Master Arms\MARS";
         }
 
-        private void selectPathButton_Click(object sender, EventArgs e)
+        private void OnSelectPathButtonClick(object sender, EventArgs e)
         {
             using (var dialog = new FolderBrowserDialog())
             {
@@ -178,7 +177,7 @@ namespace MARS.ControlPanel.Forms
             }
         }
 
-        private void saveButton_Click(object sender, EventArgs e)
+        private void OnSaveButtonClick(object sender, EventArgs e)
         {
             this.SaveConfiguration();
         }
@@ -189,12 +188,12 @@ namespace MARS.ControlPanel.Forms
             this.exportEnabledLabel.Text = this.IsExportEnabled().ToString();
         }
 
-        private void teamSpeakPathTextBox_TextChanged(object sender, EventArgs e)
+        private void OnTeamSpeakPathTextBoxTextChanged(object sender, EventArgs e)
         {
             this.CheckInstallation();
         }
 
-        private void inputListener_DoWork(object sender, DoWorkEventArgs e)
+        private void OnInputListenerDoWork(object sender, DoWorkEventArgs e)
         {
             bool[,] initial = new bool[devices.Count, 128];
 
@@ -243,7 +242,7 @@ namespace MARS.ControlPanel.Forms
             e.Result = new InputAssignment { AssignmentName = e.Argument.ToString(), Device = device, Button = button };
         }
 
-        private void inputListener_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void OnInputListenerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             var assignment = e.Result as InputAssignment;
 
@@ -264,7 +263,7 @@ namespace MARS.ControlPanel.Forms
             }
         }
 
-        private void InitInput()
+        private void InitializeInput()
         {
             this.input = new DirectInput();
             this.devices = new List<Device>();
@@ -313,7 +312,7 @@ namespace MARS.ControlPanel.Forms
             base.Dispose(disposing);
         }
 
-        private void SetSelectPttButton_Click(object sender, EventArgs e)
+        private void OnSetSelectPttButtonClick(object sender, EventArgs e)
         {
             var assigment = (sender as Control).Tag.ToString();
             this.inputListener.RunWorkerAsync(assigment);
