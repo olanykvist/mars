@@ -30,6 +30,36 @@ namespace MARS.Common
         public string TeamSpeakPath { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the input device
+        /// </summary>
+        public string SelectPttOneDevice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the button index
+        /// </summary>
+        public int SelectPttOneButton { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the input device
+        /// </summary>
+        public string SelectPttTwoDevice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the button index
+        /// </summary>
+        public int SelectPttTwoButton { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the input device
+        /// </summary>
+        public string SelectPttThreeDevice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the button index
+        /// </summary>
+        public int SelectPttThreeButton { get; set; }
+
+        /// <summary>
         /// Loads current configuration from file
         /// </summary>
         /// <returns>The current configuration</returns>
