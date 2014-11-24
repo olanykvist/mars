@@ -31,7 +31,7 @@ namespace MARS.ControlPanel.Forms
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (this.components != null))
             {
                 this.components.Dispose();
             }
@@ -187,6 +187,39 @@ namespace MARS.ControlPanel.Forms
             return @"C:\Program Files\Master Arms\MARS";
         }
 
+        private void CheckInstallation()
+        {
+            this.pluginInstalledLabel.Text = this.IsPluginInstalled().ToString();
+            this.exportEnabledLabel.Text = this.IsExportEnabled().ToString();
+        }
+
+        private void InitializeInput()
+        {
+            this.input = new DirectInput();
+            this.devices = new List<Device>();
+
+            var instances = this.input.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
+
+            foreach (var instance in instances)
+            {
+                if (instance.Usage == UsageId.GenericJoystick)
+                {
+                    var device = new Joystick(this.input, instance.ProductGuid);
+                    device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
+                    device.Acquire();
+
+                    this.devices.Add(device);
+                }
+            }
+        }
+
+        private void ToggleSetSelectPttButtons()
+        {
+            this.setSelectPttOneButton.Enabled = !this.setSelectPttOneButton.Enabled;
+            this.setSelectPttTwoButton.Enabled = !this.setSelectPttTwoButton.Enabled;
+            this.setSelectPttThreeButton.Enabled = !this.setSelectPttThreeButton.Enabled;
+        }
+
         private void OnSelectPathButtonClick(object sender, EventArgs e)
         {
             using (var dialog = new FolderBrowserDialog())
@@ -209,10 +242,11 @@ namespace MARS.ControlPanel.Forms
             this.SaveConfiguration();
         }
 
-        private void CheckInstallation()
+        private void OnSetSelectPttButtonClick(object sender, EventArgs e)
         {
-            this.pluginInstalledLabel.Text = this.IsPluginInstalled().ToString();
-            this.exportEnabledLabel.Text = this.IsExportEnabled().ToString();
+            this.ToggleSetSelectPttButtons();
+            var assigment = (sender as Control).Tag.ToString();
+            this.inputListener.RunWorkerAsync(assigment);
         }
 
         private void OnTeamSpeakPathTextBoxTextChanged(object sender, EventArgs e)
@@ -288,33 +322,8 @@ namespace MARS.ControlPanel.Forms
                 this.selectPttThreeDeviceLabel.Text = assignment.Device;
                 this.selectPttThreeButtonLabel.Text = assignment.Button.ToString();
             }
-        }
 
-        private void InitializeInput()
-        {
-            this.input = new DirectInput();
-            this.devices = new List<Device>();
-
-            var instances = this.input.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
-
-            foreach (var instance in instances)
-            {
-                if (instance.Usage == UsageId.GenericJoystick)
-                {
-                    var device = new Joystick(this.input, instance.ProductGuid);
-                    device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
-                    device.Acquire();
-
-                    this.devices.Add(device);
-                    this.devicesListBox.Items.Add(instance.ProductName);
-                }
-            }
-        }
-
-        private void OnSetSelectPttButtonClick(object sender, EventArgs e)
-        {
-            var assigment = (sender as Control).Tag.ToString();
-            this.inputListener.RunWorkerAsync(assigment);
+            this.ToggleSetSelectPttButtons();
         }
     }
 }

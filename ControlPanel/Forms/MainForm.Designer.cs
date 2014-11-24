@@ -39,8 +39,6 @@
             this.selectPttTwoButtonLabel = new System.Windows.Forms.Label();
             this.selectPttTwoDeviceLabel = new System.Windows.Forms.Label();
             this.setSelectPttTwoButton = new System.Windows.Forms.Button();
-            this.devicesListBox = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
             exportEnabledCaption = new System.Windows.Forms.Label();
             pluginInstalledCaption = new System.Windows.Forms.Label();
             selectPttOneDeviceCaption = new System.Windows.Forms.Label();
@@ -73,7 +71,7 @@
             // selectPttOneDeviceCaption
             // 
             selectPttOneDeviceCaption.AutoSize = true;
-            selectPttOneDeviceCaption.Location = new System.Drawing.Point(30, 43);
+            selectPttOneDeviceCaption.Location = new System.Drawing.Point(12, 23);
             selectPttOneDeviceCaption.Name = "selectPttOneDeviceCaption";
             selectPttOneDeviceCaption.Size = new System.Drawing.Size(44, 13);
             selectPttOneDeviceCaption.TabIndex = 9;
@@ -82,7 +80,7 @@
             // selectPttOneButtonCaption
             // 
             selectPttOneButtonCaption.AutoSize = true;
-            selectPttOneButtonCaption.Location = new System.Drawing.Point(30, 60);
+            selectPttOneButtonCaption.Location = new System.Drawing.Point(12, 40);
             selectPttOneButtonCaption.Name = "selectPttOneButtonCaption";
             selectPttOneButtonCaption.Size = new System.Drawing.Size(41, 13);
             selectPttOneButtonCaption.TabIndex = 10;
@@ -91,7 +89,7 @@
             // selectPttTwoButtonCaption
             // 
             selectPttTwoButtonCaption.AutoSize = true;
-            selectPttTwoButtonCaption.Location = new System.Drawing.Point(30, 105);
+            selectPttTwoButtonCaption.Location = new System.Drawing.Point(12, 85);
             selectPttTwoButtonCaption.Name = "selectPttTwoButtonCaption";
             selectPttTwoButtonCaption.Size = new System.Drawing.Size(41, 13);
             selectPttTwoButtonCaption.TabIndex = 15;
@@ -100,7 +98,7 @@
             // selectPttTwoDeviceCaption
             // 
             selectPttTwoDeviceCaption.AutoSize = true;
-            selectPttTwoDeviceCaption.Location = new System.Drawing.Point(30, 88);
+            selectPttTwoDeviceCaption.Location = new System.Drawing.Point(12, 68);
             selectPttTwoDeviceCaption.Name = "selectPttTwoDeviceCaption";
             selectPttTwoDeviceCaption.Size = new System.Drawing.Size(44, 13);
             selectPttTwoDeviceCaption.TabIndex = 13;
@@ -109,7 +107,7 @@
             // selectPttThreeButtonCaption
             // 
             selectPttThreeButtonCaption.AutoSize = true;
-            selectPttThreeButtonCaption.Location = new System.Drawing.Point(30, 151);
+            selectPttThreeButtonCaption.Location = new System.Drawing.Point(12, 131);
             selectPttThreeButtonCaption.Name = "selectPttThreeButtonCaption";
             selectPttThreeButtonCaption.Size = new System.Drawing.Size(41, 13);
             selectPttThreeButtonCaption.TabIndex = 20;
@@ -118,7 +116,7 @@
             // selectPttThreeDeviceCaption
             // 
             selectPttThreeDeviceCaption.AutoSize = true;
-            selectPttThreeDeviceCaption.Location = new System.Drawing.Point(30, 134);
+            selectPttThreeDeviceCaption.Location = new System.Drawing.Point(12, 114);
             selectPttThreeDeviceCaption.Name = "selectPttThreeDeviceCaption";
             selectPttThreeDeviceCaption.Size = new System.Drawing.Size(44, 13);
             selectPttThreeDeviceCaption.TabIndex = 18;
@@ -173,7 +171,7 @@
             // 
             // setSelectPttOneButton
             // 
-            this.setSelectPttOneButton.Location = new System.Drawing.Point(295, 55);
+            this.setSelectPttOneButton.Location = new System.Drawing.Point(277, 35);
             this.setSelectPttOneButton.Name = "setSelectPttOneButton";
             this.setSelectPttOneButton.Size = new System.Drawing.Size(75, 23);
             this.setSelectPttOneButton.TabIndex = 8;
@@ -190,7 +188,7 @@
             // selectPttOneDeviceLabel
             // 
             this.selectPttOneDeviceLabel.AutoSize = true;
-            this.selectPttOneDeviceLabel.Location = new System.Drawing.Point(81, 43);
+            this.selectPttOneDeviceLabel.Location = new System.Drawing.Point(63, 23);
             this.selectPttOneDeviceLabel.Name = "selectPttOneDeviceLabel";
             this.selectPttOneDeviceLabel.Size = new System.Drawing.Size(22, 13);
             this.selectPttOneDeviceLabel.TabIndex = 9;
@@ -199,7 +197,7 @@
             // selectPttOneButtonLabel
             // 
             this.selectPttOneButtonLabel.AutoSize = true;
-            this.selectPttOneButtonLabel.Location = new System.Drawing.Point(81, 60);
+            this.selectPttOneButtonLabel.Location = new System.Drawing.Point(63, 40);
             this.selectPttOneButtonLabel.Name = "selectPttOneButtonLabel";
             this.selectPttOneButtonLabel.Size = new System.Drawing.Size(22, 13);
             this.selectPttOneButtonLabel.TabIndex = 10;
@@ -217,24 +215,22 @@
             this.groupBox1.Controls.Add(selectPttTwoDeviceCaption);
             this.groupBox1.Controls.Add(this.selectPttTwoDeviceLabel);
             this.groupBox1.Controls.Add(this.setSelectPttTwoButton);
-            this.groupBox1.Controls.Add(this.devicesListBox);
             this.groupBox1.Controls.Add(selectPttOneButtonCaption);
             this.groupBox1.Controls.Add(this.selectPttOneButtonLabel);
             this.groupBox1.Controls.Add(selectPttOneDeviceCaption);
             this.groupBox1.Controls.Add(this.selectPttOneDeviceLabel);
-            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.setSelectPttOneButton);
-            this.groupBox1.Location = new System.Drawing.Point(56, 155);
+            this.groupBox1.Location = new System.Drawing.Point(15, 163);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(376, 267);
+            this.groupBox1.Size = new System.Drawing.Size(376, 167);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Buttons";
+            this.groupBox1.Text = "Input assignments";
             // 
             // selectPttThreeButtonLabel
             // 
             this.selectPttThreeButtonLabel.AutoSize = true;
-            this.selectPttThreeButtonLabel.Location = new System.Drawing.Point(81, 151);
+            this.selectPttThreeButtonLabel.Location = new System.Drawing.Point(63, 131);
             this.selectPttThreeButtonLabel.Name = "selectPttThreeButtonLabel";
             this.selectPttThreeButtonLabel.Size = new System.Drawing.Size(22, 13);
             this.selectPttThreeButtonLabel.TabIndex = 21;
@@ -243,7 +239,7 @@
             // selectPttThreeDeviceLabel
             // 
             this.selectPttThreeDeviceLabel.AutoSize = true;
-            this.selectPttThreeDeviceLabel.Location = new System.Drawing.Point(81, 134);
+            this.selectPttThreeDeviceLabel.Location = new System.Drawing.Point(63, 114);
             this.selectPttThreeDeviceLabel.Name = "selectPttThreeDeviceLabel";
             this.selectPttThreeDeviceLabel.Size = new System.Drawing.Size(22, 13);
             this.selectPttThreeDeviceLabel.TabIndex = 19;
@@ -251,7 +247,7 @@
             // 
             // setSelectPttThreeButton
             // 
-            this.setSelectPttThreeButton.Location = new System.Drawing.Point(295, 146);
+            this.setSelectPttThreeButton.Location = new System.Drawing.Point(277, 126);
             this.setSelectPttThreeButton.Name = "setSelectPttThreeButton";
             this.setSelectPttThreeButton.Size = new System.Drawing.Size(75, 23);
             this.setSelectPttThreeButton.TabIndex = 17;
@@ -263,7 +259,7 @@
             // selectPttTwoButtonLabel
             // 
             this.selectPttTwoButtonLabel.AutoSize = true;
-            this.selectPttTwoButtonLabel.Location = new System.Drawing.Point(81, 105);
+            this.selectPttTwoButtonLabel.Location = new System.Drawing.Point(63, 85);
             this.selectPttTwoButtonLabel.Name = "selectPttTwoButtonLabel";
             this.selectPttTwoButtonLabel.Size = new System.Drawing.Size(22, 13);
             this.selectPttTwoButtonLabel.TabIndex = 16;
@@ -272,7 +268,7 @@
             // selectPttTwoDeviceLabel
             // 
             this.selectPttTwoDeviceLabel.AutoSize = true;
-            this.selectPttTwoDeviceLabel.Location = new System.Drawing.Point(81, 88);
+            this.selectPttTwoDeviceLabel.Location = new System.Drawing.Point(63, 68);
             this.selectPttTwoDeviceLabel.Name = "selectPttTwoDeviceLabel";
             this.selectPttTwoDeviceLabel.Size = new System.Drawing.Size(22, 13);
             this.selectPttTwoDeviceLabel.TabIndex = 14;
@@ -280,7 +276,7 @@
             // 
             // setSelectPttTwoButton
             // 
-            this.setSelectPttTwoButton.Location = new System.Drawing.Point(295, 100);
+            this.setSelectPttTwoButton.Location = new System.Drawing.Point(277, 80);
             this.setSelectPttTwoButton.Name = "setSelectPttTwoButton";
             this.setSelectPttTwoButton.Size = new System.Drawing.Size(75, 23);
             this.setSelectPttTwoButton.TabIndex = 12;
@@ -289,28 +285,11 @@
             this.setSelectPttTwoButton.UseVisualStyleBackColor = true;
             this.setSelectPttTwoButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
             // 
-            // devicesListBox
-            // 
-            this.devicesListBox.FormattingEnabled = true;
-            this.devicesListBox.Location = new System.Drawing.Point(9, 192);
-            this.devicesListBox.Name = "devicesListBox";
-            this.devicesListBox.Size = new System.Drawing.Size(361, 69);
-            this.devicesListBox.TabIndex = 11;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(79, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Select + PTT 1";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(545, 434);
+            this.ClientSize = new System.Drawing.Size(403, 341);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.exportEnabledLabel);
             this.Controls.Add(this.pluginInstalledLabel);
@@ -340,13 +319,11 @@
         private System.Windows.Forms.Label selectPttOneDeviceLabel;
         private System.Windows.Forms.Label selectPttOneButtonLabel;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label selectPttThreeButtonLabel;
         private System.Windows.Forms.Label selectPttThreeDeviceLabel;
         private System.Windows.Forms.Button setSelectPttThreeButton;
         private System.Windows.Forms.Label selectPttTwoButtonLabel;
         private System.Windows.Forms.Label selectPttTwoDeviceLabel;
         private System.Windows.Forms.Button setSelectPttTwoButton;
-        private System.Windows.Forms.ListBox devicesListBox;
     }
 }
