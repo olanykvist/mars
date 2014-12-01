@@ -118,6 +118,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="InputListener.h" />
     <ClInclude Include="json\json-forwards.h" />
     <ClInclude Include="json\json.h" />
     <ClInclude Include="MARS.h" />
@@ -128,6 +129,7 @@
     <ClInclude Include="Transmission.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="InputListener.cpp" />
     <ClCompile Include="jsoncpp.cpp" />
     <ClCompile Include="MARS.cpp" />
     <ClCompile Include="Plugin.cpp" />

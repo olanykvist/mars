@@ -10,7 +10,7 @@ namespace PluginTest
 	TEST_CLASS(SocketListenerTest)
 	{
 	public:
-		TEST_METHOD(ListenerShouldStartAndStopWithoutCrash)
+		TEST_METHOD(ShouldStartAndStopWithoutCrash)
 		{
 			SocketListener listener;
 			listener.Initialize();
@@ -21,6 +21,7 @@ namespace PluginTest
 			// Check of port is open
 			// Try to connect
 
+			listener.Stop();
 			listener.Destroy();
 		}
 	};
