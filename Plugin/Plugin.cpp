@@ -117,8 +117,9 @@ void ts3plugin_infoData(uint64 serverConnectionHandlerID, uint64 id, enum Plugin
 {
 	if (type == PLUGIN_CLIENT)
 	{
+		String info = MARS::GetClientInfoData(serverConnectionHandlerID, id);
 		*data = new char[255];
-		sprintf_s(*data, 255, "Info here...");
+		strcpy_s(*data, 255, info.c_str());
 	}
 }
 

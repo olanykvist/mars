@@ -3,6 +3,8 @@
 
 #include <string>
 #include <ts3_functions.h>
+#include <public_definitions.h>
+#include <public_errors.h>
 #include "SocketListener.h"
 
 typedef std::string String;
@@ -21,7 +23,9 @@ namespace MARS
 	extern SocketListener listener;
 
 	// Callback
-	extern void OnMessageReceived(const char* message);
+	void OnMessageReceived(const char* message);
+
+	const String GetClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId);
 };
 
 #endif

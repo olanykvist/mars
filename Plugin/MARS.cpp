@@ -29,4 +29,16 @@ namespace MARS
 			ts.printMessageToCurrentTab(val.c_str());
 		}
 	}
+
+	const String GetClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId)
+	{
+		char* result;
+		if (ts.getClientVariableAsString(serverConnectionHandlerId, (anyID)clientId, CLIENT_META_DATA, &result) == ERROR_ok)
+		{
+			ts.freeMemory(result);
+		}
+
+		String data("Data will come here");
+		return data;
+	}
 }
