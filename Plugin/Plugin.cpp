@@ -24,6 +24,7 @@ namespace MARS
 	Plugin::Plugin()
 		: teamspeak({ 0 })
 		, pluginId(nullptr)
+		, receivers()
 	{
 	}
 
@@ -58,7 +59,7 @@ namespace MARS
 		return false;
 	}
 
-	const string Plugin::getClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId) const
+	string Plugin::getClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId) const
 	{
 		string info = this->getClientMetaData(serverConnectionHandlerId, clientId);
 
@@ -70,7 +71,7 @@ namespace MARS
 		return info;
 	}
 
-	const string Plugin::getClientMetaData(uint64 serverConnectionHandlerId, uint64 clientId) const
+	string Plugin::getClientMetaData(uint64 serverConnectionHandlerId, uint64 clientId) const
 	{
 		string data;
 		char* result;
@@ -81,6 +82,12 @@ namespace MARS
 		}
 
 		return data;
+	}
+
+	// Callback
+	void Plugin::onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId)
+	{
+
 	}
 }
 
@@ -189,9 +196,9 @@ void ts3plugin_infoData(uint64 serverConnectionHandlerID, uint64 id, enum Plugin
 	if (type == PLUGIN_CLIENT)
 	{
 		string info = plugin.getClientInfoData(serverConnectionHandlerID, id);
-		size_t length = info.length();
-		*data = new char[length + 1];
-		strcpy_s(*data, length + 1, info.c_str());
+		size_t size = info.length() + 1;
+		*data = new char[size];
+		strcpy_s(*data, size, info.c_str());
 	}
 }
 
@@ -199,4 +206,10 @@ void ts3plugin_infoData(uint64 serverConnectionHandlerID, uint64 id, enum Plugin
 void ts3plugin_freeMemory(void* data)
 {
 	delete[] data;
+}
+
+/* Callback */
+void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID, anyID clientID, anyID invokerID, const char* invokerName, const char* invokerUniqueIdentifier)
+{
+	plugin.onClientUpdated(serverConnectionHandlerID, clientID, invokerID);
 }

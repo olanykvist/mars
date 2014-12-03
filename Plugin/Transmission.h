@@ -9,6 +9,10 @@ namespace MARS
 	{
 	public:
 		Transmission(int frequency = 0, Modulation modulation = Modulation::AM);
+		int getFrequency() const;
+		void setFrequency(int frequency);
+		Modulation getModulation() const;
+		void setModulation(Modulation modulation);
 
 	private:
 		int frequency;

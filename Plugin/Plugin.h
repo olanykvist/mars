@@ -8,6 +8,9 @@
 #endif
 
 #include <string>
+#include <map>
+
+#include "Radio.h"
 
 namespace MARS
 {
@@ -27,12 +30,15 @@ namespace MARS
 		void setTeamSpeakFunctions(TS3Functions functions);
 		void setPluginId(const char* id);
 		bool processCommand(uint64 serverConnectionHandlerID, const char* command);
-		const std::string getClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId) const;
-		const std::string getClientMetaData(uint64 serverConnectionHandlerId, uint64 clientId) const;
+		std::string getClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId) const;
+		std::string getClientMetaData(uint64 serverConnectionHandlerId, uint64 clientId) const;
+		
+		void onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId);
 
 	private:
 		TS3Functions teamspeak;
 		char* pluginId;
+		std::map<uint64, Radio*> receivers;
 	};
 };
 
