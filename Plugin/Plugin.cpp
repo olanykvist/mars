@@ -7,42 +7,117 @@
 #include "public_rare_definitions.h"
 #include "ts3_functions.h"
 #include "Plugin.h"
-#include "MARS.h"
+
+using std::string;
+
+static MARS::Plugin plugin;
+
+namespace MARS
+{
+	const char* Plugin::NAME = "MARS";
+	const char* Plugin::VERSION = "1.0 beta";
+	const char* Plugin::AUTHOR = "Master Arms";
+	const char* Plugin::DESCRIPTION = "MARS, Master Arms Radio System, integrates the radios in DCS World with TeamSpeak for a more realistic radio experience.";
+	const char* Plugin::COMMAND_KEYWORD = "mars";
+	const int   Plugin::API_VERSION = 20;
+
+	Plugin::Plugin()
+		: teamspeak({ 0 })
+		, pluginId(nullptr)
+	{
+	}
+
+	Plugin::~Plugin()
+	{
+		if (this->pluginId)
+		{
+			delete[] this->pluginId;
+		}
+	}
+
+	void Plugin::setTeamSpeakFunctions(TS3Functions functions)
+	{
+		this->teamspeak = functions;
+	}
+
+	void Plugin::setPluginId(const char* id)
+	{
+		size_t len = strlen(id);
+		this->pluginId = new char[len + 1];
+		strcpy_s(this->pluginId, len + 1, id);
+	}
+
+	bool Plugin::processCommand(uint64 serverConnectionHandlerId, const char* command)
+	{
+		if (strcmp(command, "test") == 0)
+		{
+			this->teamspeak.printMessageToCurrentTab("Testkommandot!");
+			return true;
+		}
+
+		return false;
+	}
+
+	const string Plugin::getClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId) const
+	{
+		string info = this->getClientMetaData(serverConnectionHandlerId, clientId);
+
+		if (info.length() == 0)
+		{
+			info = "CLIENT_META_DATA is empty";
+		}
+
+		return info;
+	}
+
+	const string Plugin::getClientMetaData(uint64 serverConnectionHandlerId, uint64 clientId) const
+	{
+		string data;
+		char* result;
+		if (this->teamspeak.getClientVariableAsString(serverConnectionHandlerId, (anyID)clientId, CLIENT_META_DATA, &result) == ERROR_ok)
+		{
+			data = string(result);
+			this->teamspeak.freeMemory(result);
+		}
+
+		return data;
+	}
+}
 
 /* Unique name identifying this plugin */
 const char* ts3plugin_name()
 {
-	return MARS::PLUGIN_NAME.c_str();
+	return plugin.NAME;
 }
 
 /* Plugin version */
 const char* ts3plugin_version()
 {
-	return MARS::PLUGIN_VERSION.c_str();
+	return plugin.VERSION;
 }
 
 /* Plugin API version. Must be the same as the clients API major version, else the plugin fails to load. */
 int ts3plugin_apiVersion()
 {
-	return MARS::PLUGIN_API_LEVEL;
+	return plugin.API_VERSION;
 }
 
 /* Plugin author */
 const char* ts3plugin_author()
 {
-	return MARS::PLUGIN_AUTHOR.c_str();
+	return plugin.AUTHOR;
 }
 
 /* Plugin description */
 const char* ts3plugin_description()
 {
-	return MARS::PLUGIN_DESCRIPTION.c_str();
+	return plugin.DESCRIPTION;
 }
 
 /* Set TeamSpeak 3 callback functions */
 void ts3plugin_setFunctionPointers(const struct TS3Functions funcs)
 {
-	MARS::ts = funcs;
+	plugin.setTeamSpeakFunctions(funcs);
 }
 
 /*
@@ -51,9 +126,6 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs)
 */
 int ts3plugin_init()
 {
-	MARS::listener.Initialize();
-	MARS::listener.onMessage = MARS::OnMessageReceived;
-	MARS::listener.Start();
 	return 0;
 	/* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
 	/* -2 is a very special case and should only be used if a plugin displays a dialog (e.g. overlay) asking the user to disable
@@ -64,8 +136,6 @@ int ts3plugin_init()
 /* Custom code called right before the plugin is unloaded */
 void ts3plugin_shutdown()
 {
-	MARS::listener.Stop();
-	MARS::listener.Destroy();
 }
 
 /*
@@ -75,25 +145,26 @@ void ts3plugin_shutdown()
 */
 void ts3plugin_registerPluginID(const char* id)
 {
-	MARS::pluginId = String(id);
+	plugin.setPluginId(id);
 }
 
 /* Plugin command keyword. Return NULL or "" if not used. */
 const char* ts3plugin_commandKeyword()
 {
-	return MARS::PLUGIN_KEYWORD.c_str();
+	return plugin.COMMAND_KEYWORD;
 }
 
 /* Plugin processes console command. Return 0 if plugin handled the command, 1 if not handled. */
 int ts3plugin_processCommand(uint64 serverConnectionHandlerID, const char* command)
 {
-	if (strcmp(command, "test") == 0)
+	if (plugin.processCommand(serverConnectionHandlerID, command) == true)
 	{
-		MARS::ts.printMessageToCurrentTab("Testkommando!");
 		return 0;
 	}
-
-	return 1;
+	else
+	{
+		return 1;
+	}
 }
 
 /* Client changed current server connection handler */
@@ -104,7 +175,7 @@ void ts3plugin_currentServerConnectionChanged(uint64 serverConnectionHandlerID)
 /* Static title shown in the left column in the info frame */
 const char* ts3plugin_infoTitle()
 {
-	return MARS::PLUGIN_NAME.c_str();
+	return plugin.NAME;
 }
 
 /*
@@ -117,9 +188,10 @@ void ts3plugin_infoData(uint64 serverConnectionHandlerID, uint64 id, enum Plugin
 {
 	if (type == PLUGIN_CLIENT)
 	{
-		String info = MARS::GetClientInfoData(serverConnectionHandlerID, id);
-		*data = new char[255];
-		strcpy_s(*data, 255, info.c_str());
+		string info = plugin.getClientInfoData(serverConnectionHandlerID, id);
+		size_t length = info.length();
+		*data = new char[length + 1];
+		strcpy_s(*data, length + 1, info.c_str());
 	}
 }
 

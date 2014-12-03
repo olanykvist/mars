@@ -7,6 +7,35 @@
 #define DLL_EXPORT __declspec(dllimport)
 #endif
 
+#include <string>
+
+namespace MARS
+{
+	class Plugin
+	{
+	public:
+		static const char* NAME;
+		static const char* VERSION;
+		static const char* AUTHOR;
+		static const char* DESCRIPTION;
+		static const char* COMMAND_KEYWORD;
+		static const int   API_VERSION;
+
+		Plugin();
+		~Plugin();
+
+		void setTeamSpeakFunctions(TS3Functions functions);
+		void setPluginId(const char* id);
+		bool processCommand(uint64 serverConnectionHandlerID, const char* command);
+		const std::string getClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId) const;
+		const std::string getClientMetaData(uint64 serverConnectionHandlerId, uint64 clientId) const;
+
+	private:
+		TS3Functions teamspeak;
+		char* pluginId;
+	};
+};
+
 // TeamSpeak SDK functions
 extern "C"
 {
