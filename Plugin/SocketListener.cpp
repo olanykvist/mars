@@ -88,8 +88,10 @@ namespace MARS
 		closesocket(this->listenSocket);
 		if (this->listenThread.joinable())
 		{
+			TerminateThread(this->listenThread.native_handle(), 0); // Hmmm. sometimes closesocket() doesnt work...
 			this->listenThread.join();
 		}
+
 	}
 
 	void SocketListener::Destroy()

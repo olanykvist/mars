@@ -7,6 +7,7 @@ namespace MARS
 		, secondary(0)
 		, pan(0.0f)
 		, modulation(AM)
+		, name()
 	{
 	}
 
@@ -48,6 +49,16 @@ namespace MARS
 	void Radio::setModulation(Modulation modulation)
 	{
 		this->modulation = modulation;
+	}
+
+	const std::string& Radio::getName() const
+	{
+		return this->name;
+	}
+
+	void Radio::setName(const std::string& name)
+	{
+		this->name = std::string(name);
 	}
 
 	bool Radio::canReceive(const Transmission& transmission) const

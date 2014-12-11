@@ -24,12 +24,18 @@ namespace MARS
 	Plugin::Plugin()
 		: teamspeak({ 0 })
 		, pluginId(nullptr)
-		, receivers()
+		, inGame(false)
+		, internal()
+		, external()
+		, listener()
 	{
 	}
 
 	Plugin::~Plugin()
 	{
+		this->listener.Stop();
+		this->listener.Destroy();
+
 		if (this->pluginId)
 		{
 			delete[] this->pluginId;
@@ -84,6 +90,12 @@ namespace MARS
 		return data;
 	}
 
+	void Plugin::initListener()
+	{
+		this->listener.Initialize();
+		this->listener.Start();
+	}
+
 	// Callback
 	void Plugin::onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId)
 	{
@@ -133,6 +145,8 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs)
 */
 int ts3plugin_init()
 {
+	plugin.initListener();
+
 	return 0;
 	/* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
 	/* -2 is a very special case and should only be used if a plugin displays a dialog (e.g. overlay) asking the user to disable

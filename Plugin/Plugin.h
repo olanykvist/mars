@@ -8,9 +8,9 @@
 #endif
 
 #include <string>
-#include <map>
-
+#include <vector>
 #include "Radio.h"
+#include "SocketListener.h"
 
 namespace MARS
 {
@@ -32,13 +32,18 @@ namespace MARS
 		bool processCommand(uint64 serverConnectionHandlerID, const char* command);
 		std::string getClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId) const;
 		std::string getClientMetaData(uint64 serverConnectionHandlerId, uint64 clientId) const;
+
+		void initListener();
 		
 		void onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId);
 
 	private:
 		TS3Functions teamspeak;
 		char* pluginId;
-		std::map<uint64, Radio*> receivers;
+		bool inGame;
+		std::vector<Radio> internal;
+		std::vector<Radio> external;
+		SocketListener listener;
 	};
 };
 

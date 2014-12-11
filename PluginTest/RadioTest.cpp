@@ -19,6 +19,7 @@ namespace PluginTest
 			Assert::IsTrue(radio.getSecondaryFrequency() == 0);
 			Assert::IsTrue(radio.getPan() == 0.0f);
 			Assert::IsTrue(radio.getModulation() == Modulation::AM);
+			Assert::IsTrue(radio.getName() == "");
 		}
 
 		TEST_METHOD(GettersShouldReturnSetValue)
@@ -39,6 +40,9 @@ namespace PluginTest
 
 			radio.setModulation(Modulation::FM);
 			Assert::IsTrue(radio.getModulation() == Modulation::FM);
+
+			radio.setName("FR 22");
+			Assert::AreEqual(radio.getName().c_str(), "FR 22");
 		}
 
 		TEST_METHOD(ShouldNotReceiveOnZero)
