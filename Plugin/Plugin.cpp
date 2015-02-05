@@ -29,6 +29,15 @@ namespace MARS
 		, external()
 		, listener()
 	{
+		// Add external radios
+		this->external.push_back(Radio());
+		this->external.push_back(Radio());
+		this->external.push_back(Radio());
+
+		// Add internal radios
+		this->internal.push_back(Radio());
+		this->internal.push_back(Radio());
+		this->internal.push_back(Radio());
 	}
 
 	Plugin::~Plugin()
