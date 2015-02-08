@@ -101,6 +101,7 @@ namespace MARS
 
 	void Plugin::initListener()
 	{
+		this->listener.onMessage = &MARS::Plugin::onMess;
 		this->listener.Initialize();
 		this->listener.Start();
 	}
@@ -109,6 +110,11 @@ namespace MARS
 	void Plugin::onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId)
 	{
 
+	}
+
+	void Plugin::onMess(const char* message)
+	{
+		plugin.teamspeak.printMessageToCurrentTab(message);
 	}
 }
 

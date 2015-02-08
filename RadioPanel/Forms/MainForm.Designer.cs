@@ -70,6 +70,7 @@
             this.radio3.Name = "radio3";
             this.radio3.Size = new System.Drawing.Size(163, 95);
             this.radio3.TabIndex = 3;
+            this.radio3.FrequencyChanged += new System.EventHandler(this.OnFrequencyChanged);
             // 
             // radio2
             // 
@@ -81,6 +82,7 @@
             this.radio2.Name = "radio2";
             this.radio2.Size = new System.Drawing.Size(163, 95);
             this.radio2.TabIndex = 2;
+            this.radio2.FrequencyChanged += new System.EventHandler(this.OnFrequencyChanged);
             // 
             // radio1
             // 
@@ -92,6 +94,7 @@
             this.radio1.Name = "radio1";
             this.radio1.Size = new System.Drawing.Size(163, 95);
             this.radio1.TabIndex = 1;
+            this.radio1.FrequencyChanged += new System.EventHandler(this.OnFrequencyChanged);
             // 
             // MainForm
             // 

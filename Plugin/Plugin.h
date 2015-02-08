@@ -36,6 +36,7 @@ namespace MARS
 		void initListener();
 		
 		void onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId);
+		static void onMess(const char*);
 
 	private:
 		TS3Functions teamspeak;
