@@ -7,7 +7,7 @@
 #include "public_rare_definitions.h"
 #include "ts3_functions.h"
 #include "Plugin.h"
-
+#include "ClientMetaData.h"
 using std::string;
 
 static MARS::Plugin plugin;
@@ -34,7 +34,7 @@ namespace MARS
 		this->external.push_back(Radio());
 		this->external.push_back(Radio());
 
-		// Add internal radios
+		// Add internal/DCS radios
 		this->internal.push_back(Radio());
 		this->internal.push_back(Radio());
 		this->internal.push_back(Radio());
@@ -80,7 +80,7 @@ namespace MARS
 
 		if (info.length() == 0)
 		{
-			info = "CLIENT_META_DATA is empty";
+			info = "Not installed";
 		}
 
 		return info;
@@ -93,6 +93,8 @@ namespace MARS
 		if (this->teamspeak.getClientVariableAsString(serverConnectionHandlerId, (anyID)clientId, CLIENT_META_DATA, &result) == ERROR_ok)
 		{
 			data = string(result);
+			//ClientMetaData meta = ClientMetaData::deserialize(
+			//	)
 			this->teamspeak.freeMemory(result);
 		}
 

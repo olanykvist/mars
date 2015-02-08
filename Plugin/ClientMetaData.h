@@ -17,15 +17,16 @@ namespace MARS
 	{
 	public:
 		ClientMetaData();
-		std::string serialize() const;
+		std::string serialize(bool formatted = false) const;
+		static const ClientMetaData deserialize(const std::string& document);
 
 	private:
 		std::string version;
-		bool isRunning;
-		std::string player;
-		std::string type;
-		RadioInformation radio[3];
+		bool running;
+		std::string name;
+		std::string unit;
 		int selected;
+		RadioInformation radio[3];
 	};
 };
 

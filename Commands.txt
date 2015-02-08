@@ -1,0 +1,56 @@
+JSON commands received via socket
+=================================
+
+start (start simulation):
+	command = "start"
+
+stop (stop simulation):
+	command = "stop"
+
+set (set radio information):
+	command = "set"
+	name = string
+	radio = int
+	primary = int
+	secondary = int
+	modulation = int (enum)
+
+select (select active radio)
+	command = "select"
+	radio = int
+
+use (select internal/external radio)
+	command = "use"
+	type = string (internal | external)
+
+pos (set player position)
+	command = "pos"
+	x = float
+	y = float
+	z = float
+
+info (set player info)
+	command = "info"
+	name = string
+	unit = string
+
+Console commands
+================
+
+dump (dumps own metada to current tab)
+	mars /dump
+
+CLIENT_METADATA
+===============
+mars
+	version = string
+	running = bool
+	name = string
+	unit = string
+	selected = int
+	radio[...]
+		name = string
+		frequency = int
+		modulation = int (enum)
+
+{"name":"Cool name","radios":[{"frequency":0,"modulation":0,"name":"Off radio"},{"frequency":127000000,"modulation":1,"name":"AN-65"},{"frequency":0,"modulation":0,"name":"init"}],"running":false,"selected":0,"unit":"MiG-21 bis","version":"0.9999"}
