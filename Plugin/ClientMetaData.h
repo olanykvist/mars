@@ -20,7 +20,7 @@ namespace MARS
 		std::string serialize(bool formatted = false) const;
 		static const ClientMetaData deserialize(const std::string& document);
 
-	private:
+	public:
 		std::string version;
 		bool running;
 		std::string name;

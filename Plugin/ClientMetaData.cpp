@@ -75,6 +75,10 @@ namespace MARS
 				data.radio[i].modulation = (MARS::Modulation)root["radios"][i]["modulation"].asInt();
 			}
 		}
+		else
+		{
+			throw;
+		}
 
 		return data;
 	}

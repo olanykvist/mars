@@ -67,6 +67,8 @@ namespace MARS
 	{
 		if (strcmp(command, "test") == 0)
 		{
+			string document("{\"name\":\"Cool name\",\"radios\":[{\"frequency\":0,\"modulation\":0,\"name\":\"Off radio\"},{\"frequency\":127000000,\"modulation\":1,\"name\":\"AN - 65\"},{\"frequency\":0,\"modulation\":0,\"name\":\"init\"}],\"running\":true,\"selected\":2,\"unit\":\"MiG-21 bis\",\"version\":\"0.9999\"}");
+			this->teamspeak.setClientSelfVariableAsString(serverConnectionHandlerId, CLIENT_META_DATA, document.c_str());
 			this->teamspeak.printMessageToCurrentTab("Testkommandot!");
 			return true;
 		}
@@ -76,14 +78,66 @@ namespace MARS
 
 	string Plugin::getClientInfoData(uint64 serverConnectionHandlerId, uint64 clientId) const
 	{
-		string info = this->getClientMetaData(serverConnectionHandlerId, clientId);
+		const size_t BUFFER_SIZE = 256;
+		const int MHz = 1000000;
+		char buffer[BUFFER_SIZE] = { 0 };
 
-		if (info.length() == 0)
+		string metadata = this->getClientMetaData(serverConnectionHandlerId, clientId);
+
+		if (metadata.length() == 0)
 		{
-			info = "Not installed";
+			return "Not installed";
 		}
 
-		return info;
+		ClientMetaData client;
+		try
+		{
+			client = ClientMetaData::deserialize(metadata);
+		}
+		catch (...)
+		{
+			return "Failed to parse metadata. Conflicting plugin?";
+		}
+		
+		sprintf_s(buffer, BUFFER_SIZE, "Installed (version %s)\n", client.version.c_str());
+
+		if (client.running)
+		{
+			char status[128] = { 0 };
+			sprintf_s(status, 128, "Status: In-game as %s, playing %s\n", client.name.c_str(), client.unit.c_str());
+			strcat_s(buffer, BUFFER_SIZE, status);
+
+			for (int i = 0; i < 3; i++)
+			{
+				char radio[128] = { 0 };
+				float frequency = client.radio[i].frequency / MHz;
+				
+				sprintf_s(radio, 128, "%s - %3.3f ", client.radio[i].name.c_str(), frequency);
+				
+				if (client.radio[i].modulation == AM)
+				{
+					strcat_s(radio, 128, "AM");
+				}
+				else if (client.radio[i].modulation == FM)
+				{
+					strcat_s(radio, 128, "FM");
+				}
+
+				if ((client.selected - 1) == i)
+				{
+					strcat_s(radio, 128, "[B]*[/B]");
+				}
+				
+				strcat_s(radio, 128, "\n");
+				strcat_s(buffer, BUFFER_SIZE, radio);
+			}
+		}
+		else
+		{
+			strcat_s(buffer, BUFFER_SIZE, "Status: Not in-game\n");
+		}
+
+		return buffer;
 	}
 
 	string Plugin::getClientMetaData(uint64 serverConnectionHandlerId, uint64 clientId) const
@@ -93,8 +147,6 @@ namespace MARS
 		if (this->teamspeak.getClientVariableAsString(serverConnectionHandlerId, (anyID)clientId, CLIENT_META_DATA, &result) == ERROR_ok)
 		{
 			data = string(result);
-			//ClientMetaData meta = ClientMetaData::deserialize(
-			//	)
 			this->teamspeak.freeMemory(result);
 		}
 

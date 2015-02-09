@@ -21,6 +21,7 @@ namespace PluginTest
 		{
 			string document("{\"name\":\"Cool name\",\"radios\":[{\"frequency\":0,\"modulation\":0,\"name\":\"Off radio\"},{\"frequency\":127000000,\"modulation\":1,\"name\":\"AN - 65\"},{\"frequency\":0,\"modulation\":0,\"name\":\"init\"}],\"running\":false,\"selected\":0,\"unit\":\"MiG-21 bis\",\"version\":\"0.9999\"}");
 			ClientMetaData data = ClientMetaData::deserialize(document);
+			Assert::AreEqual(data.name, string("Cool name"));
 		}
 	};
 }
