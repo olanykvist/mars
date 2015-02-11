@@ -9,6 +9,7 @@ stop (stop simulation):
 
 set (set radio information):
 	command = "set"
+	internal = bool
 	name = string
 	radio = int
 	primary = int
