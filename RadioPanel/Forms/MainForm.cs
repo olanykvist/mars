@@ -19,7 +19,8 @@ namespace MARS.RadioPanel.Forms
         public MainForm()
         {
             InitializeComponent();
-            this.StartClient();
+            state.control = this.mainSatusLabel;
+            StartClient();
             this.connectionTimer.Start();
         }
 
@@ -28,13 +29,12 @@ namespace MARS.RadioPanel.Forms
             Send(state, "ping");
         }
 
-        private void StartClient()
+        private static void StartClient()
         {
             var endpoint = new IPEndPoint(IPAddress.Loopback, 2000);
             var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             state.client = client;
-            state.control = this.mainSatusLabel;
 
             client.BeginConnect(endpoint, new AsyncCallback(OnConnect), state);
             connectDone.WaitOne();
@@ -89,13 +89,20 @@ namespace MARS.RadioPanel.Forms
         private static void Send(State state, string message)
         {
             var data = Encoding.ASCII.GetBytes(message);
-            state.client.BeginSend(data, 0, data.Length, 0, new AsyncCallback(OnSend), state);
+            try
+            {
+                state.client.BeginSend(data, 0, data.Length, 0, new AsyncCallback(OnSend), state);
+            }
+            catch (SocketException)
+            {
+                StartClient();
+            }
         }
 
         private void OnFrequencyChanged(object sender, EventArgs e)
         {
             var radio = sender as Radio;
-            var command = new { Command = "setext", Radio = radio.Id, Frequency = radio.Frequency, Modulation = radio.Modulation };
+            var command = new { command = "set", name = "EXT", radio = radio.Id, primary = radio.Frequency, secondary = 0, modulation = radio.Modulation };
             var message = JsonConvert.SerializeObject(command, Formatting.None);
             Send(state, message);
         }

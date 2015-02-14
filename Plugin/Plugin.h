@@ -11,6 +11,7 @@
 #include <vector>
 #include "Radio.h"
 #include "SocketListener.h"
+#include "ClientMetaData.h"
 
 namespace MARS
 {
@@ -34,17 +35,27 @@ namespace MARS
 		std::string getClientMetaData(uint64 serverConnectionHandlerId, uint64 clientId) const;
 
 		void initListener();
+		void shutdownListener();
 		
 		void onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId);
-		static void onMess(const char*);
+		static void onMessageReceived(const char* message);
+		void updateMetaData();
+
+
 
 	private:
 		TS3Functions teamspeak;
 		char* pluginId;
 		bool inGame;
+		bool usingExternal;
+		int selectedRadioIndex;
 		std::vector<Radio> internal;
 		std::vector<Radio> external;
+		Radio* currentRadio;
 		SocketListener listener;
+		std::string name;
+		std::string unit;
+		ClientMetaData metaData;
 	};
 };
 

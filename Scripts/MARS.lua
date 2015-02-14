@@ -17,6 +17,7 @@ MARS =
 	{
 		LuaExportStart = LuaExportStart,
 		LuaExportAfterNextFrame = LuaExportAfterNextFrame,
+		LuaExportActivityNextEvent = LuaExportActivityNextEvent,
 		LuaExportStop = LuaExportStop
 	},
 	
@@ -41,6 +42,8 @@ MARS =
 	},
 	
 	JSON = nil,
+	connection = nil,
+	queue = {},
 	
 	Initialize = function()
 		MARS.JSON = assert(loadfile("Scripts/JSON.lua"))()
@@ -48,6 +51,7 @@ MARS =
 	end,
 	
 	Connect = function()
+		--local result, err = 
 		connection = socket.try(socket.connect(MARS.options.host, MARS.options.port))
 		connection:setoption("tcp-nodelay", true)
 	end,
@@ -56,18 +60,7 @@ MARS =
 		MARS.ExportCommon()
 	end,
 	
-	ExportCommon = function()
-	--[[
-		local id = LoGetPlayerPlaneId()
-		local player = LoGetPilotName()
-		local self = LoGetSelfData()
-		
-		MARS.data.id = id
-		MARS.data.player = player
-		MARS.data.unit = self.Name
-		MARS.data.pos = {x = self.Position.x, y = self.Position.y, z = self.Position.z}
-	--]]
-		
+	ExportCommon = function()	
 		local name = LoGetPilotName()
 		local data = LoGetSelfData()
 		local unit = nil
@@ -78,25 +71,80 @@ MARS =
 		
 		if data then
 			unit = data.Name
+			MARS.data.pos.x = data.Position.x
+			MARS.data.pos.y = data.Position.y
+			MARS.data.pos.z = data.Position.z
 		else
 			unit = "GC"
+			MARS.data.pos.x = 0
+			MARS.data.pos.y = 0
+			MARS.data.pos.z = 0
 		end
 		
 		if MARS.data.name ~= name or MARS.data.unit ~= unit then
 			MARS.SendInfoCommand(name, unit)
 			MARS.data.name = name
 			MARS.data.unit = unit
+			MARS.SendSetCommand("init", 1, 0, 0, 0)
+			MARS.SendSetCommand("init", 2, 0, 0, 0)
+			MARS.SendSetCommand("init", 3, 0, 0, 0)
 		end
 		
 		if unit == "MiG-21Bis" then
 			MARS.ExportMIG21()
 		elseif unit == "Ka-50" then
 			MARS.ExportKA50()
+		elseif unit == "A-10C" then
+			MARS.ExportA10()
 		end
 		
 	end,
-	
+
 	ExportA10 = function()
+		local radio =
+		{
+			name = "AN/ARC-186(V)",
+			primary = MARS.Round(MARS.GetFrequency(55), 5000),
+			secondary = 0,
+			modulation = MARS.modulation.AM
+		}
+		
+		if not MARS.FastCompare(MARS.data.radios[1], radio) then
+			MARS.SendSetCommand(radio.name, 1, radio.primary, radio.secondary, radio.modulation)
+			MARS.data.radios[1] = MARS.FastCopy(radio)
+		end
+		
+		radio =
+		{
+			name = "AN/ARC-164",
+			primary = MARS.Round(MARS.GetFrequency(54), 5000),
+			secondary = 0,
+			modulation = MARS.modulation.AM
+		}
+		
+		local panel = GetDevice(0)
+		local knob = panel:get_argument_value(168) -- Function selector knob
+		if MARS.NearEqual(knob, 0.2, 0.03) and radio.primary > 0 then
+			radio.secondary = 243000000
+		end
+		
+		if not MARS.FastCompare(MARS.data.radios[2], radio) then
+			MARS.SendSetCommand(radio.name, 2, radio.primary, radio.secondary, radio.modulation)
+			MARS.data.radios[2] = MARS.FastCopy(radio)
+		end
+		
+		radio =
+		{
+			name = "AN/ARC-186(V)",
+			primary = MARS.Round(MARS.GetFrequency(56), 5000),
+			secondary = 0,
+			modulation = MARS.modulation.FM
+		}
+		
+		if not MARS.FastCompare(MARS.data.radios[3], radio) then
+			MARS.SendSetCommand(radio.name, 3, radio.primary, radio.secondary, radio.modulation)
+			MARS.data.radios[3] = MARS.FastCopy(radio)
+		end		
 	end,
 	
 	ExportP51 = function()
@@ -191,7 +239,22 @@ MARS =
 		}
 		
 		local json = MARS.JSON:encode(command)
-		socket.try(connection:send(json))
+		table.insert(MARS.queue, json)
+		--socket.try(connection:send(json .. "\0"))
+	end,
+	
+	SendPosCommand = function(pos)
+		local command =
+		{
+			command = "pos",
+			x = pos.x,
+			y = pos.y,
+			z = pos.z
+		}
+		
+		local json = MARS.JSON:encode(command)
+		table.insert(MARS.queue, json)
+		--socket.try(connection:send(json .. "\0"))
 	end,
 	
 	SendSelectCommand = function(radio)
@@ -202,6 +265,29 @@ MARS =
 		}
 		
 		local json = MARS.JSON:encode(command)
+		table.insert(MARS.queue, json)
+		--socket.try(connection:send(json .. "\0"))
+	end,
+	
+	SendStartCommand = function()
+		local command =
+		{
+			command = "start",
+		}
+		
+		local json = MARS.JSON:encode(command)
+		--table.insert(MARS.queue, json)
+		socket.try(connection:send(json))
+	end,
+	
+	SendStopCommand = function()
+		local command =
+		{
+			command = "stop",
+		}
+		
+		local json = MARS.JSON:encode(command)
+		--table.insert(MARS.queue, json)
 		socket.try(connection:send(json))
 	end,
 	
@@ -218,7 +304,17 @@ MARS =
 		}
 		
 		local json = MARS.JSON:encode(command)
-		socket.try(connection:send(json))
+		table.insert(MARS.queue, json)
+		--socket.try(connection:send(json .. "\0"))
+	end,
+	
+	SendQueuedCommands = function()
+		if #MARS.queue > 0 then
+			local item = table.remove(MARS.queue, 1)
+			if item then
+				socket.try(connection:send(item))
+			end
+		end
 	end,
 	
 	Quit = function()
@@ -234,12 +330,12 @@ MARS =
 		return true
 	end,
 	
-	FastCopy = function(t1)
-		local t2 = {}
-		for k, v in pairs(t1) do
-			t2[k] = v
+	FastCopy = function(t)
+		local copy = {}
+		for k, v in pairs(t) do
+			copy[k] = v
 		end
-		return t2
+		return copy
 	end,
 	
 	Round = function(number, step)
@@ -272,6 +368,7 @@ LuaExportStart = function()
 	log("MARS LuaExportStart")
 
 	MARS.Initialize()
+	MARS.SendStartCommand()
 	
     -- Call original function if it exists
     if MARS.originals.LuaExportStart then
@@ -289,10 +386,17 @@ LuaExportAfterNextFrame = function()
     end
 end
 
+LuaExportActivityNextEvent = function(t)
+	local tn = t + 0.2
+	MARS.SendQueuedCommands()
+	return tn
+end
+
 -- CALLBACK: Called by DCS when exiting a mission
 LuaExportStop = function()
 	log("MARS LuaExportStop")
 
+	MARS.SendStopCommand()
 	MARS.Quit()
 	
     -- Call original function if it exists

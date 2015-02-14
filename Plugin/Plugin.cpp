@@ -8,6 +8,8 @@
 #include "ts3_functions.h"
 #include "Plugin.h"
 #include "ClientMetaData.h"
+#include "json/json.h"
+
 using std::string;
 
 static MARS::Plugin plugin;
@@ -25,9 +27,13 @@ namespace MARS
 		: teamspeak({ 0 })
 		, pluginId(nullptr)
 		, inGame(false)
+		, usingExternal(false)
+		, selectedRadioIndex(0)
 		, internal()
 		, external()
+		, currentRadio(nullptr)
 		, listener()
+		, metaData()
 	{
 		// Add external radios
 		this->external.push_back(Radio());
@@ -72,6 +78,13 @@ namespace MARS
 			this->teamspeak.printMessageToCurrentTab("Testkommandot!");
 			return true;
 		}
+		else if (strcmp(command, "dump") == 0)
+		{
+			anyID id;
+			this->teamspeak.getClientID(serverConnectionHandlerId, &id);
+			string data = this->getClientMetaData(serverConnectionHandlerId, id);
+			this->teamspeak.printMessageToCurrentTab(data.c_str());
+		}
 
 		return false;
 	}
@@ -110,7 +123,7 @@ namespace MARS
 			for (int i = 0; i < 3; i++)
 			{
 				char radio[128] = { 0 };
-				float frequency = client.radio[i].frequency / MHz;
+				float frequency = (float)client.radio[i].frequency / MHz;
 				
 				sprintf_s(radio, 128, "%s - %3.3f ", client.radio[i].name.c_str(), frequency);
 				
@@ -155,9 +168,14 @@ namespace MARS
 
 	void Plugin::initListener()
 	{
-		this->listener.onMessage = &MARS::Plugin::onMess;
+		this->listener.onMessage = Plugin::onMessageReceived;
 		this->listener.Initialize();
 		this->listener.Start();
+	}
+
+	void Plugin::shutdownListener()
+	{
+		this->listener.Stop();
 	}
 
 	// Callback
@@ -166,9 +184,95 @@ namespace MARS
 
 	}
 
-	void Plugin::onMess(const char* message)
+	void Plugin::onMessageReceived(const char* message)
 	{
-		plugin.teamspeak.printMessageToCurrentTab(message);
+		string json(message);
+		Json::Reader reader;
+		Json::Value root;
+
+		bool success = reader.parse(json, root, false);
+		if (success)
+		{
+			string status = "Parsed: " + json;
+			plugin.teamspeak.printMessageToCurrentTab(status.c_str());
+
+			string command = root["command"].asString();
+			
+			if (command == "set")
+			{
+				int index = root["radio"].asInt() - 1;
+				if (root["internal"].asBool())
+				{
+					plugin.internal.at(index).setName(root["name"].asString());
+					plugin.internal.at(index).setPrimaryFrequency(root["primary"].asInt());
+					plugin.internal.at(index).setSecondaryFrequency(root["secondary"].asInt());
+					plugin.internal.at(index).setModulation((MARS::Modulation)root["modulation"].asInt());
+				}
+				else
+				{
+					plugin.external.at(index).setName(root["name"].asString());
+					plugin.external.at(index).setPrimaryFrequency(root["primary"].asInt());
+					plugin.external.at(index).setSecondaryFrequency(root["secondary"].asInt());
+					plugin.external.at(index).setModulation((MARS::Modulation)root["modulation"].asInt());
+
+				}
+				plugin.updateMetaData();
+			}
+			else if (command == "select")
+			{
+				int index = root["radio"].asInt() - 1;
+				plugin.selectedRadioIndex = index;
+				plugin.updateMetaData();
+			}
+			else if (command == "start")
+			{
+				plugin.inGame = true;
+				plugin.updateMetaData();
+			}
+			else if (command == "stop")
+			{
+				plugin.inGame = false;
+				plugin.updateMetaData();
+			}
+		}
+		else
+		{
+			string status = "Failed: " + json;
+			plugin.teamspeak.printMessageToCurrentTab(status.c_str());
+		}
+	}
+
+	void Plugin::updateMetaData()
+	{
+		this->metaData.version = Plugin::VERSION;
+		this->metaData.running = this->inGame;
+		this->metaData.name = this->name;
+		this->metaData.unit = this->unit;
+		this->metaData.selected = this->selectedRadioIndex + 1;
+
+		for (int i = 0; i < 3; i++)
+		{
+			if (this->usingExternal)
+			{
+				this->metaData.radio[i].name = this->external.at(i).getName();
+				this->metaData.radio[i].frequency = this->external.at(i).getPrimaryFrequency();
+				this->metaData.radio[i].modulation = this->external.at(i).getModulation();
+			}
+			else
+			{
+				this->metaData.radio[i].name = this->internal.at(i).getName();
+				this->metaData.radio[i].frequency = this->internal.at(i).getPrimaryFrequency();
+				this->metaData.radio[i].modulation = this->internal.at(i).getModulation();
+			}
+		}
+
+		string data = this->metaData.serialize();
+
+		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
+		if (this->teamspeak.setClientSelfVariableAsString(connection, CLIENT_META_DATA, data.c_str()) != ERROR_ok)
+		{
+			// Failed to se metadata
+		}
 	}
 }
 
@@ -226,6 +330,7 @@ int ts3plugin_init()
 /* Custom code called right before the plugin is unloaded */
 void ts3plugin_shutdown()
 {
+	plugin.shutdownListener();
 }
 
 /*
