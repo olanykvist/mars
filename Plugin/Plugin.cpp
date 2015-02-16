@@ -84,6 +84,7 @@ namespace MARS
 			this->teamspeak.getClientID(serverConnectionHandlerId, &id);
 			string data = this->getClientMetaData(serverConnectionHandlerId, id);
 			this->teamspeak.printMessageToCurrentTab(data.c_str());
+			return true;
 		}
 
 		return false;
@@ -218,11 +219,20 @@ namespace MARS
 				}
 				plugin.updateMetaData();
 			}
+			else if (command == "pos")
+			{
+				
+			}
 			else if (command == "select")
 			{
 				int index = root["radio"].asInt() - 1;
 				plugin.selectedRadioIndex = index;
 				plugin.updateMetaData();
+			}
+			else if (command == "info")
+			{
+				plugin.name = root["name"].asString();
+				plugin.unit = root["unit"].asString();
 			}
 			else if (command == "start")
 			{
