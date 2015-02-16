@@ -127,6 +127,7 @@
     <ClInclude Include="Radio.h" />
     <ClInclude Include="SocketListener.h" />
     <ClInclude Include="Transmission.h" />
+    <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientMetaData.cpp" />
@@ -136,6 +137,7 @@
     <ClCompile Include="Radio.cpp" />
     <ClCompile Include="SocketListener.cpp" />
     <ClCompile Include="Transmission.cpp" />
+    <ClCompile Include="Vector3.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

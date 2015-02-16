@@ -2,6 +2,7 @@
 #define MARS_TRANSMISSION_H
 
 #include "Modulation.h"
+#include "Vector3.h"
 
 namespace MARS
 {
@@ -17,6 +18,7 @@ namespace MARS
 	private:
 		int frequency;
 		Modulation modulation;
+		Vector3 origin;
 	};
 };
 
