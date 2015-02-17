@@ -43,6 +43,7 @@ end
 MARS.InitializeData = function()
 	MARS.data =
 	{
+		internal = false,
 		name = "init",
 		unit = "init",
 		pos = {x = 0, y = 0, z = 0},
@@ -66,6 +67,8 @@ MARS.EnsureConnection = function()
 		else
 			MARS.Log("Connected")
 			MARS.connection:setoption("tcp-nodelay", true)
+			MARS.InitializeData()
+			MARS.SendStartCommand()
 		end
 	end
 end
@@ -79,25 +82,39 @@ MARS.Update = function(tCurrent)
 	end
 end
 
-MARS.ExportCommon = function()	
-	local name = LoGetPilotName()
-	local data = LoGetSelfData()
-	local unit = nil
-	
-	if not name then
-		name = "N/A"
+MARS.ExportPosition = function(tCurrent)
+	local tNext = tCurrent
+	while true do
+		MARS.SendPosCommand(MARS.data.pos)
+		tNext = coroutine.yield()
 	end
+end
+
+MARS.ExportCommon = function()	
+	local name = nil
+	local export = nil     -- Unit specific export function
+	local unit = nil
+	local data = LoGetSelfData()
 	
-	if data then
-		unit = data.Name
-		MARS.data.pos.x = data.Position.x
-		MARS.data.pos.y = data.Position.y
-		MARS.data.pos.z = data.Position.z
-	else
+	if data == nil then
 		unit = "GC"
+		name = "N/A"
 		MARS.data.pos.x = 0
 		MARS.data.pos.y = 0
 		MARS.data.pos.z = 0
+	else
+		unit = data.Name
+		name = data.UnitName
+		MARS.data.pos.x = data.Position.x
+		MARS.data.pos.y = data.Position.y
+		MARS.data.pos.z = data.Position.z
+	end
+	
+	if MARS.UnitHasInternalRadio(unit) == true then
+		local panel = GetDevice(0)
+		if panel == 0 then
+			unit = "Parachute" -- Pilot ejected
+		end
 	end
 	
 	if MARS.data.name ~= name or MARS.data.unit ~= unit then -- Switched unit
@@ -107,14 +124,23 @@ MARS.ExportCommon = function()
 		MARS.data.unit = unit
 	end
 	
-	if unit == "MiG-21Bis" then
-		MARS.ExportMIG21()
-	elseif unit == "Ka-50" then
-		MARS.ExportKA50()
-	elseif unit == "A-10C" then
-		MARS.ExportA10()
+	local internal = MARS.UnitHasInternalRadio(unit)
+	if MARS.data.internal ~= internal then
+		MARS.SendUseCommand(internal)
+		MARS.data.internal = internal
 	end
 	
+	if unit == "A-10C" then
+		export = MARS.ExportA10()
+	elseif unit == "Ka-50" then
+		export = MARS.ExportKA50()
+	elseif unit == "MiG-21Bis" then
+		export = MARS.ExportMIG21()
+	end
+	
+	if export ~= nil then
+		export()
+	end
 end
 
 MARS.ExportA10 = function()
@@ -270,6 +296,25 @@ MARS.ExportMIG21 = function()
 	end
 end
 
+MARS.SendUseCommand = function(internal)
+	local mode
+	
+	if internal == true then
+		mode = "internal"
+	else
+		mode = "external"
+	end
+	
+	local command =
+	{
+		command = "use",
+		stack = mode
+	}
+	
+	local json = MARS.JSON:encode(command)
+	MARS.QueueMessage(json)
+end
+
 MARS.SendInfoCommand = function(name, unit)
 	local command =
 	{
@@ -385,6 +430,9 @@ MARS.EnsureCoroutines = function()
 		MARS.coroutines[3] = coroutine.create(MARS.Update)
 		LoCreateCoroutineActivity(3, currentTime + 1.5, 0.2)
 		
+		MARS.coroutines[4] = coroutine.create(MARS.ExportPosition)
+		LoCreateCoroutineActivity(4, currentTime + 2.0, 8.0)
+		
 		MARS.coroutinesRegistered = true
 	end
 end
@@ -403,7 +451,10 @@ MARS.Send = function(message)
 end
 
 MARS.Disconnect = function()
-	MARS.connection:close()
+	if MARS.connection then
+		MARS.connection:close()
+	end
+	MARS.connection = nil
 	MARS.Log("Connection closed")
 end
 
@@ -448,6 +499,18 @@ MARS.NearEqual = function(a, b, epsilon)
 	return math.abs(a - b) < epsilon
 end
 
+MARS.UnitHasInternalRadio = function(unit)
+	if unit == "A-10C" then
+		return true
+	elseif unit == "Ka-50" then
+		return true
+	elseif unit == "MiG-21Bis" then
+		return true
+	else
+		return false
+	end
+end
+
 MARS.Log = function(message)
 	if message then
 		log("MARS: " .. message)
@@ -481,10 +544,10 @@ LuaExportActivityNextEvent = function(tCurrent)
 	MARS.EnsureCoroutines()
 
 	-- Call original function if it exists
-	if MARS.originals.LuaExportStop then
-		MARS.originals.LuaExportStop()
+	if MARS.originals.LuaExportActivityNextEvent then
+		return MARS.originals.LuaExportActivityNextEvent(tCurrent)
 	end
-
+	
 	return tNext
 end
 
