@@ -22,7 +22,7 @@ select (select active radio)
 
 use (select internal/external radio)
 	command = "use"
-	type = string (internal | external)
+	mode = string (internal | external)
 
 pos (set player position)
 	command = "pos"
