@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientMetaDataTest.cpp" />
+    <ClCompile Include="ConfigurationTest.cpp" />
     <ClCompile Include="InputListenerTest.cpp" />
     <ClCompile Include="SocketListenerTest.cpp" />
     <ClCompile Include="stdafx.cpp">

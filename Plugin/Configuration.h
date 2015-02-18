@@ -22,6 +22,7 @@ namespace MARS
 		float getRadioThreePan() const;
 
 	private:
+		static std::string getIniFilePath();
 		std::string selectPttOneDevice;
 		int selectPttOneButton;
 		std::string selectPttTwoDevice;
