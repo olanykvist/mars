@@ -113,7 +113,7 @@ namespace MARS
 		{
 			return "Failed to parse metadata. Conflicting plugin?";
 		}
-		
+
 		sprintf_s(buffer, BUFFER_SIZE, "Installed (version %s)\n", client.version.c_str());
 
 		if (client.running)
@@ -126,9 +126,9 @@ namespace MARS
 			{
 				char radio[128] = { 0 };
 				float frequency = (float)client.radio[i].frequency / MHz;
-				
+
 				sprintf_s(radio, 128, "%s - %3.3f ", client.radio[i].name.c_str(), frequency);
-				
+
 				if (client.radio[i].modulation == AM)
 				{
 					strcat_s(radio, 128, "AM");
@@ -142,7 +142,7 @@ namespace MARS
 				{
 					strcat_s(radio, 128, "[B]*[/B]");
 				}
-				
+
 				strcat_s(radio, 128, "\n");
 				strcat_s(buffer, BUFFER_SIZE, radio);
 			}
@@ -199,7 +199,7 @@ namespace MARS
 			plugin.teamspeak.printMessageToCurrentTab(status.c_str());
 
 			string command = root["command"].asString();
-			
+
 			if (command == "set")
 			{
 				int index = root["radio"].asInt() - 1;
@@ -222,7 +222,7 @@ namespace MARS
 			}
 			else if (command == "pos")
 			{
-				
+
 			}
 			else if (command == "select")
 			{
@@ -314,57 +314,76 @@ namespace MARS
 
 	void Plugin::start()
 	{
-		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
-		if (!connection)
+		this->usingVAD = this->usingVoiceActivation();
+		if (this->usingVAD)
 		{
-			return;
-		}
-
-		// Get VAD setting
-		char* result;
-		if (this->teamspeak.getPreProcessorConfigValue(connection, "vad", &result) == ERROR_ok)
-		{
-			if (strcmp(result, "true") == 0)
-			{
-				this->usingVAD = true;
-			}
-
-			this->teamspeak.freeMemory(result);
-
-			// Disable VAD
-			if (this->teamspeak.setPreProcessorConfigValue(connection, "vad", "false") != ERROR_ok)
-			{
-				this->teamspeak.logMessage("Failed to disable voice activation", LogLevel_ERROR, "MARS", 0);
-			}
-			if (this->teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED) != ERROR_ok)
-			{
-				this->teamspeak.logMessage("Failed to disable mic", LogLevel_ERROR, "MARS", 0);
-			}
-		}
-		else
-		{
-			this->teamspeak.logMessage("Failed to get VAD setting", LogLevel_ERROR, "MARS", 0);
+			this->disableVoiceActivation();
 		}
 	}
 
 	void Plugin::stop()
 	{
-		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
-		if (!connection)
-		{
-			return;
-		}
-
 		if (this->usingVAD)
 		{
-			if (this->teamspeak.setPreProcessorConfigValue(connection, "vad", "true") != ERROR_ok)
+			this->enableVoiceActivation();
+		}
+	}
+
+	bool Plugin::usingVoiceActivation() const
+	{
+		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
+		bool vad = false;
+
+		char* result;
+		if (this->teamspeak.getPreProcessorConfigValue(connection, "vad", &result) == ERROR_ok)
+		{
+			if (strcmp(result, "true") == 0)
 			{
-				this->teamspeak.logMessage("Failed to restore voice activation", LogLevel_ERROR, "MARS", 0);
+				vad = true;
 			}
-			if (this->teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE) != ERROR_ok)
+			else
 			{
-				this->teamspeak.logMessage("Failed reactivate mic", LogLevel_ERROR, "MARS", 0);
+				vad = false;
 			}
+
+			this->teamspeak.freeMemory(result);
+		}
+		else
+		{
+			// Failed to get value
+			throw;
+		}
+
+		return vad;
+	}
+
+	void Plugin::enableVoiceActivation() const
+	{
+		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
+
+		// Activate VAD
+		if (this->teamspeak.setPreProcessorConfigValue(connection, "vad", "true") != ERROR_ok)
+		{
+		}
+
+		// Activate mic input
+		if (this->teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE) != ERROR_ok)
+		{
+		}
+	}
+
+	void Plugin::disableVoiceActivation() const
+	{
+		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
+
+		// Disable VAD
+		if (this->teamspeak.setPreProcessorConfigValue(connection, "vad", "false") != ERROR_ok)
+		{
+		}
+
+		// Deactivate mic input
+		if (this->teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED) != ERROR_ok)
+		{
 		}
 	}
 }

@@ -43,6 +43,10 @@ namespace MARS
 		void clearMetaData();
 		void start();
 		void stop();
+		bool usingVoiceActivation() const;
+		void enableVoiceActivation() const;
+		void disableVoiceActivation() const;
+
 		
 	private:
 		TS3Functions teamspeak;
