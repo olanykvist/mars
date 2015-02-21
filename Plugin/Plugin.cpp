@@ -26,6 +26,7 @@ namespace MARS
 	Plugin::Plugin()
 		: teamspeak({ 0 })
 		, pluginId(nullptr)
+		, usingVAD(false)
 		, inGame(false)
 		, usingExternal(false)
 		, selectedRadioIndex(0)
@@ -279,9 +280,91 @@ namespace MARS
 		string data = this->metaData.serialize();
 
 		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
+		if (!connection)
+		{
+			return;
+		}
 		if (this->teamspeak.setClientSelfVariableAsString(connection, CLIENT_META_DATA, data.c_str()) != ERROR_ok)
 		{
-			// Failed to se metadata
+			this->teamspeak.logMessage("Failed to update metadata", LogLevel_ERROR, "MARS", 0);
+		}
+		if (this->teamspeak.flushClientSelfUpdates(connection, nullptr))
+		{
+			this->teamspeak.logMessage("Failed to flush metadata update", LogLevel_ERROR, "MARS", 0);
+		}
+	}
+
+	void Plugin::clearMetaData()
+	{
+		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
+		if (!connection)
+		{
+			return;
+		}
+
+		if (this->teamspeak.setClientSelfVariableAsString(connection, CLIENT_META_DATA, "") != ERROR_ok)
+		{
+			this->teamspeak.logMessage("Failed to clear metadata", LogLevel_ERROR, "MARS", 0);
+		}
+		if (this->teamspeak.flushClientSelfUpdates(connection, nullptr))
+		{
+			this->teamspeak.logMessage("Failed to flush metadata update", LogLevel_ERROR, "MARS", 0);
+		}
+	}
+
+	void Plugin::start()
+	{
+		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
+		if (!connection)
+		{
+			return;
+		}
+
+		// Get VAD setting
+		char* result;
+		if (this->teamspeak.getPreProcessorConfigValue(connection, "vad", &result) == ERROR_ok)
+		{
+			if (strcmp(result, "true") == 0)
+			{
+				this->usingVAD = true;
+			}
+
+			this->teamspeak.freeMemory(result);
+
+			// Disable VAD
+			if (this->teamspeak.setPreProcessorConfigValue(connection, "vad", "false") != ERROR_ok)
+			{
+				this->teamspeak.logMessage("Failed to disable voice activation", LogLevel_ERROR, "MARS", 0);
+			}
+			if (this->teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED) != ERROR_ok)
+			{
+				this->teamspeak.logMessage("Failed to disable mic", LogLevel_ERROR, "MARS", 0);
+			}
+		}
+		else
+		{
+			this->teamspeak.logMessage("Failed to get VAD setting", LogLevel_ERROR, "MARS", 0);
+		}
+	}
+
+	void Plugin::stop()
+	{
+		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
+		if (!connection)
+		{
+			return;
+		}
+
+		if (this->usingVAD)
+		{
+			if (this->teamspeak.setPreProcessorConfigValue(connection, "vad", "true") != ERROR_ok)
+			{
+				this->teamspeak.logMessage("Failed to restore voice activation", LogLevel_ERROR, "MARS", 0);
+			}
+			if (this->teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE) != ERROR_ok)
+			{
+				this->teamspeak.logMessage("Failed reactivate mic", LogLevel_ERROR, "MARS", 0);
+			}
 		}
 	}
 }
@@ -329,6 +412,7 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs)
 int ts3plugin_init()
 {
 	plugin.initListener();
+	plugin.updateMetaData();
 
 	return 0;
 	/* 0 = success, 1 = failure, -2 = failure but client will not show a "failed to load" warning */
@@ -341,6 +425,8 @@ int ts3plugin_init()
 void ts3plugin_shutdown()
 {
 	plugin.shutdownListener();
+	plugin.stop();
+	plugin.clearMetaData();
 }
 
 /*
@@ -404,6 +490,15 @@ void ts3plugin_infoData(uint64 serverConnectionHandlerID, uint64 id, enum Plugin
 void ts3plugin_freeMemory(void* data)
 {
 	delete[] data;
+}
+
+void ts3plugin_onConnectStatusChangeEvent(uint64 serverConnectionHandlerID, int newStatus, unsigned int errorNumber)
+{
+	if (newStatus == STATUS_CONNECTED)
+	{
+		plugin.updateMetaData();
+		plugin.start();
+	}
 }
 
 /* Callback */
