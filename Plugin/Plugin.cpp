@@ -195,30 +195,18 @@ namespace MARS
 		bool success = reader.parse(json, root, false);
 		if (success)
 		{
-			string status = "Parsed: " + json;
-			plugin.teamspeak.printMessageToCurrentTab(status.c_str());
-
 			string command = root["command"].asString();
 
 			if (command == "set")
 			{
-				int index = root["radio"].asInt() - 1;
-				if (root["internal"].asBool())
-				{
-					plugin.internal.at(index).setName(root["name"].asString());
-					plugin.internal.at(index).setPrimaryFrequency(root["primary"].asInt());
-					plugin.internal.at(index).setSecondaryFrequency(root["secondary"].asInt());
-					plugin.internal.at(index).setModulation((MARS::Modulation)root["modulation"].asInt());
-				}
-				else
-				{
-					plugin.external.at(index).setName(root["name"].asString());
-					plugin.external.at(index).setPrimaryFrequency(root["primary"].asInt());
-					plugin.external.at(index).setSecondaryFrequency(root["secondary"].asInt());
-					plugin.external.at(index).setModulation((MARS::Modulation)root["modulation"].asInt());
+				bool internal = root["internal"].asBool();
+				string name = root["name"].asString();
+				int primary = root["primary"].asInt();
+				int secondary = root["secondary"].asInt();
+				int radio = root["radio"].asInt();
+				Modulation modulation = (Modulation)root["modulation"].asInt();
 
-				}
-				plugin.updateMetaData();
+				plugin.setRadioInformation(internal, name, radio, primary, secondary, modulation);
 			}
 			else if (command == "pos")
 			{
@@ -226,30 +214,46 @@ namespace MARS
 			}
 			else if (command == "select")
 			{
-				int index = root["radio"].asInt() - 1;
-				plugin.selectedRadioIndex = index;
-				plugin.updateMetaData();
+				int id = root["radio"].asInt();
+
+				plugin.selectActiveRadio(id);
+			}
+			else if (command == "use")
+			{
+				string mode = root["mode"].asString();
+				
+				if (mode == "internal")
+				{
+					plugin.useInternalRadios();
+				}
+				else
+				{
+					plugin.useExternalRadios();
+				}
 			}
 			else if (command == "info")
 			{
-				plugin.name = root["name"].asString();
-				plugin.unit = root["unit"].asString();
+				string name = root["name"].asString();
+				string unit = root["unit"].asString();
+
+				plugin.setPlayerInformation(name, unit);
 			}
 			else if (command == "start")
 			{
-				plugin.inGame = true;
-				plugin.updateMetaData();
+				plugin.start();
 			}
 			else if (command == "stop")
 			{
-				plugin.inGame = false;
-				plugin.updateMetaData();
+				plugin.stop();
 			}
 		}
 		else
 		{
-			string status = "Failed: " + json;
-			plugin.teamspeak.printMessageToCurrentTab(status.c_str());
+			if (json != "poke")
+			{
+				string error = "Failed to parse command: " + json;
+				plugin.teamspeak.logMessage(error.c_str(), LogLevel_ERROR, "MARS", 0);
+			}
 		}
 	}
 
@@ -329,6 +333,10 @@ namespace MARS
 		}
 	}
 
+	/// <summary>
+	/// Returns the current voice activation detection setting
+	/// </summary>
+	/// <returns>True if using voice activation, otherwise false</returns>
 	bool Plugin::usingVoiceActivation() const
 	{
 		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
@@ -357,6 +365,9 @@ namespace MARS
 		return vad;
 	}
 
+	/// <summary>
+	/// Enables voice activation detection
+	/// </summary>
 	void Plugin::enableVoiceActivation() const
 	{
 		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
@@ -372,6 +383,9 @@ namespace MARS
 		}
 	}
 
+	/// <summary>
+	/// Disables voice activation detection
+	/// </summary>
 	void Plugin::disableVoiceActivation() const
 	{
 		uint64 connection = this->teamspeak.getCurrentServerConnectionHandlerID();
@@ -385,6 +399,76 @@ namespace MARS
 		if (this->teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED) != ERROR_ok)
 		{
 		}
+	}
+
+	/// <summary>
+	/// Activates specified radio number (not index)
+	/// </summary>
+	void Plugin::selectActiveRadio(int id)
+	{
+		if (id < 1 || id > 3)
+		{
+			throw;
+		}
+
+		if (id - 1 != this->selectedRadioIndex)
+		{
+			this->selectedRadioIndex = id - 1;
+			this->updateMetaData();
+		}
+	}
+
+	/// <summary>
+	/// Activates the internal radios
+	/// </summary>
+	void Plugin::useInternalRadios()
+	{
+		if (this->usingExternal)
+		{
+			this->usingExternal = false;
+			this->updateMetaData();
+		}
+	}
+
+	/// <summary>
+	/// Activates the external radios
+	/// </summary>
+	void Plugin::useExternalRadios()
+	{
+		if (!this->usingExternal)
+		{
+			this->usingExternal = true;
+			this->updateMetaData();
+		}
+	}
+
+	void Plugin::setRadioInformation(bool internal, const string& name, int radio, int primary, int secondary, Modulation modulation)
+	{
+		int index = radio - 1;
+
+		if (internal == true)
+		{
+			this->internal[index].setName(name);
+			this->internal[index].setPrimaryFrequency(primary);
+			this->internal[index].setSecondaryFrequency(secondary);
+			this->internal[index].setModulation(modulation);
+		}
+		else
+		{
+			this->external[index].setName(name);
+			this->external[index].setPrimaryFrequency(primary);
+			this->external[index].setSecondaryFrequency(secondary);
+			this->external[index].setModulation(modulation);
+		}
+
+		this->updateMetaData();
+	}
+
+	void Plugin::setPlayerInformation(const string& name, const string& unit)
+	{
+		this->name = name;
+		this->unit = unit;
+		this->updateMetaData();
 	}
 }
 

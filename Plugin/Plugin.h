@@ -46,8 +46,12 @@ namespace MARS
 		bool usingVoiceActivation() const;
 		void enableVoiceActivation() const;
 		void disableVoiceActivation() const;
+		void selectActiveRadio(int id);
+		void useInternalRadios();
+		void useExternalRadios();
+		void setRadioInformation(bool internal, const std::string& name, int radio, int primary, int secondary, Modulation modulation);
+		void setPlayerInformation(const std::string& name, const std::string& unit);
 
-		
 	private:
 		TS3Functions teamspeak;
 		char* pluginId;
