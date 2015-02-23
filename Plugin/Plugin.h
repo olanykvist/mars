@@ -51,6 +51,7 @@ namespace MARS
 		void useExternalRadios();
 		void setRadioInformation(bool internal, const std::string& name, int radio, int primary, int secondary, Modulation modulation);
 		void setPlayerInformation(const std::string& name, const std::string& unit);
+		void setPosition(float x, float y, float z);
 
 	private:
 		TS3Functions teamspeak;
@@ -66,6 +67,7 @@ namespace MARS
 		std::string name;
 		std::string unit;
 		ClientMetaData metaData;
+		Vector3 position;
 	};
 };
 

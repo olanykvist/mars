@@ -269,15 +269,7 @@ MARS.ExportKA50 = function()
 	end
 	
 	-- Clear radio 3
-	radio =
-	{
-		id = 3,
-		name = "init",
-		primary = 0,
-		secondary = 0,
-		modulation = MARS.modulation.AM
-	}
-	
+	radio =	{ id = 3, name = "N/A", primary = 0, secondary = 0, modulation = MARS.modulation.AM }
 	if not MARS.FastCompare(MARS.data.radios[3], radio) then
 		MARS.SendSetCommand(radio)
 		MARS.data.radios[3] = MARS.FastCopy(radio)
@@ -317,14 +309,14 @@ MARS.ExportMIG21 = function()
 	end
 	
 	-- Clear radio 2
-	radio = { id = 2, name = "init", primary = 0, secondary = 0, modulation = 0 }
+	radio = { id = 2, name = "N/A", primary = 0, secondary = 0, modulation = 0 }
 	if not MARS.FastCompare(MARS.data.radios[2], radio) then
 		MARS.SendSetCommand(radio)
 		MARS.data.radios[2] = MARS.FastCopy(radio)
 	end
 	
 	-- Clear radio 3
-	radio = { id = 3, name = "init", primary = 0, secondary = 0, modulation = 0 }
+	radio = { id = 3, name = "N/A", primary = 0, secondary = 0, modulation = 0 }
 	if not MARS.FastCompare(MARS.data.radios[3], radio) then
 		MARS.SendSetCommand(radio)
 		MARS.data.radios[3] = MARS.FastCopy(radio)

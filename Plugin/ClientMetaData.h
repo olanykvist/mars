@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Modulation.h"
+#include "Vector3.h"
 
 namespace MARS
 {
@@ -26,6 +27,7 @@ namespace MARS
 		std::string name;
 		std::string unit;
 		int selected;
+		Vector3 position;
 		RadioInformation radio[3];
 	};
 };

@@ -38,29 +38,6 @@ namespace MARS
 		bool ReadData(Connection& connection);
 		bool ShutdownConnection(Connection& connection);
 	};
-
-	//class SocketListener
-	//{
-	//public:
-	//	typedef void(*OnMessage)(const char*);
-	//	SocketListener();
-	//	~SocketListener();
-	//	void Initialize();
-	//	void Start();
-	//	void Stop();
-	//	void Destroy();
-	//	OnMessage onMessage;
-
-	//private:
-	//	bool isListening;
-	//	WSADATA wsaData;
-	//	SOCKET listenSocket;
-	//	vector<SOCKET> clientSockets;
-	//	thread listenThread;
-	//	vector<thread> receiveThreads;
-	//	void AcceptConnections();
-	//	void HandleConnection(SOCKET client);
-	//};
 };
 
 #endif

@@ -11,6 +11,7 @@ namespace MARS
 		, name("init")
 		, unit("init")
 		, selected(0)
+		, position()
 	{
 		for (size_t i = 0; i < 3; i++)
 		{
@@ -41,6 +42,13 @@ namespace MARS
 
 		root["radios"] = array;
 
+		Json::Value position;
+		position["x"] = this->position.x;
+		position["y"] = this->position.y;
+		position["z"] = this->position.z;
+
+		root["pos"] = position;
+
 		if (formatted == true)
 		{
 			Json::StyledWriter writer;
@@ -67,6 +75,10 @@ namespace MARS
 			data.name = root["name"].asString();
 			data.unit = root["unit"].asString();
 			data.selected = root["selected"].asInt();
+
+			data.position.x = root["pos"]["x"].asFloat();
+			data.position.y = root["pos"]["y"].asFloat();
+			data.position.z = root["pos"]["z"].asFloat();
 
 			for (int i = 0; i < 3; i++)
 			{

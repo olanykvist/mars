@@ -35,6 +35,7 @@ namespace MARS
 		, currentRadio(nullptr)
 		, socketListener()
 		, metaData()
+		, position()
 	{
 		// Add external radios
 		this->external.push_back(Radio());
@@ -124,8 +125,17 @@ namespace MARS
 			sprintf_s(status, 128, "Status: In-game as %s, playing %s\n", client.name.c_str(), client.unit.c_str());
 			strcat_s(buffer, BUFFER_SIZE, status);
 
+			char pos[128] = { 0 };
+			sprintf_s(pos, 128, "X%d Y%d Z%d\n", (int)client.position.x, (int)client.position.y, (int)client.position.z);
+			strcat_s(buffer, BUFFER_SIZE, pos);
+
 			for (int i = 0; i < 3; i++)
 			{
+				if (client.radio[i].name == "N/A")
+				{
+					continue;
+				}
+
 				char radio[128] = { 0 };
 				float frequency = (float)client.radio[i].frequency / MHz;
 
@@ -211,7 +221,11 @@ namespace MARS
 			}
 			else if (command == "pos")
 			{
+				float x = root["x"].asFloat();
+				float y = root["y"].asFloat();
+				float z = root["z"].asFloat();
 
+				plugin.setPosition(x, y, z);
 			}
 			else if (command == "select")
 			{
@@ -265,6 +279,7 @@ namespace MARS
 		this->metaData.name = this->name;
 		this->metaData.unit = this->unit;
 		this->metaData.selected = this->selectedRadioIndex + 1;
+		this->metaData.position = this->position;
 
 		for (int i = 0; i < 3; i++)
 		{
@@ -475,6 +490,14 @@ namespace MARS
 	{
 		this->name = name;
 		this->unit = unit;
+		this->updateMetaData();
+	}
+
+	void Plugin::setPosition(float x, float y, float z)
+	{
+		this->position.x = x;
+		this->position.y = y;
+		this->position.z = z;
 		this->updateMetaData();
 	}
 }
