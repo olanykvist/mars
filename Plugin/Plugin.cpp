@@ -45,6 +45,11 @@ namespace MARS
 		this->internal.push_back(Radio());
 		this->internal.push_back(Radio());
 		this->internal.push_back(Radio());
+
+		//
+		this->external[0].setName("EXT 1");
+		this->external[1].setName("EXT 2");
+		this->external[2].setName("EXT 3");
 	}
 
 	Plugin::~Plugin()
@@ -178,6 +183,7 @@ namespace MARS
 	void Plugin::shutdownListener()
 	{
 		this->listener.Stop();
+		this->listener.Destroy();
 	}
 
 	// Callback
@@ -323,6 +329,9 @@ namespace MARS
 		{
 			this->disableVoiceActivation();
 		}
+
+		this->inGame = true;
+		this->updateMetaData();
 	}
 
 	void Plugin::stop()
@@ -331,6 +340,9 @@ namespace MARS
 		{
 			this->enableVoiceActivation();
 		}
+
+		this->inGame = false;
+		this->updateMetaData();
 	}
 
 	/// <summary>
