@@ -34,7 +34,7 @@ namespace MARS
 		std::thread acceptor;
 		SOCKET CreateListenSocket(unsigned short port);
 		void SetupFileDescriptorSets(fd_set& readfds, fd_set& writefds, fd_set& exceptfds, SOCKET listener = INVALID_SOCKET);
-		void AcceptConnections(SOCKET server);
+		void AcceptConnections();
 		bool ReadData(Connection& connection);
 		bool ShutdownConnection(Connection& connection);
 	};

@@ -99,7 +99,7 @@ namespace MARS
 		}
 	}
 
-	void SocketListener::AcceptConnections(SOCKET server)
+	void SocketListener::AcceptConnections()
 	{
 		sockaddr_in endpoint;
 		int endpointSize = sizeof(endpoint);
@@ -107,32 +107,33 @@ namespace MARS
 		while (this->listening)
 		{
 			fd_set readFDs, writeFDs, exceptFDs;
-			this->SetupFileDescriptorSets(readFDs, writeFDs, exceptFDs, listener);
+			this->SetupFileDescriptorSets(readFDs, writeFDs, exceptFDs, this->listener);
 
 			if (select(0, &readFDs, &writeFDs, &exceptFDs, 0) > 0)
 			{
 				// Listener socket?
-				if (FD_ISSET(listener, &readFDs))
+				if (FD_ISSET(this->listener, &readFDs))
 				{
-					SOCKET sd = accept(listener, (sockaddr*)&endpoint, &endpointSize);
+					SOCKET sd = accept(this->listener, (sockaddr*)&endpoint, &endpointSize);
 					if (sd != INVALID_SOCKET)
 					{
-						//std::cout << "Accepted connection" << std::endl;
+						// Connection accepted
 						connections.push_back(Connection(sd));
 
+						// Set "no block" mode on socket
 						u_long noBlock = 1;
 						ioctlsocket(sd, FIONBIO, &noBlock);
 					}
 					else
 					{
-						//std::cout << "accept() failed" << std::endl;
+						// "accept() failed"
 					}
 				}
 
 				// Exception on listener socket
-				else if (FD_ISSET(listener, &exceptFDs))
+				else if (FD_ISSET(this->listener, &exceptFDs))
 				{
-					//std::cout << "Exception on listening socket" << std::endl;
+					// Exception on listening socket
 				}
 
 				// Or one of clients?
@@ -152,7 +153,7 @@ namespace MARS
 					{
 						if (FD_ISSET(i->socket, &readFDs))
 						{
-							ok = ReadData(*i);
+							ok = this->ReadData(*i);
 							error = "Read error";
 							FD_CLR(i->socket, &readFDs);
 						}
@@ -189,7 +190,6 @@ namespace MARS
 			else
 			{
 				// select() failed
-				//std::cout << "select() failed" << std::endl;
 			}
 		}
 
@@ -202,7 +202,7 @@ namespace MARS
 
 		if (count == 0)
 		{
-			//cout << "Socket " << connection.socket << " was closed by the client. Shutting down." << endl;
+			// Connection closed by client
 			return false;
 		}
 		else if (count == SOCKET_ERROR)
@@ -214,7 +214,6 @@ namespace MARS
 			return (err == WSAEWOULDBLOCK);
 		}
 
-		//cout << "Received: " << connection.buffer << endl;
 		if (this->MessageReceived != nullptr)
 		{
 			this->MessageReceived(connection.buffer);
