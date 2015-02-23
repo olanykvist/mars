@@ -62,7 +62,7 @@ namespace MARS
 		std::vector<Radio> internal;
 		std::vector<Radio> external;
 		Radio* currentRadio;
-		SocketListener listener;
+		SocketListener socketListener;
 		std::string name;
 		std::string unit;
 		ClientMetaData metaData;

@@ -33,7 +33,7 @@ namespace MARS
 		, internal()
 		, external()
 		, currentRadio(nullptr)
-		, listener()
+		, socketListener()
 		, metaData()
 	{
 		// Add external radios
@@ -54,9 +54,6 @@ namespace MARS
 
 	Plugin::~Plugin()
 	{
-		this->listener.Stop();
-		this->listener.Destroy();
-
 		if (this->pluginId)
 		{
 			delete[] this->pluginId;
@@ -175,15 +172,13 @@ namespace MARS
 
 	void Plugin::initListener()
 	{
-		this->listener.onMessage = Plugin::onMessageReceived;
-		this->listener.Initialize();
-		this->listener.Start();
+		this->socketListener.MessageReceived = Plugin::onMessageReceived;
+		this->socketListener.Start(10112);
 	}
 
 	void Plugin::shutdownListener()
 	{
-		this->listener.Stop();
-		this->listener.Destroy();
+		this->socketListener.Stop();
 	}
 
 	// Callback

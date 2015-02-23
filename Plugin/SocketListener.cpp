@@ -1,145 +1,268 @@
 #include "SocketListener.h"
 #include <thread>
 
+using std::thread;
+
 namespace MARS
 {
 	SocketListener::SocketListener()
-		: wsaData({ 0 })
-		, listenSocket(INVALID_SOCKET)
-		, isListening(false)
-		, onMessage(nullptr)
-	{
-	}
+		: listening(false)
+		, listener(INVALID_SOCKET)
+		, connections()
+		, acceptor()
+		, MessageReceived(nullptr)
+	{}
 
 	SocketListener::~SocketListener()
 	{
-		this->Destroy();
+		if (this->listening)
+		{
+			this->Stop();
+		}
 	}
 
-	void SocketListener::Initialize()
+	void SocketListener::Start(unsigned short port)
 	{
-		// Initialize WinSock
-		int result = WSAStartup(WINSOCK_VERSION, &(this->wsaData));
+		WSAData data;
+
+		int result = WSAStartup(WINSOCK_VERSION, &data);
 		if (result != 0)
 		{
 			// Fail
 		}
 
-		// Create socket
-		this->listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (this->listenSocket == INVALID_SOCKET)
+		this->listener = this->CreateListenSocket(port);
+		if (this->listener == INVALID_SOCKET)
 		{
-			// Fail
+			throw;
 		}
 
-		// Configure endpoint
-		sockaddr_in endpoint = { 0 };
-		endpoint.sin_family = AF_INET;
-		endpoint.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-		endpoint.sin_port = htons(2000);
-
-		// Bind socket
-		result = bind(this->listenSocket, (sockaddr*)&endpoint, sizeof(endpoint));
-		if (result != 0)
-		{
-			// Fail
-		}
-
-		// Listen
-		result = listen(this->listenSocket, SOMAXCONN);
-		if (result == SOCKET_ERROR)
-		{
-			closesocket(this->listenSocket);
-			WSACleanup();
-		}
-	}
-
-	void SocketListener::Start()
-	{
-		this->isListening = true;
-		this->listenThread = std::thread(&SocketListener::AcceptConnections, this);
+		this->listening = true;
+		this->acceptor = thread(&SocketListener::AcceptConnections, this, this->listener);
 	}
 
 	void SocketListener::Stop()
 	{
-		this->isListening = false;
+		this->listening = false;
 
-		// Close all client connections in a somewhat nice way
-		for (auto& s : this->clientSockets)
+		closesocket(listener);
+		if (this->acceptor.joinable())
 		{
-			const size_t BUFFER_SIZE = 256;
-			char buffer[BUFFER_SIZE];
-			memset(buffer, 0, BUFFER_SIZE);
-			closesocket(s);
+			this->acceptor.join();
 		}
 
-		this->clientSockets.clear();
-
-		for (auto& t : this->receiveThreads)
+		int result = WSACleanup();
+		if (result != 0)
 		{
-			if (t.joinable())
+			//cout << "WSACleanup failed" << endl;
+		}
+	}
+
+	SOCKET SocketListener::CreateListenSocket(unsigned short port)
+	{
+		SOCKET listener = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		if (listener != INVALID_SOCKET)
+		{
+			sockaddr_in endpoint = { 0 };
+			endpoint.sin_family = AF_INET;
+			endpoint.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+			endpoint.sin_port = htons(port);
+
+			int result = bind(listener, (sockaddr*)&endpoint, sizeof(endpoint));
+			if (result != SOCKET_ERROR)
 			{
-				t.join();
+				listen(listener, SOMAXCONN);
+				return listener;
 			}
 		}
-		this->receiveThreads.clear();
 
-		// Close listener socket (accept() will return with error)
-		closesocket(this->listenSocket);
-		if (this->listenThread.joinable())
+		return INVALID_SOCKET;
+	}
+
+	void SocketListener::SetupFileDescriptorSets(fd_set& readfds, fd_set& writefds, fd_set& exceptfds, SOCKET listener)
+	{
+		FD_ZERO(&readfds);
+		FD_ZERO(&writefds);
+		FD_ZERO(&exceptfds);
+
+		if (listener != INVALID_SOCKET)
 		{
-			TerminateThread(this->listenThread.native_handle(), 0); // Hmmm. sometimes closesocket() doesnt work...
-			this->listenThread.join();
+			FD_SET(listener, &readfds);
+			FD_SET(listener, &exceptfds);
 		}
 
-	}
-
-	void SocketListener::Destroy()
-	{
-		WSACleanup();
-	}
-
-	void SocketListener::AcceptConnections()
-	{
-		SOCKET client = INVALID_SOCKET;
-		while (this->isListening)
+		for (auto& connection : connections)
 		{
-			client = accept(this->listenSocket, nullptr, nullptr);
-			if (client != INVALID_SOCKET)
-			{
-				this->clientSockets.push_back(client);
-				this->receiveThreads.push_back(thread(&SocketListener::HandleConnection, this, client));
-			}
+			FD_SET(connection.socket, &readfds);
+			FD_SET(connection.socket, &writefds);
+			FD_SET(connection.socket, &exceptfds);
 		}
 	}
 
-	void SocketListener::HandleConnection(SOCKET client)
+	void SocketListener::AcceptConnections(SOCKET server)
 	{
-		const size_t BUFFER_SIZE = 256;
-		char buffer[BUFFER_SIZE];
-		int count = 0;
+		sockaddr_in endpoint;
+		int endpointSize = sizeof(endpoint);
 
-		do
+		while (this->listening)
 		{
-			memset(buffer, 0, BUFFER_SIZE);
-			count = recv(client, buffer, BUFFER_SIZE, 0);
-			if (count > 0)
+			fd_set readFDs, writeFDs, exceptFDs;
+			this->SetupFileDescriptorSets(readFDs, writeFDs, exceptFDs, listener);
+
+			if (select(0, &readFDs, &writeFDs, &exceptFDs, 0) > 0)
 			{
-				// buffer holds received message
-				if (this->onMessage != nullptr)
+				// Listener socket?
+				if (FD_ISSET(listener, &readFDs))
 				{
-					this->onMessage(buffer);
+					SOCKET sd = accept(listener, (sockaddr*)&endpoint, &endpointSize);
+					if (sd != INVALID_SOCKET)
+					{
+						//std::cout << "Accepted connection" << std::endl;
+						connections.push_back(Connection(sd));
+
+						u_long noBlock = 1;
+						ioctlsocket(sd, FIONBIO, &noBlock);
+					}
+					else
+					{
+						//std::cout << "accept() failed" << std::endl;
+					}
 				}
-			}
-			else if (count == 0)
-			{
-				// Client closed socket
+
+				// Exception on listener socket
+				else if (FD_ISSET(listener, &exceptFDs))
+				{
+					//std::cout << "Exception on listening socket" << std::endl;
+				}
+
+				// Or one of clients?
+				auto i = connections.begin();
+				while (i != connections.end())
+				{
+					bool ok = true;
+					const char* error = nullptr;
+
+					if (FD_ISSET(i->socket, &exceptFDs))
+					{
+						ok = false;
+						error = "General socket error";
+						FD_CLR(i->socket, &exceptFDs);
+					}
+					else
+					{
+						if (FD_ISSET(i->socket, &readFDs))
+						{
+							ok = ReadData(*i);
+							error = "Read error";
+							FD_CLR(i->socket, &readFDs);
+						}
+						if (FD_ISSET(i->socket, &writeFDs))
+						{
+							// Writing not implemented...
+							FD_CLR(i->socket, &writeFDs);
+						}
+					}
+
+					if (!ok)
+					{
+						// Something bad happened on the socket, or the
+						// client closed its half of the connection.  Shut
+						// the conn down and remove it from the list.
+						int err;
+						int errlen = sizeof(err);
+						getsockopt(i->socket, SOL_SOCKET, SO_ERROR, (char*)&err, &errlen);
+						if (err != NO_ERROR)
+						{
+							//std::cout << WSAGetLastErrorMessage(error, err) << std::endl;
+							//std::cout << "Error";
+						}
+						ShutdownConnection(*i);
+						connections.erase(i);
+						i = connections.begin();
+					}
+					else
+					{
+						++i;
+					}
+				}
 			}
 			else
 			{
-				// Error reading from socket
-				int error = WSAGetLastError();
+				// select() failed
+				//std::cout << "select() failed" << std::endl;
 			}
-		} while (count > 0);
+		}
+
+	}
+
+	bool SocketListener::ReadData(Connection& connection)
+	{
+		memset(connection.buffer, 0, Connection::BUFFER_SIZE);
+		int count = recv(connection.socket, connection.buffer, Connection::BUFFER_SIZE, 0);
+
+		if (count == 0)
+		{
+			//cout << "Socket " << connection.socket << " was closed by the client. Shutting down." << endl;
+			return false;
+		}
+		else if (count == SOCKET_ERROR)
+		{
+			// Something bad happened on the socket.
+			int err;
+			int errlen = sizeof(err);
+			getsockopt(connection.socket, SOL_SOCKET, SO_ERROR, (char*)&err, &errlen);
+			return (err == WSAEWOULDBLOCK);
+		}
+
+		//cout << "Received: " << connection.buffer << endl;
+		if (this->MessageReceived != nullptr)
+		{
+			this->MessageReceived(connection.buffer);
+		}
+
+		return true;
+	}
+
+	bool SocketListener::ShutdownConnection(Connection& connection)
+	{
+		// Disallow any further data sends.  This will tell the other side
+		// that we want to go away now.  If we skip this step, we don't
+		// shut the connection down nicely.
+		if (shutdown(connection.socket, SD_SEND) == SOCKET_ERROR)
+		{
+			return false;
+		}
+
+		// Receive any extra data still sitting on the socket.  After all
+		// data is received, this call will block until the remote host
+		// acknowledges the TCP control packet sent by the shutdown above.
+		// Then we'll get a 0 back from recv, signalling that the remote
+		// host has closed its side of the connection.
+		char buffer[Connection::BUFFER_SIZE];
+		while (true)
+		{
+			int count = recv(connection.socket, buffer, Connection::BUFFER_SIZE, 0);
+			if (count == SOCKET_ERROR)
+			{
+				return false;
+			}
+			else if (count != 0)
+			{
+				//std::cout << std::endl << "FYI, received " << count << " unexpected bytes during shutdown." << std::endl;
+			}
+			else
+			{
+				// Okay, we're done!
+				break;
+			}
+		}
+
+		// Close the socket.
+		if (closesocket(connection.socket) == SOCKET_ERROR)
+		{
+			return false;
+		}
+
+		return true;
 	}
 }
