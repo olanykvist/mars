@@ -413,9 +413,9 @@ namespace MARS
 	/// </summary>
 	void Plugin::selectActiveRadio(int id)
 	{
-		if (id < 1 || id > 3)
+		if (id < 0 || id > 3)
 		{
-			throw;
+			throw "Invalid radio";
 		}
 
 		if (id - 1 != this->selectedRadioIndex)

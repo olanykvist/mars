@@ -38,7 +38,7 @@ namespace MARS
 		}
 
 		this->listening = true;
-		this->acceptor = thread(&SocketListener::AcceptConnections, this, this->listener);
+		this->acceptor = thread(&SocketListener::AcceptConnections, this);
 	}
 
 	void SocketListener::Stop()
