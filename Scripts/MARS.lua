@@ -10,7 +10,7 @@ MARS = {}
 MARS.options = 
 {
 	host = "localhost",
-	port = 2000
+	port = 10112
 }
 
 MARS.originals =
@@ -94,6 +94,7 @@ MARS.ExportCommon = function()
 	local name = nil
 	local export = nil     -- Unit specific export function
 	local unit = nil
+	local internal = true
 	local data = LoGetSelfData()
 	
 	if data == nil then
@@ -102,6 +103,7 @@ MARS.ExportCommon = function()
 		MARS.data.pos.x = 0
 		MARS.data.pos.y = 0
 		MARS.data.pos.z = 0
+		internal = false
 	else
 		unit = data.Name
 		name = data.UnitName
@@ -114,6 +116,7 @@ MARS.ExportCommon = function()
 		local panel = GetDevice(0)
 		if panel == 0 then
 			unit = "Parachute" -- Pilot ejected
+			internal = false
 		end
 	end
 	
@@ -124,11 +127,13 @@ MARS.ExportCommon = function()
 		MARS.data.unit = unit
 	end
 	
-	local internal = MARS.UnitHasInternalRadio(unit)
+	---[[
+	--internal = MARS.UnitHasInternalRadio(unit)
 	if MARS.data.internal ~= internal then
 		MARS.SendUseCommand(internal)
 		MARS.data.internal = internal
 	end
+	--]]
 	
 	if unit == "A-10C" then
 		export = MARS.ExportA10()
@@ -262,6 +267,22 @@ MARS.ExportKA50 = function()
 		MARS.SendSelectCommand(selected)
 		MARS.data.selected = selected
 	end
+	
+	-- Clear radio 3
+	radio =
+	{
+		id = 3,
+		name = "init",
+		primary = 0,
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	if not MARS.FastCompare(MARS.data.radios[3], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[3] = MARS.FastCopy(radio)
+	end
+	
 end
 
 MARS.ExportUH1 = function()
@@ -272,7 +293,7 @@ end
 
 MARS.ExportFW190 = function()
 end
-	
+
 MARS.ExportMIG21 = function()
 	local radio =
 	{
@@ -294,21 +315,35 @@ MARS.ExportMIG21 = function()
 		MARS.SendSetCommand(radio)
 		MARS.data.radios[1] = MARS.FastCopy(radio)
 	end
+	
+	-- Clear radio 2
+	radio = { id = 2, name = "init", primary = 0, secondary = 0, modulation = 0 }
+	if not MARS.FastCompare(MARS.data.radios[2], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[2] = MARS.FastCopy(radio)
+	end
+	
+	-- Clear radio 3
+	radio = { id = 3, name = "init", primary = 0, secondary = 0, modulation = 0 }
+	if not MARS.FastCompare(MARS.data.radios[3], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[3] = MARS.FastCopy(radio)
+	end
 end
 
 MARS.SendUseCommand = function(internal)
-	local mode
+	local modes
 	
 	if internal == true then
-		mode = "internal"
+		modes = "internal"
 	else
-		mode = "external"
+		modes = "external"
 	end
 	
 	local command =
 	{
 		command = "use",
-		stack = mode
+		mode = modes
 	}
 	
 	local json = MARS.JSON:encode(command)
@@ -326,7 +361,7 @@ MARS.SendInfoCommand = function(name, unit)
 	local json = MARS.JSON:encode(command)
 	MARS.QueueMessage(json)
 end
-	
+
 MARS.SendPosCommand = function(pos)
 	local command =
 	{
@@ -339,7 +374,7 @@ MARS.SendPosCommand = function(pos)
 	local json = MARS.JSON:encode(command)
 	MARS.QueueMessage(json)
 end
-	
+
 MARS.SendSelectCommand = function(id)
 	local command =
 	{
