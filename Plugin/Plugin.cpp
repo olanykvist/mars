@@ -37,6 +37,7 @@ namespace MARS
 		, inputListener()
 		, metaData()
 		, position()
+		, configuration()
 	{
 		// Add external radios
 		this->external.push_back(Radio());
@@ -204,6 +205,11 @@ namespace MARS
 		this->inputListener.Stop();
 	}
 
+	void Plugin::loadConfiguration()
+	{
+		this->configuration = Configuration::load();
+	}
+
 	// Callback
 	void Plugin::onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId)
 	{
@@ -290,12 +296,56 @@ namespace MARS
 
 	void Plugin::onButtonDown(const wchar_t* device, int button)
 	{
-		plugin.teamspeak.printMessageToCurrentTab("Button down");
+		if (device == plugin.configuration.getSelectPttOneDevice())
+		{
+			if (button == plugin.configuration.getSelectPttOneButton())
+			{
+				plugin.teamspeak.printMessageToCurrentTab("PTT 1 DOWN");
+			}
+		}
+
+		if (device == plugin.configuration.getSelectPttTwoDevice())
+		{
+			if (button == plugin.configuration.getSelectPttTwoButton())
+			{
+				plugin.teamspeak.printMessageToCurrentTab("PTT 2 DOWN");
+			}
+		}
+
+		if (device == plugin.configuration.getSelectPttThreeDevice())
+		{
+			if (button == plugin.configuration.getSelectPttThreeButton())
+			{
+				plugin.teamspeak.printMessageToCurrentTab("PTT 3 DOWN");
+			}
+		}
 	}
 
 	void Plugin::onButtonUp(const wchar_t* device, int button)
 	{
-		plugin.teamspeak.printMessageToCurrentTab("Button up");
+		if (device == plugin.configuration.getSelectPttOneDevice())
+		{
+			if (button == plugin.configuration.getSelectPttOneButton())
+			{
+				plugin.teamspeak.printMessageToCurrentTab("PTT 1 UP");
+			}
+		}
+		
+		if (device == plugin.configuration.getSelectPttTwoDevice())
+		{
+			if (button == plugin.configuration.getSelectPttTwoButton())
+			{
+				plugin.teamspeak.printMessageToCurrentTab("PTT 2 UP");
+			}
+		}
+		
+		if (device == plugin.configuration.getSelectPttThreeDevice())
+		{
+			if (button == plugin.configuration.getSelectPttThreeButton())
+			{
+				plugin.teamspeak.printMessageToCurrentTab("PTT 3 UP");
+			}
+		}
 	}
 
 	void Plugin::updateMetaData(bool flush)
@@ -574,6 +624,7 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs)
 */
 int ts3plugin_init()
 {
+	plugin.loadConfiguration();
 	plugin.initListener();
 	plugin.initInput();
 	plugin.updateMetaData();

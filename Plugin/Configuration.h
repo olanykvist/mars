@@ -11,23 +11,23 @@ namespace MARS
 		Configuration();
 		virtual ~Configuration();
 		static Configuration load();
-		const std::string& getSelectPttOneDevice() const;
+		const std::wstring& getSelectPttOneDevice() const;
 		int getSelectPttOneButton() const;
-		const std::string& getSelectPttTwoDevice() const;
+		const std::wstring& getSelectPttTwoDevice() const;
 		int getSelectPttTwoButton() const;
-		const std::string& getSelectPttThreeDevice() const;
+		const std::wstring& getSelectPttThreeDevice() const;
 		int getSelectPttThreeButton() const;
 		float getRadioOnePan() const;
 		float getRadioTwoPan() const;
 		float getRadioThreePan() const;
 
 	private:
-		static std::string getIniFilePath();
-		std::string selectPttOneDevice;
+		static std::wstring getIniFilePath();
+		std::wstring selectPttOneDevice;
 		int selectPttOneButton;
-		std::string selectPttTwoDevice;
+		std::wstring selectPttTwoDevice;
 		int selectPttTwoButton;
-		std::string selectPttThreeDevice;
+		std::wstring selectPttThreeDevice;
 		int selectPttThreeButton;
 		float radioOnePan;
 		float radioTwoPan;

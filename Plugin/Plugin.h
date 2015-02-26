@@ -13,6 +13,7 @@
 #include "SocketListener.h"
 #include "InputListener.h"
 #include "ClientMetaData.h"
+#include "Configuration.h"
 
 namespace MARS
 {
@@ -40,6 +41,8 @@ namespace MARS
 
 		void initInput();
 		void shutdownInput();
+
+		void loadConfiguration();
 		
 		void onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId);
 		static void onMessageReceived(const char* message);
@@ -75,6 +78,7 @@ namespace MARS
 		std::string unit;
 		ClientMetaData metaData;
 		Vector3 position;
+		Configuration configuration;
 	};
 };
 
