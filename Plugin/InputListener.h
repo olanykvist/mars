@@ -18,19 +18,21 @@ namespace MARS
 	class InputListener
 	{
 	public:
+		typedef void(*OnButtonEvent)(const wchar_t*, int);
 		InputListener();
 		~InputListener();
-		void Initialize();
 		void Start();
 		void Stop();
-		void Destroy();
+		OnButtonEvent ButtonDown;
+		OnButtonEvent ButtonUp;
 		static BOOL CALLBACK OnEnumDevice(LPCDIDEVICEINSTANCE pDeviceInstance, void* pData);
 
 	private:
 		IDirectInput8* pInput;
 		vector<IDirectInputDevice8*> vDevices;
 		thread listenThread;
-
+		bool listening;
+		void Initialize();
 		void Listen();
 	};
 

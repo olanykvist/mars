@@ -11,6 +11,7 @@
 #include <vector>
 #include "Radio.h"
 #include "SocketListener.h"
+#include "InputListener.h"
 #include "ClientMetaData.h"
 
 namespace MARS
@@ -36,9 +37,14 @@ namespace MARS
 
 		void initListener();
 		void shutdownListener();
+
+		void initInput();
+		void shutdownInput();
 		
 		void onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId);
 		static void onMessageReceived(const char* message);
+		static void onButtonDown(const wchar_t* device, int button);
+		static void onButtonUp(const wchar_t* device, int button);
 		void updateMetaData(bool flush = false);
 		void clearMetaData();
 		void start();
@@ -64,6 +70,7 @@ namespace MARS
 		std::vector<Radio> external;
 		Radio* currentRadio;
 		SocketListener socketListener;
+		InputListener inputListener;
 		std::string name;
 		std::string unit;
 		ClientMetaData metaData;

@@ -34,6 +34,7 @@ namespace MARS
 		, external()
 		, currentRadio(nullptr)
 		, socketListener()
+		, inputListener()
 		, metaData()
 		, position()
 	{
@@ -191,6 +192,18 @@ namespace MARS
 		this->socketListener.Stop();
 	}
 
+	void Plugin::initInput()
+	{
+		this->inputListener.ButtonDown = Plugin::onButtonDown;
+		this->inputListener.ButtonUp = Plugin::onButtonUp;
+		this->inputListener.Start();
+	}
+
+	void Plugin::shutdownInput()
+	{
+		this->inputListener.Stop();
+	}
+
 	// Callback
 	void Plugin::onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId)
 	{
@@ -273,6 +286,16 @@ namespace MARS
 				plugin.teamspeak.logMessage(error.c_str(), LogLevel_ERROR, "MARS", 0);
 			}
 		}
+	}
+
+	void Plugin::onButtonDown(const wchar_t* device, int button)
+	{
+		plugin.teamspeak.printMessageToCurrentTab("Button down");
+	}
+
+	void Plugin::onButtonUp(const wchar_t* device, int button)
+	{
+		plugin.teamspeak.printMessageToCurrentTab("Button up");
 	}
 
 	void Plugin::updateMetaData(bool flush)
@@ -552,6 +575,7 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs)
 int ts3plugin_init()
 {
 	plugin.initListener();
+	plugin.initInput();
 	plugin.updateMetaData();
 
 	return 0;
@@ -565,6 +589,7 @@ int ts3plugin_init()
 void ts3plugin_shutdown()
 {
 	plugin.shutdownListener();
+	plugin.shutdownInput();
 	plugin.stop();
 	plugin.clearMetaData();
 }

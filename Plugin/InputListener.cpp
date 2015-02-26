@@ -6,20 +6,13 @@ namespace MARS
 	InputListener::InputListener()
 		: pInput(nullptr)
 		, vDevices()
+		, listening(false)
 	{
 	}
 
 	InputListener::~InputListener()
 	{
-		for (auto& device : this->vDevices)
-		{
-			device->Unacquire();
-			SafeReleaseInterface(device);
-		}
-
-		this->vDevices.clear();
-
-		SafeReleaseInterface(this->pInput);
+		this->Stop();
 	}
 
 	void InputListener::Initialize()
@@ -30,18 +23,42 @@ namespace MARS
 		if (FAILED(result))
 		{
 			// Log & throw
+			throw;
 		}
 
 		result = this->pInput->EnumDevices(DI8DEVCLASS_GAMECTRL, InputListener::OnEnumDevice, this, DIEDFL_ATTACHEDONLY);
 		if (FAILED(result))
 		{
 			// Log & throw
+			throw;
 		}
 	}
 
 	void InputListener::Start()
 	{
-		this->Listen();
+		this->listening = true;
+		this->Initialize();
+		this->listenThread = thread(&InputListener::Listen, this);
+	}
+
+	void InputListener::Stop()
+	{
+		this->listening = false;
+
+		if (this->listenThread.joinable())
+		{
+			this->listenThread.join();
+		}
+
+		for (auto& device : this->vDevices)
+		{
+			device->Unacquire();
+			SafeReleaseInterface(device);
+		}
+
+		this->vDevices.clear();
+
+		SafeReleaseInterface(this->pInput);
 	}
 
 	BOOL InputListener::OnEnumDevice(LPCDIDEVICEINSTANCE pDeviceInstance, void* pData)
@@ -82,7 +99,6 @@ namespace MARS
 		name.diph.dwHeaderSize = sizeof(DIPROPHEADER);
 		name.diph.dwObj = 0; // device property 
 		name.diph.dwHow = DIPH_DEVICE;
-		TCHAR message[1024];
 		
 		for (size_t i = 0; i < this->vDevices.size(); i++)
 		{
@@ -96,26 +112,30 @@ namespace MARS
 
 		Sleep(1000 / 60);
 
-		while (true)
+		while (this->listening == true)
 		{
-			for (size_t i = 0; i < this->vDevices.size(); i++) // Each device
+			for (int i = 0; i < this->vDevices.size(); i++) // Each device
 			{
 				this->vDevices[i]->Poll();
 				this->vDevices[i]->GetDeviceState(sizeof(state), &state);
 
-				for (size_t j = 0; j < 128; j++)
+				for (int j = 0; j < 128; j++)
 				{
 					if ((state.rgbButtons[j] & 0x80) && !(last[i][j] & 0x80))
 					{
 						this->vDevices[i]->GetProperty(DIPROP_PRODUCTNAME, &name.diph);
-						_stprintf_s(message, 1024, L"DOWN: %d %s\n", j, name.wsz);
-						OutputDebugString(message);
+						if (this->ButtonDown != nullptr)
+						{
+							ButtonDown(name.wsz, j);
+						}
 					}
 					else if (!(state.rgbButtons[j] & 0x80) && (last[i][j] & 0x80))
 					{
 						this->vDevices[i]->GetProperty(DIPROP_PRODUCTNAME, &name.diph);
-						_stprintf_s(message, 1024, L"UP: %d %s\n", j, name.wsz);
-						OutputDebugString(message);
+						if (this->ButtonUp != nullptr)
+						{
+							ButtonUp(name.wsz, j);
+						}
 					}
 
 					last[i][j] = state.rgbButtons[j];
