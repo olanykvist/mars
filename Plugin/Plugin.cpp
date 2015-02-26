@@ -8,6 +8,7 @@
 #include "ts3_functions.h"
 #include "Plugin.h"
 #include "ClientMetaData.h"
+#include "Transmission.h"
 #include "json/json.h"
 
 using std::string;
@@ -38,6 +39,7 @@ namespace MARS
 		, metaData()
 		, position()
 		, configuration()
+		, receivers()
 	{
 		// Add external radios
 		this->external.push_back(Radio());
@@ -77,14 +79,7 @@ namespace MARS
 
 	bool Plugin::processCommand(uint64 serverConnectionHandlerId, const char* command)
 	{
-		if (strcmp(command, "test") == 0)
-		{
-			string document("{\"name\":\"Cool name\",\"radios\":[{\"frequency\":0,\"modulation\":0,\"name\":\"Off radio\"},{\"frequency\":127000000,\"modulation\":1,\"name\":\"AN - 65\"},{\"frequency\":0,\"modulation\":0,\"name\":\"init\"}],\"running\":true,\"selected\":2,\"unit\":\"MiG-21 bis\",\"version\":\"0.9999\"}");
-			this->teamspeak.setClientSelfVariableAsString(serverConnectionHandlerId, CLIENT_META_DATA, document.c_str());
-			this->teamspeak.printMessageToCurrentTab("Testkommandot!");
-			return true;
-		}
-		else if (strcmp(command, "dump") == 0)
+		if (strcmp(command, "dump") == 0)
 		{
 			anyID id;
 			this->teamspeak.getClientID(serverConnectionHandlerId, &id);
@@ -213,7 +208,64 @@ namespace MARS
 	// Callback
 	void Plugin::onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId)
 	{
+		if (this->inGame == false)
+		{
+			return;
+		}
 
+		anyID myId = 0;
+		if (this->teamspeak.getClientID(serverConnectionHandlerId, &myId) != ERROR_ok)
+		{
+			this->teamspeak.logMessage("Failed to get own Id", LogLevel_ERROR, Plugin::NAME, 0);
+			return;
+		}
+
+
+		uint64 channelId = 0;
+		if (this->teamspeak.getChannelOfClient(serverConnectionHandlerId, myId, &channelId) != ERROR_ok)
+		{
+			this->teamspeak.logMessage("Failed to get channel id", LogLevel_ERROR, Plugin::NAME, 0);
+			return;
+		}
+
+		anyID* clients;
+		if (this->teamspeak.getChannelClientList(serverConnectionHandlerId, channelId, &clients) != ERROR_ok)
+		{
+			this->teamspeak.logMessage("Failed to get clients in channel", LogLevel_ERROR, Plugin::NAME, 0);
+			return;
+		}
+
+		this->receivers.clear();
+
+		for (int i = 0; clients[i] != 0; i++)
+		{
+			string json = this->getClientMetaData(serverConnectionHandlerId, clients[i]);
+			ClientMetaData data = ClientMetaData::deserialize(json);
+			Transmission transmission = Transmission(data.radio[data.selected - 1].frequency, data.radio[data.selected - 1].modulation);
+
+			this->receivers[clients[i]] = nullptr;
+
+			if (this->usingExternal)
+			{
+				for (auto& radio : external)
+				{
+					if (radio.canReceive(transmission))
+					{
+						this->receivers[clients[i]] = &radio;
+					}
+				}
+			}
+			else
+			{
+				for (auto& radio : internal)
+				{
+					if (radio.canReceive(transmission))
+					{
+						this->receivers[clients[i]] = &radio;
+					}
+				}
+			}
+		}
 	}
 
 	void Plugin::onMessageReceived(const char* message)
@@ -258,7 +310,7 @@ namespace MARS
 			else if (command == "use")
 			{
 				string mode = root["mode"].asString();
-				
+
 				if (mode == "internal")
 				{
 					plugin.useInternalRadios();
@@ -330,7 +382,7 @@ namespace MARS
 				plugin.teamspeak.printMessageToCurrentTab("PTT 1 UP");
 			}
 		}
-		
+
 		if (device == plugin.configuration.getSelectPttTwoDevice())
 		{
 			if (button == plugin.configuration.getSelectPttTwoButton())
@@ -338,7 +390,7 @@ namespace MARS
 				plugin.teamspeak.printMessageToCurrentTab("PTT 2 UP");
 			}
 		}
-		
+
 		if (device == plugin.configuration.getSelectPttThreeDevice())
 		{
 			if (button == plugin.configuration.getSelectPttThreeButton())
@@ -712,8 +764,7 @@ void ts3plugin_onConnectStatusChangeEvent(uint64 serverConnectionHandlerID, int 
 {
 	if (newStatus == STATUS_CONNECTED)
 	{
-		plugin.updateMetaData();
-		plugin.start();
+		plugin.updateMetaData(true);
 	}
 }
 

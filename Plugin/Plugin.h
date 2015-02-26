@@ -9,6 +9,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "Radio.h"
 #include "SocketListener.h"
 #include "InputListener.h"
@@ -79,6 +80,7 @@ namespace MARS
 		ClientMetaData metaData;
 		Vector3 position;
 		Configuration configuration;
+		std::map<anyID, Radio*> receivers;
 	};
 };
 
