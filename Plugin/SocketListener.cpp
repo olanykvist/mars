@@ -1,6 +1,7 @@
 #include "SocketListener.h"
 #include <thread>
 
+using std::vector;
 using std::thread;
 
 namespace MARS
@@ -37,6 +38,7 @@ namespace MARS
 			throw;
 		}
 
+		this->connections = vector<MARS::Connection>();
 		this->listening = true;
 		this->acceptor = thread(&SocketListener::AcceptConnections, this);
 	}
@@ -49,6 +51,11 @@ namespace MARS
 		if (this->acceptor.joinable())
 		{
 			this->acceptor.join();
+		}
+
+		for (auto& connection : connections)
+		{
+			this->ShutdownConnection(connection);
 		}
 
 		int result = WSACleanup();
@@ -224,10 +231,13 @@ namespace MARS
 
 	bool SocketListener::ShutdownConnection(Connection& connection)
 	{
+		closesocket(connection.socket);
+		return true;
+
 		// Disallow any further data sends.  This will tell the other side
 		// that we want to go away now.  If we skip this step, we don't
 		// shut the connection down nicely.
-		if (shutdown(connection.socket, SD_SEND) == SOCKET_ERROR)
+		if (shutdown(connection.socket, SD_BOTH) == SOCKET_ERROR)
 		{
 			return false;
 		}

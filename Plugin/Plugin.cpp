@@ -199,6 +199,9 @@ namespace MARS
 
 	void Plugin::onMessageReceived(const char* message)
 	{
+		// Debug output
+		plugin.teamspeak.printMessageToCurrentTab(message);
+
 		string json(message);
 		Json::Reader reader;
 		Json::Value root;
@@ -272,7 +275,7 @@ namespace MARS
 		}
 	}
 
-	void Plugin::updateMetaData()
+	void Plugin::updateMetaData(bool flush)
 	{
 		this->metaData.version = Plugin::VERSION;
 		this->metaData.running = this->inGame;
@@ -308,9 +311,13 @@ namespace MARS
 		{
 			this->teamspeak.logMessage("Failed to update metadata", LogLevel_ERROR, "MARS", 0);
 		}
-		if (this->teamspeak.flushClientSelfUpdates(connection, nullptr))
+
+		if (flush == true)
 		{
-			this->teamspeak.logMessage("Failed to flush metadata update", LogLevel_ERROR, "MARS", 0);
+			if (this->teamspeak.flushClientSelfUpdates(connection, nullptr) != ERROR_ok)
+			{
+				this->teamspeak.logMessage("Failed to flush metadata update", LogLevel_ERROR, "MARS", 0);
+			}
 		}
 	}
 
@@ -326,7 +333,7 @@ namespace MARS
 		{
 			this->teamspeak.logMessage("Failed to clear metadata", LogLevel_ERROR, "MARS", 0);
 		}
-		if (this->teamspeak.flushClientSelfUpdates(connection, nullptr))
+		if (this->teamspeak.flushClientSelfUpdates(connection, nullptr) != ERROR_ok)
 		{
 			this->teamspeak.logMessage("Failed to flush metadata update", LogLevel_ERROR, "MARS", 0);
 		}
@@ -341,7 +348,7 @@ namespace MARS
 		}
 
 		this->inGame = true;
-		this->updateMetaData();
+		this->updateMetaData(true);
 	}
 
 	void Plugin::stop()
@@ -352,7 +359,7 @@ namespace MARS
 		}
 
 		this->inGame = false;
-		this->updateMetaData();
+		this->updateMetaData(true);
 	}
 
 	/// <summary>
@@ -436,7 +443,7 @@ namespace MARS
 		if (id - 1 != this->selectedRadioIndex)
 		{
 			this->selectedRadioIndex = id - 1;
-			this->updateMetaData();
+			this->updateMetaData(true);
 		}
 	}
 
@@ -448,7 +455,7 @@ namespace MARS
 		if (this->usingExternal)
 		{
 			this->usingExternal = false;
-			this->updateMetaData();
+			this->updateMetaData(true);
 		}
 	}
 
@@ -460,7 +467,7 @@ namespace MARS
 		if (!this->usingExternal)
 		{
 			this->usingExternal = true;
-			this->updateMetaData();
+			this->updateMetaData(true);
 		}
 	}
 
@@ -483,7 +490,7 @@ namespace MARS
 			this->external[index].setModulation(modulation);
 		}
 
-		this->updateMetaData();
+		this->updateMetaData(true);
 	}
 
 	void Plugin::setPlayerInformation(const string& name, const string& unit)

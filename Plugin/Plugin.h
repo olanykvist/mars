@@ -39,7 +39,7 @@ namespace MARS
 		
 		void onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId);
 		static void onMessageReceived(const char* message);
-		void updateMetaData();
+		void updateMetaData(bool flush = false);
 		void clearMetaData();
 		void start();
 		void stop();
