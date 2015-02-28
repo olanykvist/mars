@@ -46,6 +46,10 @@ namespace MARS
 		void loadConfiguration();
 		
 		void onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId);
+		void onClientTalkStatusChanged(uint64 serverConnectionHandlerId, int status, anyID clientId);
+		void onPlaybackVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels);
+		void onPostProcessVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels, const unsigned int* channelSpeakerArray, unsigned int* channelFillMask);
+
 		static void onMessageReceived(const char* message);
 		static void onButtonDown(const wchar_t* device, int button);
 		static void onButtonUp(const wchar_t* device, int button);

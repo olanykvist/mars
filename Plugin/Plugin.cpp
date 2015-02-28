@@ -268,6 +268,118 @@ namespace MARS
 		}
 	}
 
+	void Plugin::onClientTalkStatusChanged(uint64 serverConnectionHandlerId, int status, anyID clientId)
+	{
+		// PTT ner och upp när annan sänder (som man kan höra)
+		// Endast PTT upp när man själv sänder
+
+		if (this->inGame == false)
+		{
+			return;
+		}
+
+		anyID myId = 0;
+		if (this->teamspeak.getClientID(serverConnectionHandlerId, &myId) != ERROR_ok)
+		{
+			this->teamspeak.logMessage("Failed to get own Id", LogLevel_ERROR, Plugin::NAME, 0);
+			return;
+		}
+
+		if (clientId == myId)
+		{
+			if (status == STATUS_NOT_TALKING) // Only play ppt "up" sound
+			{
+
+			}
+		}
+		else
+		{
+			if (status == STATUS_TALKING)
+			{
+
+			}
+			else if (status == STATUS_NOT_TALKING)
+			{
+
+			}
+		}
+	}
+
+	void Plugin::onPlaybackVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels)
+	{
+		if (plugin.inGame == false)
+		{
+			return;
+		}
+
+		const int noise_level = 150;
+
+		// Filter here
+		// TODO: Add band pass filter and range limit
+		for (int i = 0; i < sampleCount; ++i)
+		{
+			// Add some random noise
+			int noise = rand() % noise_level;
+			samples[i] = samples[i] + noise - noise_level;
+
+			// Distort silent sounds by zeroizing samples
+			if (abs(samples[i]) <= 100)
+			{
+				samples[i] = 0;
+			}
+
+			// Keep every 3rd sample only
+			if (i % 3 == 0)
+			{
+				samples[i + 1] = samples[i];
+				samples[i + 2] = samples[i];
+			}
+		}
+	}
+
+	void Plugin::onPostProcessVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels, const unsigned int* channelSpeakerArray, unsigned int* channelFillMask)
+	{
+		if (plugin.inGame == false)
+		{
+			return;
+		}
+
+		float pan = receivers[clientId]->getPan();
+
+		// Pan here
+		int left = -1;
+		int right = -1;
+
+		// Find left/right channel
+		for (int i = 0; i < channels; i++)
+		{
+			if (channelSpeakerArray[i] == SPEAKER_HEADPHONES_LEFT || channelSpeakerArray[i] == SPEAKER_FRONT_LEFT)
+			{
+				left = i;
+			}
+			if (channelSpeakerArray[i] == SPEAKER_HEADPHONES_RIGHT || channelSpeakerArray[i] == SPEAKER_FRONT_RIGHT)
+			{
+				right = i;
+			}
+		}
+
+		if (left >= 0 && right >= 0)
+		{
+			for (int i = 0; i < sampleCount; ++i)
+			{
+				if (pan <= -0.1) // Left (mute right)
+				{
+					samples[right + (i * channels)] = 0;
+				}
+				else if (pan >= 0.1) // Right (mute left)
+				{
+					samples[left + (i * channels)] = 0;
+				}
+			}
+		}
+
+	}
+
 	void Plugin::onMessageReceived(const char* message)
 	{
 		// Debug output
@@ -772,4 +884,20 @@ void ts3plugin_onConnectStatusChangeEvent(uint64 serverConnectionHandlerID, int 
 void ts3plugin_onUpdateClientEvent(uint64 serverConnectionHandlerID, anyID clientID, anyID invokerID, const char* invokerName, const char* invokerUniqueIdentifier)
 {
 	plugin.onClientUpdated(serverConnectionHandlerID, clientID, invokerID);
+}
+
+// Called when someone starts or stops talking
+void ts3plugin_onTalkStatusChangeEvent(uint64 serverConnectionHandlerID, int status, int isReceivedWhisper, anyID clientID)
+{
+	plugin.onClientTalkStatusChanged(serverConnectionHandlerID, status, clientID);
+}
+
+void ts3plugin_onEditPlaybackVoiceDataEvent(uint64 serverConnectionHandlerID, anyID clientID, short* samples, int sampleCount, int channels)
+{
+	plugin.onPlaybackVoiceDataEvent(serverConnectionHandlerID, clientID, samples, sampleCount, channels);
+}
+
+void ts3plugin_onEditPostProcessVoiceDataEvent(uint64 serverConnectionHandlerID, anyID clientID, short* samples, int sampleCount, int channels, const unsigned int* channelSpeakerArray, unsigned int* channelFillMask)
+{
+	plugin.onPostProcessVoiceDataEvent(serverConnectionHandlerID, clientID, samples, sampleCount, channels, channelSpeakerArray, channelFillMask);
 }
