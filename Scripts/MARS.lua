@@ -27,6 +27,15 @@ MARS.modulation =
 	FM = 1
 }
 
+MARS.unitsWithInternalRadio =
+{
+	["A-10C"] = true,
+	["Ka-50"] = true,
+	["MiG-21Bis"]= true,
+	["P-51D"] = true,
+	["TF-51D"] = true
+}
+
 MARS.data = {}
 
 MARS.JSON = nil                       -- JSON library
@@ -43,7 +52,7 @@ end
 MARS.InitializeData = function()
 	MARS.data =
 	{
-		internal = false,
+		internal = nil,
 		name = "init",
 		unit = "init",
 		pos = {x = 0, y = 0, z = 0},
@@ -117,6 +126,7 @@ MARS.ExportCommon = function()
 		if panel == 0 then
 			unit = "Parachute" -- Pilot ejected
 			internal = false
+			MARS.SendSelectCommand(1)
 		end
 	end
 	
@@ -128,7 +138,7 @@ MARS.ExportCommon = function()
 	end
 	
 	---[[
-	--internal = MARS.UnitHasInternalRadio(unit)
+	internal = MARS.UnitHasInternalRadio(unit)
 	if MARS.data.internal ~= internal then
 		MARS.SendUseCommand(internal)
 		MARS.data.internal = internal
@@ -141,6 +151,8 @@ MARS.ExportCommon = function()
 		export = MARS.ExportKA50()
 	elseif unit == "MiG-21Bis" then
 		export = MARS.ExportMIG21()
+	elseif unit == "P-51D" or unit == "TF-51D" then
+		export = MARS.ExportP51()
 	end
 	
 	if export ~= nil then
@@ -199,6 +211,29 @@ MARS.ExportA10 = function()
 end
 
 MARS.ExportP51 = function()
+	local radio =
+	{
+		id = 1,
+		name = "SCR522A",
+		primary = MARS.Round(MARS.GetFrequency(24), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	local selected = 1
+
+	if MARS.data.selected ~= selected then
+		MARS.SendSelectCommand(selected)
+		MARS.data.selected = selected
+	end
+	
+	if not MARS.FastCompare(MARS.data.radios[1], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[1] = MARS.FastCopy(radio)
+	end
+	
+	MARS.ClearRadio(2)
+	MARS.ClearRadio(3)
 end
 
 MARS.ExportMI8 = function()
@@ -268,13 +303,7 @@ MARS.ExportKA50 = function()
 		MARS.data.selected = selected
 	end
 	
-	-- Clear radio 3
-	radio =	{ id = 3, name = "N/A", primary = 0, secondary = 0, modulation = MARS.modulation.AM }
-	if not MARS.FastCompare(MARS.data.radios[3], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[3] = MARS.FastCopy(radio)
-	end
-	
+	MARS.ClearRadio(3)
 end
 
 MARS.ExportUH1 = function()
@@ -308,18 +337,15 @@ MARS.ExportMIG21 = function()
 		MARS.data.radios[1] = MARS.FastCopy(radio)
 	end
 	
-	-- Clear radio 2
-	radio = { id = 2, name = "N/A", primary = 0, secondary = 0, modulation = 0 }
-	if not MARS.FastCompare(MARS.data.radios[2], radio) then
+	MARS.ClearRadio(2)
+	MARS.ClearRadio(3)
+end
+
+MARS.ClearRadio = function(id)
+	local radio = { id = id, name = "N/A", primary = 0, secondary = 0, modulation = 0 }
+	if not MARS.FastCompare(MARS.data.radios[id], radio) then
 		MARS.SendSetCommand(radio)
-		MARS.data.radios[2] = MARS.FastCopy(radio)
-	end
-	
-	-- Clear radio 3
-	radio = { id = 3, name = "N/A", primary = 0, secondary = 0, modulation = 0 }
-	if not MARS.FastCompare(MARS.data.radios[3], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[3] = MARS.FastCopy(radio)
+		MARS.data.radios[id] = MARS.FastCopy(radio)
 	end
 end
 
@@ -527,15 +553,7 @@ MARS.NearEqual = function(a, b, epsilon)
 end
 
 MARS.UnitHasInternalRadio = function(unit)
-	if unit == "A-10C" then
-		return true
-	elseif unit == "Ka-50" then
-		return true
-	elseif unit == "MiG-21Bis" then
-		return true
-	else
-		return false
-	end
+	return MARS.unitsWithInternalRadio[unit] == true
 end
 
 MARS.Log = function(message)
