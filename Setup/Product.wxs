@@ -4,10 +4,15 @@
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate />
+    <WixVariable Id="WixUIBannerBmp" Value="Banner.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UIRef Id="WixUI_InstallDir" />
     <Feature Id="MainFeature">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentGroupRef Id="Scripts" />
       <ComponentGroupRef Id="Plugin" />
+      <ComponentRef Id="RegistryEntries" />
     </Feature>
   </Product>
   <Fragment>
@@ -21,6 +26,15 @@
         </Directory>
       </Directory>
     </Directory>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Component Id="RegistryEntries" Guid="{783DD21C-2659-467E-9AAB-CD6D6BEEA9E6}">
+        <RegistryKey Root="HKLM" Key="Software\Master Arms\MARS">
+          <RegistryValue Type="string" Name="InstallPath" Value="[INSTALLFOLDER]" KeyPath="yes"/>
+        </RegistryKey>
+      </Component>
+    </DirectoryRef>
   </Fragment>
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER" >
