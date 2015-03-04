@@ -61,6 +61,16 @@ namespace MARS.Common
         public int SelectPttThreeButton { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the input device
+        /// </summary>
+        public string PttCommonDevice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the button index
+        /// </summary>
+        public int PttCommonButton { get; set; }
+
+        /// <summary>
         /// Gets or sets the radio pan setting
         /// </summary>
         public float RadioOnePan { get; set; }
@@ -95,9 +105,12 @@ namespace MARS.Common
             config.SelectPttThreeDevice = Utility.ReadConfigurationString("SELECT_PTT_3", "Device", string.Empty, path);
             config.SelectPttThreeButton = Utility.ReadConfigurationInteger("SELECT_PTT_3", "Button", 0, path);
 
-            config.RadioOnePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio1", string.Empty, path));
-            config.RadioTwoPan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio2", string.Empty, path));
-            config.RadioThreePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio3", string.Empty, path));
+            config.PttCommonDevice = Utility.ReadConfigurationString("COMMON_PTT", "Device", string.Empty, path);
+            config.PttCommonButton = Utility.ReadConfigurationInteger("COMMON_PTT", "Button", 0, path);
+
+            config.RadioOnePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio1", string.Empty, path), CultureInfo.InvariantCulture);
+            config.RadioTwoPan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio2", string.Empty, path), CultureInfo.InvariantCulture);
+            config.RadioThreePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio3", string.Empty, path), CultureInfo.InvariantCulture);
 
             return config;
         }
@@ -130,9 +143,12 @@ namespace MARS.Common
             Utility.WriteConfigurationString("SELECT_PTT_3", "Device", this.SelectPttThreeDevice, path);
             Utility.WriteConfigurationString("SELECT_PTT_3", "Button", this.SelectPttThreeButton.ToString(), path);
 
+            Utility.WriteConfigurationString("COMMON_PTT", "Device", this.PttCommonDevice, path);
+            Utility.WriteConfigurationString("COMMON_PTT", "Button", this.PttCommonButton.ToString(), path);
+
             Utility.WriteConfigurationString("PAN", "Radio1", this.RadioOnePan.ToString("F", CultureInfo.InvariantCulture), path);
-            Utility.WriteConfigurationString("PAN", "Radio2", this.RadioOnePan.ToString("F", CultureInfo.InvariantCulture), path);
-            Utility.WriteConfigurationString("PAN", "Radio3", this.RadioOnePan.ToString("F", CultureInfo.InvariantCulture), path);
+            Utility.WriteConfigurationString("PAN", "Radio2", this.RadioTwoPan.ToString("F", CultureInfo.InvariantCulture), path);
+            Utility.WriteConfigurationString("PAN", "Radio3", this.RadioThreePan.ToString("F", CultureInfo.InvariantCulture), path);
         }
 
         /// <summary>

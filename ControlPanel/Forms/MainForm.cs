@@ -83,6 +83,13 @@ namespace MARS.ControlPanel.Forms
 
             this.selectPttThreeDeviceLabel.Text = this.configuration.SelectPttThreeDevice;
             this.selectPttThreeButtonLabel.Text = this.configuration.SelectPttThreeButton.ToString();
+
+            this.pttCommonDeviceLabel.Text = this.configuration.PttCommonDevice;
+            this.pttCommonButtonLabel.Text = this.configuration.PttCommonButton.ToString();
+
+            this.radioOnePanTrack.Value = (int)(this.configuration.RadioOnePan * 100);
+            this.radioTwoPanTrack.Value = (int)(this.configuration.RadioTwoPan * 100);
+            this.radioThreePanTrack.Value = (int)(this.configuration.RadioThreePan * 100);
         }
 
         private void SaveConfiguration()
@@ -97,6 +104,13 @@ namespace MARS.ControlPanel.Forms
 
             this.configuration.SelectPttThreeDevice = this.selectPttThreeDeviceLabel.Text;
             this.configuration.SelectPttThreeButton = Convert.ToInt32(this.selectPttThreeButtonLabel.Text);
+
+            this.configuration.PttCommonDevice = this.pttCommonDeviceLabel.Text;
+            this.configuration.PttCommonButton = Convert.ToInt32(this.pttCommonButtonLabel.Text);
+
+            this.configuration.RadioOnePan = this.radioOnePanTrack.Value / 100.0f;
+            this.configuration.RadioTwoPan = this.radioTwoPanTrack.Value / 100.0f;
+            this.configuration.RadioThreePan = this.radioThreePanTrack.Value / 100.0f;
 
             this.configuration.Save();
         }
@@ -237,6 +251,7 @@ namespace MARS.ControlPanel.Forms
             this.setSelectPttOneButton.Enabled = !this.setSelectPttOneButton.Enabled;
             this.setSelectPttTwoButton.Enabled = !this.setSelectPttTwoButton.Enabled;
             this.setSelectPttThreeButton.Enabled = !this.setSelectPttThreeButton.Enabled;
+            this.setPttCommonButton.Enabled = !this.setPttCommonButton.Enabled;
         }
 
         private void OnSelectPathButtonClick(object sender, EventArgs e)
@@ -340,6 +355,11 @@ namespace MARS.ControlPanel.Forms
             {
                 this.selectPttThreeDeviceLabel.Text = assignment.Device;
                 this.selectPttThreeButtonLabel.Text = assignment.Button.ToString();
+            }
+            else if (assignment.AssignmentName.Equals("COMMON_PTT", StringComparison.InvariantCulture))
+            {
+                this.pttCommonDeviceLabel.Text = assignment.Device;
+                this.pttCommonButtonLabel.Text = assignment.Button.ToString();
             }
 
             this.ToggleSetSelectPttButtons();
