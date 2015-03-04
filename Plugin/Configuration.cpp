@@ -48,9 +48,9 @@ namespace MARS
 		configuration.selectPttThreeDevice = wstring(buffer);
 		configuration.selectPttThreeButton = GetPrivateProfileIntW(L"SELECT_PTT_3", L"Button", 0, file.c_str());
 
-		GetPrivateProfileStringW(L"PTT_COMMON", L"Device", L"", buffer, BUFFER_SIZE, file.c_str());
+		GetPrivateProfileStringW(L"COMMON_PTT", L"Device", L"", buffer, BUFFER_SIZE, file.c_str());
 		configuration.pttCommonDevice = wstring(buffer);
-		configuration.pttCommonButton = GetPrivateProfileIntW(L"PTT_COMMON", L"Button", 0, file.c_str());
+		configuration.pttCommonButton = GetPrivateProfileIntW(L"COMMON_PTT", L"Button", 0, file.c_str());
 
 		GetPrivateProfileStringW(L"PAN", L"Radio1", L"", buffer, BUFFER_SIZE, file.c_str());
 		configuration.radioOnePan = _wtof(buffer);
