@@ -126,7 +126,10 @@ MARS.ExportCommon = function()
 		if panel == 0 then
 			unit = "Parachute" -- Pilot ejected
 			internal = false
-			MARS.SendSelectCommand(1)
+			if MARS.data.selected ~= 1 then
+				MARS.SendSelectCommand(1)
+				MARS.data.selected = 1
+			end
 		end
 	end
 	
