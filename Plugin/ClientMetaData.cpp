@@ -89,7 +89,7 @@ namespace MARS
 		}
 		else
 		{
-			throw;
+			// Failed to parse metadata
 		}
 
 		return data;
