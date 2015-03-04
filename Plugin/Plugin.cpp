@@ -51,10 +51,16 @@ namespace MARS
 		this->internal.push_back(Radio());
 		this->internal.push_back(Radio());
 
-		//
+		// Default config for external radios
 		this->external[0].setName("EXT 1");
+		this->external[0].setPrimaryFrequency(121500000);
+		this->external[0].setModulation(Modulation::AM);
 		this->external[1].setName("EXT 2");
+		this->external[1].setPrimaryFrequency(243000000);
+		this->external[1].setModulation(Modulation::AM);
 		this->external[2].setName("EXT 3");
+		this->external[2].setPrimaryFrequency(40500000);
+		this->external[2].setModulation(Modulation::FM);
 	}
 
 	Plugin::~Plugin()
@@ -344,7 +350,22 @@ namespace MARS
 			return;
 		}
 
-		float pan = receivers[clientId]->getPan();
+		Radio* radio = nullptr;
+		float pan = 0.0f;
+		try
+		{
+			radio = this->receivers.at(clientId);
+			if (radio == nullptr)
+			{
+				return;
+			}
+
+			pan = radio->getPan();
+		}
+		catch (std::out_of_range)
+		{
+			// Client not found in map
+		}
 
 		// Pan here
 		int left = -1;
@@ -460,54 +481,103 @@ namespace MARS
 
 	void Plugin::onButtonDown(const wchar_t* device, int button)
 	{
-		if (device == plugin.configuration.getSelectPttOneDevice())
+		// Only handle input when ingame
+		if (plugin.inGame == false)
 		{
-			if (button == plugin.configuration.getSelectPttOneButton())
-			{
-				plugin.teamspeak.printMessageToCurrentTab("PTT 1 DOWN");
-			}
+			return;
 		}
 
-		if (device == plugin.configuration.getSelectPttTwoDevice())
+		uint64 connection = plugin.teamspeak.getCurrentServerConnectionHandlerID();
+
+		// Handle separate PTT:s if using external radios or flying A-10C (for now...)
+		if (plugin.usingExternal || plugin.unit == "A-10C")
 		{
-			if (button == plugin.configuration.getSelectPttTwoButton())
+			if (device == plugin.configuration.getSelectPttOneDevice())
 			{
-				plugin.teamspeak.printMessageToCurrentTab("PTT 2 DOWN");
+				if (button == plugin.configuration.getSelectPttOneButton())
+				{
+					plugin.selectActiveRadio(1);
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
+				}
+			}
+
+			if (device == plugin.configuration.getSelectPttTwoDevice())
+			{
+				if (button == plugin.configuration.getSelectPttTwoButton())
+				{
+					plugin.selectActiveRadio(2);
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
+				}
+			}
+
+			if (device == plugin.configuration.getSelectPttThreeDevice())
+			{
+				if (button == plugin.configuration.getSelectPttThreeButton())
+				{
+					plugin.selectActiveRadio(3);
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
+				}
 			}
 		}
-
-		if (device == plugin.configuration.getSelectPttThreeDevice())
+		else
 		{
-			if (button == plugin.configuration.getSelectPttThreeButton())
+			// Handle only common PTT
+			if (device == plugin.configuration.getPttCommonDevice())
 			{
-				plugin.teamspeak.printMessageToCurrentTab("PTT 3 DOWN");
+				if (button == plugin.configuration.getPttCommonButton())
+				{
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
+				}
 			}
 		}
 	}
 
 	void Plugin::onButtonUp(const wchar_t* device, int button)
 	{
-		if (device == plugin.configuration.getSelectPttOneDevice())
+		// Only handle input when ingame
+		if (plugin.inGame == false)
 		{
-			if (button == plugin.configuration.getSelectPttOneButton())
-			{
-				plugin.teamspeak.printMessageToCurrentTab("PTT 1 UP");
-			}
+			return;
 		}
 
-		if (device == plugin.configuration.getSelectPttTwoDevice())
+		uint64 connection = plugin.teamspeak.getCurrentServerConnectionHandlerID();
+
+		// Handle separate PTT:s if using external radios or flying A-10C (for now...)
+		if (plugin.usingExternal || plugin.unit == "A-10C")
 		{
-			if (button == plugin.configuration.getSelectPttTwoButton())
+			if (device == plugin.configuration.getSelectPttOneDevice())
 			{
-				plugin.teamspeak.printMessageToCurrentTab("PTT 2 UP");
+				if (button == plugin.configuration.getSelectPttOneButton())
+				{
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
+				}
+			}
+
+			if (device == plugin.configuration.getSelectPttTwoDevice())
+			{
+				if (button == plugin.configuration.getSelectPttTwoButton())
+				{
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
+				}
+			}
+
+			if (device == plugin.configuration.getSelectPttThreeDevice())
+			{
+				if (button == plugin.configuration.getSelectPttThreeButton())
+				{
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
+				}
 			}
 		}
-
-		if (device == plugin.configuration.getSelectPttThreeDevice())
+		else
 		{
-			if (button == plugin.configuration.getSelectPttThreeButton())
+			// Handle only common PTT
+			if (device == plugin.configuration.getPttCommonDevice())
 			{
-				plugin.teamspeak.printMessageToCurrentTab("PTT 3 UP");
+				if (button == plugin.configuration.getPttCommonButton())
+				{
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
+				}
 			}
 		}
 	}
@@ -625,7 +695,6 @@ namespace MARS
 		else
 		{
 			// Failed to get value
-			throw;
 		}
 
 		return vad;
