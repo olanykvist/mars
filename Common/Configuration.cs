@@ -7,6 +7,7 @@
 namespace MARS.Common
 {
     using System;
+    using System.Globalization;
     using System.IO;
 
     /// <summary>
@@ -60,6 +61,21 @@ namespace MARS.Common
         public int SelectPttThreeButton { get; set; }
 
         /// <summary>
+        /// Gets or sets the radio pan setting
+        /// </summary>
+        public float RadioOnePan { get; set; }
+
+        /// <summary>
+        /// Gets or sets the radio pan setting
+        /// </summary>
+        public float RadioTwoPan { get; set; }
+
+        /// <summary>
+        /// Gets or sets the radio pan setting
+        /// </summary>
+        public float RadioThreePan { get; set; }
+
+        /// <summary>
         /// Loads current configuration from file
         /// </summary>
         /// <returns>The current configuration</returns>
@@ -78,6 +94,10 @@ namespace MARS.Common
 
             config.SelectPttThreeDevice = Utility.ReadConfigurationString("SELECT_PTT_3", "Device", string.Empty, path);
             config.SelectPttThreeButton = Utility.ReadConfigurationInteger("SELECT_PTT_3", "Button", 0, path);
+
+            config.RadioOnePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio1", string.Empty, path));
+            config.RadioTwoPan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio2", string.Empty, path));
+            config.RadioThreePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio3", string.Empty, path));
 
             return config;
         }
@@ -109,6 +129,10 @@ namespace MARS.Common
 
             Utility.WriteConfigurationString("SELECT_PTT_3", "Device", this.SelectPttThreeDevice, path);
             Utility.WriteConfigurationString("SELECT_PTT_3", "Button", this.SelectPttThreeButton.ToString(), path);
+
+            Utility.WriteConfigurationString("PAN", "Radio1", this.RadioOnePan.ToString("F", CultureInfo.InvariantCulture), path);
+            Utility.WriteConfigurationString("PAN", "Radio2", this.RadioOnePan.ToString("F", CultureInfo.InvariantCulture), path);
+            Utility.WriteConfigurationString("PAN", "Radio3", this.RadioOnePan.ToString("F", CultureInfo.InvariantCulture), path);
         }
 
         /// <summary>

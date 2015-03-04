@@ -15,6 +15,8 @@ namespace MARS
 		, selectPttTwoButton(0)
 		, selectPttThreeDevice()
 		, selectPttThreeButton(0)
+		, pttCommonDevice()
+		, pttCommonButton(0)
 		, radioOnePan(0.0f)
 		, radioTwoPan(0.0f)
 		, radioThreePan(0.0f)
@@ -46,10 +48,18 @@ namespace MARS
 		configuration.selectPttThreeDevice = wstring(buffer);
 		configuration.selectPttThreeButton = GetPrivateProfileIntW(L"SELECT_PTT_3", L"Button", 0, file.c_str());
 
-		// Not in ini-file yet
-		configuration.radioOnePan = -1.0f;
-		configuration.radioTwoPan = 0.0f;
-		configuration.radioThreePan = 1.0f;
+		GetPrivateProfileStringW(L"PTT_COMMON", L"Device", L"", buffer, BUFFER_SIZE, file.c_str());
+		configuration.pttCommonDevice = wstring(buffer);
+		configuration.pttCommonButton = GetPrivateProfileIntW(L"PTT_COMMON", L"Button", 0, file.c_str());
+
+		GetPrivateProfileStringW(L"PAN", L"Radio1", L"", buffer, BUFFER_SIZE, file.c_str());
+		configuration.radioOnePan = _wtof(buffer);
+
+		GetPrivateProfileStringW(L"PAN", L"Radio2", L"", buffer, BUFFER_SIZE, file.c_str());
+		configuration.radioTwoPan = _wtof(buffer);
+
+		GetPrivateProfileStringW(L"PAN", L"Radio3", L"", buffer, BUFFER_SIZE, file.c_str());
+		configuration.radioThreePan = _wtof(buffer);
 
 		return configuration;
 	}
@@ -82,6 +92,16 @@ namespace MARS
 	int Configuration::getSelectPttThreeButton() const
 	{
 		return this->selectPttThreeButton;
+	}
+
+	const wstring& Configuration::getPttCommonDevice() const
+	{
+		return this->pttCommonDevice;
+	}
+
+	int Configuration::getPttCommonButton() const
+	{
+		return this->pttCommonButton;
 	}
 
 	float Configuration::getRadioOnePan() const
