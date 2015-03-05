@@ -3,7 +3,7 @@
   <Product Id="{F9AF699C-76BE-4D60-9D3B-678B8DCDC58A}" Name="MARS" Language="1033" Version="0.9.0.0" Manufacturer="Master Arms" UpgradeCode="{9B36C710-11BE-4828-9274-4540C306F6BE}">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-    <MediaTemplate />
+    <MediaTemplate EmbedCab="yes" />
     <WixVariable Id="WixUIBannerBmp" Value="Banner.bmp" />
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />

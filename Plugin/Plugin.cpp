@@ -18,7 +18,7 @@ static MARS::Plugin plugin;
 namespace MARS
 {
 	const char* Plugin::NAME = "MARS";
-	const char* Plugin::VERSION = "1.0 beta";
+	const char* Plugin::VERSION = "1.0.0-beta-1";
 	const char* Plugin::AUTHOR = "Master Arms";
 	const char* Plugin::DESCRIPTION = "MARS, Master Arms Radio System, integrates the radios in DCS World with TeamSpeak for a more realistic radio experience.";
 	const char* Plugin::COMMAND_KEYWORD = "mars";
@@ -318,28 +318,47 @@ namespace MARS
 			return;
 		}
 
-		const int noise_level = 150;
-
-		// Filter here
-		// TODO: Add band pass filter and range limit
-		for (int i = 0; i < sampleCount; ++i)
+		Radio* radio = nullptr;
+		try
 		{
-			// Add some random noise
-			int noise = rand() % noise_level;
-			samples[i] = samples[i] + noise - noise_level;
-
-			// Distort silent sounds by zeroizing samples
-			if (abs(samples[i]) <= 100)
+			radio = this->receivers.at(clientId);
+			if (radio == nullptr) // No radio
 			{
-				samples[i] = 0;
+				for (int i = 0; i < sampleCount; ++i)
+				{
+					samples[i] = 0;
+				}
 			}
-
-			// Keep every 3rd sample only
-			if (i % 3 == 0)
+			else
 			{
-				samples[i + 1] = samples[i];
-				samples[i + 2] = samples[i];
+				const int noise_level = 150;
+
+				// Filter here
+				// TODO: Add band pass filter and range limit
+				for (int i = 0; i < sampleCount; ++i)
+				{
+					// Add some random noise
+					int noise = rand() % noise_level;
+					samples[i] = samples[i] + noise - noise_level;
+
+					// Distort silent sounds by zeroizing samples
+					if (abs(samples[i]) <= 100)
+					{
+						samples[i] = 0;
+					}
+
+					// Keep every 3rd sample only
+					if (i % 3 == 0)
+					{
+						samples[i + 1] = samples[i];
+						samples[i + 2] = samples[i];
+					}
+				}
 			}
+		}
+		catch (std::out_of_range)
+		{
+			// Client not found in map
 		}
 	}
 

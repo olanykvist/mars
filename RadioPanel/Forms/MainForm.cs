@@ -23,7 +23,7 @@ namespace MARS.RadioPanel.Forms
         {
             InitializeComponent();
             connection.control = this.mainSatusLabel;
-            StartClient();
+            //StartClient();
             this.connectionTimer.Start();
         }
 
