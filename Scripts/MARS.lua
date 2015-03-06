@@ -37,7 +37,8 @@ MARS.unitsWithInternalRadio =
 	["UH-1H"] = true,
 	["F-86F Sabre"] = true,
 	["FW-190D9"] = true,
-	["Bf-109K-4"] = true
+	["Bf-109K-4"] = true,
+	["Mi-8MT"] = true
 }
 
 MARS.data = {}
@@ -166,6 +167,8 @@ MARS.ExportCommon = function()
 		export = MARS.ExportFW190()
 	elseif unit == "Bf-109K-4" then
 		export = MARS.ExportBF109()
+	elseif unit == "Mi-8MT" then
+		export = MARS.ExportMI8()
 	end
 	
 	if export ~= nil then
@@ -250,6 +253,66 @@ MARS.ExportP51 = function()
 end
 
 MARS.ExportMI8 = function()
+	local radio =
+	{
+		id = 1,
+		name = "R-828",
+		primary = MARS.Round(MARS.GetFrequency(39), 50000),
+		secondary = 0,
+		modulation = MARS.modulation.FM
+	}
+	
+	if not MARS.FastCompare(MARS.data.radios[1], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[1] = MARS.FastCopy(radio)
+	end
+	
+	radio =
+	{
+		id = 2,
+		name = "R-863",
+		primary = MARS.Round(MARS.GetFrequency(38), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	if not MARS.FastCompare(MARS.data.radios[2], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[2] = MARS.FastCopy(radio)
+	end
+	
+	radio =
+	{
+		id = 3,
+		name = "JADRO-1A",
+		primary = MARS.Round(MARS.GetFrequency(37), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	if not MARS.FastCompare(MARS.data.radios[3], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[3] = MARS.FastCopy(radio)
+	end
+	
+	local panel = GetDevice(0)
+	local switch = panel:get_argument_value(550)
+	local selected = 0
+	
+	if MARS.NearEqual(switch, 0.0, 0.03) then
+		selected = 2
+	elseif MARS.NearEqual(switch, 0.1, 0.03) then
+		selected = 3
+	elseif MARS.NearEqual(switch, 0.2, 0.03) then
+		selected = 1
+	else
+		selected = 0
+	end
+	
+	if MARS.data.selected ~= selected then
+		MARS.SendSelectCommand(selected)
+		MARS.data.selected = selected
+	end
 end
 
 MARS.ExportKA50 = function()
