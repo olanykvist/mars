@@ -35,7 +35,9 @@ MARS.unitsWithInternalRadio =
 	["P-51D"] = true,
 	["TF-51D"] = true,
 	["UH-1H"] = true,
-	["F-86F Sabre"] = true
+	["F-86F Sabre"] = true,
+	["FW-190D9"] = true,
+	["Bf-109K-4"] = true
 }
 
 MARS.data = {}
@@ -142,13 +144,11 @@ MARS.ExportCommon = function()
 		MARS.data.unit = unit
 	end
 	
-	---[[
 	internal = MARS.UnitHasInternalRadio(unit)
 	if MARS.data.internal ~= internal then
 		MARS.SendUseCommand(internal)
 		MARS.data.internal = internal
 	end
-	--]]
 	
 	if unit == "A-10C" then
 		export = MARS.ExportA10()
@@ -162,6 +162,10 @@ MARS.ExportCommon = function()
 		export = MARS.ExportUH1()
 	elseif unit == "F-86F Sabre" then
 		export = MARS.ExportF86()
+	elseif unit == "FW-190D9" then
+		export = MARS.ExportFW190()
+	elseif unit == "Bf-109K-4" then
+		export = MARS.ExportBF109()
 	end
 	
 	if export ~= nil then
@@ -416,6 +420,55 @@ MARS.ExportF86 = function()
 end
 
 MARS.ExportFW190 = function()
+	local radio =
+	{
+		id = 1,
+		name = "FuG 16ZY",
+		primary = MARS.Round(MARS.GetFrequency(15), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	local selected = 1
+
+	if MARS.data.selected ~= selected then
+		MARS.SendSelectCommand(selected)
+		MARS.data.selected = selected
+	end
+	
+	if not MARS.FastCompare(MARS.data.radios[1], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[1] = MARS.FastCopy(radio)
+	end
+	
+	MARS.ClearRadio(2)
+	MARS.ClearRadio(3)
+end
+
+MARS.ExportBF109 = function()
+	local radio =
+	{
+		id = 1,
+		name = "FuG 16ZY",
+		primary = MARS.Round(MARS.GetFrequency(14), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	local selected = 1
+
+	if MARS.data.selected ~= selected then
+		MARS.SendSelectCommand(selected)
+		MARS.data.selected = selected
+	end
+	
+	if not MARS.FastCompare(MARS.data.radios[1], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[1] = MARS.FastCopy(radio)
+	end
+	
+	MARS.ClearRadio(2)
+	MARS.ClearRadio(3)
 end
 
 MARS.ExportMIG21 = function()
