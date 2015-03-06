@@ -34,7 +34,8 @@ MARS.unitsWithInternalRadio =
 	["MiG-21Bis"]= true,
 	["P-51D"] = true,
 	["TF-51D"] = true,
-	["UH-1H"] = true
+	["UH-1H"] = true,
+	["F-86F Sabre"] = true
 }
 
 MARS.data = {}
@@ -159,6 +160,8 @@ MARS.ExportCommon = function()
 		export = MARS.ExportP51()
 	elseif unit == "UH-1H" then
 		export = MARS.ExportUH1()
+	elseif unit == "F-86F Sabre" then
+		export = MARS.ExportF86()
 	end
 	
 	if export ~= nil then
@@ -381,6 +384,35 @@ MARS.ExportUH1 = function()
 end
 
 MARS.ExportF86 = function()
+	local radio =
+	{
+		id = 1,
+		name = "AN/ARC-27",
+		primary = MARS.Round(MARS.GetFrequency(26), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	local panel = GetDevice(0)
+	local knob = panel:get_argument_value(805) -- Function selector knob
+	if MARS.NearEqual(knob, 0.2, 0.03) and radio.primary > 0 then
+		radio.secondary = 243000000
+	end
+	
+	local selected = 1
+
+	if MARS.data.selected ~= selected then
+		MARS.SendSelectCommand(selected)
+		MARS.data.selected = selected
+	end
+	
+	if not MARS.FastCompare(MARS.data.radios[1], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[1] = MARS.FastCopy(radio)
+	end
+	
+	MARS.ClearRadio(2)
+	MARS.ClearRadio(3)
 end
 
 MARS.ExportFW190 = function()
