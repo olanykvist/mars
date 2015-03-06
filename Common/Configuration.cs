@@ -108,9 +108,9 @@ namespace MARS.Common
             config.PttCommonDevice = Utility.ReadConfigurationString("COMMON_PTT", "Device", string.Empty, path);
             config.PttCommonButton = Utility.ReadConfigurationInteger("COMMON_PTT", "Button", 0, path);
 
-            config.RadioOnePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio1", string.Empty, path), CultureInfo.InvariantCulture);
-            config.RadioTwoPan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio2", string.Empty, path), CultureInfo.InvariantCulture);
-            config.RadioThreePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio3", string.Empty, path), CultureInfo.InvariantCulture);
+            config.RadioOnePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio1", "0", path), CultureInfo.InvariantCulture);
+            config.RadioTwoPan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio2", "0", path), CultureInfo.InvariantCulture);
+            config.RadioThreePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio3", "0", path), CultureInfo.InvariantCulture);
 
             return config;
         }
