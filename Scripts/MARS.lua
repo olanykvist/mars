@@ -33,7 +33,8 @@ MARS.unitsWithInternalRadio =
 	["Ka-50"] = true,
 	["MiG-21Bis"]= true,
 	["P-51D"] = true,
-	["TF-51D"] = true
+	["TF-51D"] = true,
+	["UH-1H"] = true
 }
 
 MARS.data = {}
@@ -56,7 +57,7 @@ MARS.InitializeData = function()
 		name = "init",
 		unit = "init",
 		pos = {x = 0, y = 0, z = 0},
-		selected = 0,
+		selected = -1,
 		radios =
 		{
 			{ id = 1, name = "init", primary = 0, secondary = 0, modulation = 0 },
@@ -156,6 +157,8 @@ MARS.ExportCommon = function()
 		export = MARS.ExportMIG21()
 	elseif unit == "P-51D" or unit == "TF-51D" then
 		export = MARS.ExportP51()
+	elseif unit == "UH-1H" then
+		export = MARS.ExportUH1()
 	end
 	
 	if export ~= nil then
@@ -310,6 +313,71 @@ MARS.ExportKA50 = function()
 end
 
 MARS.ExportUH1 = function()
+	local radio =
+	{
+		id = 1,
+		name = "AN/ARC-131",
+		primary = MARS.Round(MARS.GetFrequency(23), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.FM
+	}
+	
+	if not MARS.FastCompare(MARS.data.radios[1], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[1] = MARS.FastCopy(radio)
+	end
+	
+	radio =
+	{
+		id = 2,
+		name = "AN/ARC-51BX",
+		primary = MARS.Round(MARS.GetFrequency(22), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	local panel = GetDevice(0)
+	local knob = panel:get_argument_value(17) -- Function selector knob
+	if MARS.NearEqual(knob, 0.2, 0.03) and radio.primary > 0 then
+		radio.secondary = 243000000
+	end
+	
+	if not MARS.FastCompare(MARS.data.radios[2], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[2] = MARS.FastCopy(radio)
+	end
+	
+	radio =
+	{
+		id = 3,
+		name = "AN/ARC-134",
+		primary = MARS.Round(MARS.GetFrequency(20), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	if not MARS.FastCompare(MARS.data.radios[3], radio) then
+		MARS.SendSetCommand(radio)
+		MARS.data.radios[3] = MARS.FastCopy(radio)
+	end
+	
+	local switch = panel:get_argument_value(30)
+	local selected = 0
+	
+	if MARS.NearEqual(switch, 0.2, 0.03) then
+		selected = 1
+	elseif MARS.NearEqual(switch, 0.3, 0.03) then
+		selected = 2
+	elseif MARS.NearEqual(switch, 0.4, 0.03) then
+		selected = 3
+	else
+		selected = 0
+	end
+	
+	if MARS.data.selected ~= selected then
+		MARS.SendSelectCommand(selected)
+		MARS.data.selected = selected
+	end
 end
 
 MARS.ExportF86 = function()
