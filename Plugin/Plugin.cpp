@@ -210,13 +210,13 @@ namespace MARS
 	{
 		this->configuration = Configuration::load();
 
-		this->internal[0].setPan(this->configuration.getRadioOnePan);
-		this->internal[1].setPan(this->configuration.getRadioTwoPan);
-		this->internal[2].setPan(this->configuration.getRadioThreePan);
+		this->internal[0].setPan(this->configuration.getRadioOnePan());
+		this->internal[1].setPan(this->configuration.getRadioTwoPan());
+		this->internal[2].setPan(this->configuration.getRadioThreePan());
 
-		this->external[0].setPan(this->configuration.getRadioOnePan);
-		this->external[1].setPan(this->configuration.getRadioTwoPan);
-		this->external[2].setPan(this->configuration.getRadioThreePan);
+		this->external[0].setPan(this->configuration.getRadioOnePan());
+		this->external[1].setPan(this->configuration.getRadioTwoPan());
+		this->external[2].setPan(this->configuration.getRadioThreePan());
 	}
 
 	// Callback
