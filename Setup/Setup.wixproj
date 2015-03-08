@@ -6,7 +6,7 @@
     <ProductVersion>3.9</ProductVersion>
     <ProjectGuid>f044078e-ab66-4355-a5f9-ec37de1cf954</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>MARS-1.0.0-beta-1</OutputName>
+    <OutputName>MARS-1.0.0-beta.2</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
