@@ -13,7 +13,6 @@ namespace PluginTest
 		TEST_METHOD(ShouldStartAndStopWithoutCrash)
 		{
 			InputListener* listener = new InputListener();
-			listener->Initialize();
 			listener->Start();
 
 			delete listener;
