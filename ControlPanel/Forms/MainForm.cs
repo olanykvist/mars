@@ -14,6 +14,7 @@ namespace MARS.ControlPanel.Forms
 
     public partial class MainForm : Form
     {
+        const string EXPORT = "dofile(lfs.writedir() .. \"Scripts/MARS.lua\")";
         private Configuration configuration;
         private DirectInput input;
         private IList<Device> devices;
@@ -117,7 +118,7 @@ namespace MARS.ControlPanel.Forms
 
         private bool IsPluginInstalled()
         {
-            var originalFile = new FileInfo(Path.Combine(this.GetInstallPath(), "MARS.lua"));
+            var originalFile = new FileInfo(Path.Combine(this.GetInstallPath(), @"Plugin\MARS.dll"));
             var installedFile = new FileInfo(Path.Combine(this.configuration.TeamSpeakPath, "plugins", "MARS.dll"));
 
             if (!installedFile.Exists)
@@ -135,8 +136,8 @@ namespace MARS.ControlPanel.Forms
 
         private bool IsScriptInstalled()
         {
-            var installedFile = new FileInfo(Path.Combine(this.GetScriptsPath(), "MARS.lua"));
-            var originalFile = new FileInfo(Path.Combine(this.GetInstallPath(), "MARS.lua"));
+            var originalFile = new FileInfo(Path.Combine(this.GetInstallPath(), @"Scripts\MARS.lua"));
+            var installedFile = new FileInfo(Path.Combine(this.EnsureScriptsPath(), "MARS.lua"));
 
             if (!installedFile.Exists)
             {
@@ -153,7 +154,7 @@ namespace MARS.ControlPanel.Forms
 
         private bool IsExportEnabled()
         {
-            var export = new FileInfo(Path.Combine(this.GetScriptsPath(), "Export.lua"));
+            var export = new FileInfo(Path.Combine(this.EnsureScriptsPath(), "Export.lua"));
 
             if (!export.Exists)
             {
@@ -167,7 +168,7 @@ namespace MARS.ControlPanel.Forms
 
                 while ((line = stream.ReadLine()) != null)
                 {
-                    if (line.Equals("dofile(lfs.writedir() .. \"Scripts/MARS.lua\")", StringComparison.InvariantCultureIgnoreCase))
+                    if (line.Equals(EXPORT, StringComparison.InvariantCultureIgnoreCase))
                     {
                         found = true;
                         break;
@@ -185,17 +186,85 @@ namespace MARS.ControlPanel.Forms
 
         private void EnableExport()
         {
-            var export = new FileInfo(Path.Combine(this.GetScriptsPath(), "Export.lua"));
+            var export = new FileInfo(Path.Combine(this.EnsureScriptsPath(), "Export.lua"));
+
+            if (!export.Exists)
+            {
+                var source = Path.Combine(this.GetInstallPath(), "Scripts", "Export.lua");
+                var target = Path.Combine(this.EnsureScriptsPath(), "Export.lua");
+                File.Copy(source, target, true);
+
+                return;
+            }
+
+            var lines = File.ReadAllLines(Path.Combine(this.EnsureScriptsPath(), "Export.lua"));
+            var found = false;
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                if (lines[i].Contains(EXPORT))
+                {
+                    found = true;
+                    lines[i] = EXPORT;
+                }
+            }
+
+            if (found)
+            {
+                File.WriteAllLines(Path.Combine(this.EnsureScriptsPath(), "Export.lua"), lines);
+            }
+            else
+            {
+                using (var stream = export.Open(FileMode.Append, FileAccess.Write, FileShare.None))
+                {
+                    var writer = new StreamWriter(stream);
+                    writer.WriteLine(EXPORT);
+                }
+            }
+        }
+
+        private void DisableExport()
+        {
+            var lines = File.ReadAllLines(Path.Combine(this.EnsureScriptsPath(), "Export.lua"));
+            
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                if (lines[i].Equals(EXPORT, StringComparison.InvariantCulture))
+                {
+                    lines[i] = "--" + EXPORT;
+                }
+            }
+
+            File.WriteAllLines(Path.Combine(this.EnsureScriptsPath(), "Export.lua"), lines);
         }
 
         private void InstallScript()
         {
-            var file = "MARS.lua";
-            var scriptsPath = this.EnsureScriptsPath();
-            var installPath = this.GetInstallPath();
-            var source = Path.Combine(installPath, file);
-            var target = Path.Combine(scriptsPath, file);
-            File.Copy(source, target, true);
+            var source = Path.Combine(this.GetInstallPath(), "Scripts", "MARS.lua");
+            var target = Path.Combine(this.EnsureScriptsPath(), "MARS.lua");
+
+            try
+            {
+                File.Copy(source, target, true);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                MessageBox.Show("Permission denied :-(", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void InstallPlugin()
+        {
+            var source = Path.Combine(this.GetInstallPath(), "Plugin", "MARS.dll");
+            var target = Path.Combine(this.configuration.TeamSpeakPath, "plugins", "MARS.dll");
+
+            try
+            {
+                File.Copy(source, target, true);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                MessageBox.Show("Permission denied :-(", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private string EnsureScriptsPath()
@@ -210,20 +279,23 @@ namespace MARS.ControlPanel.Forms
             return path;
         }
 
-        private string GetScriptsPath()
-        {
-            return Path.Combine(Utility.GetKnownFolderPath(KnownFolderId.SavedGames), @"DCS\Scripts");
-        }
-
         private string GetInstallPath()
         {
-            return @"C:\Program Files\Master Arms\MARS";
+            var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Master Arms\MARS");
+            var path = key.GetValue("InstallPath") as string;
+            return path;
         }
 
         private void CheckInstallation()
         {
-            this.pluginInstalledLabel.Text = this.IsPluginInstalled().ToString();
-            this.exportEnabledLabel.Text = this.IsExportEnabled().ToString();
+            this.pluginInstalledLabel.Text = this.IsPluginInstalled() ? "Yes" : "No";
+            this.scriptInstalledLabel.Text = this.IsScriptInstalled() ? "Yes" : "No";
+            this.exportEnabledLabel.Text = this.IsExportEnabled() ? "Yes" : "No";
+
+            this.installPluginButton.Enabled = !this.IsPluginInstalled();
+            this.installScriptButton.Enabled = !this.IsScriptInstalled();
+            this.enableExportButton.Enabled = !this.IsExportEnabled();
+            this.disableExportButton.Enabled = this.IsExportEnabled();
         }
 
         private void InitializeInput()
@@ -363,6 +435,35 @@ namespace MARS.ControlPanel.Forms
             }
 
             this.ToggleSetSelectPttButtons();
+        }
+
+        private void OnMainFormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.SaveConfiguration();
+        }
+
+        private void OnInstallPluginButtonClick(object sender, EventArgs e)
+        {
+            this.InstallPlugin();
+            this.CheckInstallation();
+        }
+
+        private void OnInstallScriptButtonClick(object sender, EventArgs e)
+        {
+            this.InstallScript();
+            this.CheckInstallation();
+        }
+
+        private void OnEnableExportButtonClick(object sender, EventArgs e)
+        {
+            this.EnableExport();
+            this.CheckInstallation();
+        }
+
+        private void OnDisableExportButtonClick(object sender, EventArgs e)
+        {
+            this.DisableExport();
+            this.CheckInstallation();
         }
     }
 }

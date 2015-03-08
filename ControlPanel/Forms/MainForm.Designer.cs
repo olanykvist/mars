@@ -25,42 +25,47 @@
             System.Windows.Forms.Label label4;
             System.Windows.Forms.GroupBox groupBox1;
             System.Windows.Forms.GroupBox groupBox2;
-            System.Windows.Forms.Label label6;
-            System.Windows.Forms.Label label7;
-            System.Windows.Forms.Label label8;
-            System.Windows.Forms.Label label9;
-            System.Windows.Forms.Label label10;
-            System.Windows.Forms.Label label11;
-            System.Windows.Forms.Label label12;
-            System.Windows.Forms.Label label13;
             System.Windows.Forms.Label label14;
             System.Windows.Forms.Label label15;
             System.Windows.Forms.Label label16;
             System.Windows.Forms.Label label17;
+            System.Windows.Forms.Label label10;
+            System.Windows.Forms.Label label11;
+            System.Windows.Forms.Label label12;
+            System.Windows.Forms.Label label13;
+            System.Windows.Forms.Label label9;
+            System.Windows.Forms.Label label8;
+            System.Windows.Forms.Label label7;
+            System.Windows.Forms.Label label6;
             System.Windows.Forms.GroupBox groupBox3;
+            System.Windows.Forms.Label label18;
             System.Windows.Forms.Label label5;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.teamSpeakPathTextBox = new System.Windows.Forms.TextBox();
-            this.selectPathButton = new System.Windows.Forms.Button();
-            this.saveButton = new System.Windows.Forms.Button();
-            this.pluginInstalledLabel = new System.Windows.Forms.Label();
-            this.exportEnabledLabel = new System.Windows.Forms.Label();
-            this.setSelectPttOneButton = new System.Windows.Forms.Button();
-            this.inputListener = new System.ComponentModel.BackgroundWorker();
-            this.selectPttOneDeviceLabel = new System.Windows.Forms.Label();
-            this.selectPttOneButtonLabel = new System.Windows.Forms.Label();
+            this.setPttCommonButton = new System.Windows.Forms.Button();
+            this.pttCommonButtonLabel = new System.Windows.Forms.Label();
+            this.pttCommonDeviceLabel = new System.Windows.Forms.Label();
             this.selectPttThreeButtonLabel = new System.Windows.Forms.Label();
             this.selectPttThreeDeviceLabel = new System.Windows.Forms.Label();
             this.setSelectPttThreeButton = new System.Windows.Forms.Button();
             this.selectPttTwoButtonLabel = new System.Windows.Forms.Label();
             this.selectPttTwoDeviceLabel = new System.Windows.Forms.Label();
             this.setSelectPttTwoButton = new System.Windows.Forms.Button();
-            this.pttCommonDeviceLabel = new System.Windows.Forms.Label();
-            this.pttCommonButtonLabel = new System.Windows.Forms.Label();
-            this.setPttCommonButton = new System.Windows.Forms.Button();
-            this.radioOnePanTrack = new System.Windows.Forms.TrackBar();
-            this.radioTwoPanTrack = new System.Windows.Forms.TrackBar();
+            this.selectPttOneButtonLabel = new System.Windows.Forms.Label();
+            this.selectPttOneDeviceLabel = new System.Windows.Forms.Label();
+            this.setSelectPttOneButton = new System.Windows.Forms.Button();
             this.radioThreePanTrack = new System.Windows.Forms.TrackBar();
+            this.radioTwoPanTrack = new System.Windows.Forms.TrackBar();
+            this.radioOnePanTrack = new System.Windows.Forms.TrackBar();
+            this.enableExportButton = new System.Windows.Forms.Button();
+            this.installScriptButton = new System.Windows.Forms.Button();
+            this.installPluginButton = new System.Windows.Forms.Button();
+            this.scriptInstalledLabel = new System.Windows.Forms.Label();
+            this.teamSpeakPathTextBox = new System.Windows.Forms.TextBox();
+            this.selectPathButton = new System.Windows.Forms.Button();
+            this.exportEnabledLabel = new System.Windows.Forms.Label();
+            this.pluginInstalledLabel = new System.Windows.Forms.Label();
+            this.inputListener = new System.ComponentModel.BackgroundWorker();
+            this.disableExportButton = new System.Windows.Forms.Button();
             exportEnabledCaption = new System.Windows.Forms.Label();
             pluginInstalledCaption = new System.Windows.Forms.Label();
             selectPttOneDeviceCaption = new System.Windows.Forms.Label();
@@ -71,32 +76,33 @@
             label4 = new System.Windows.Forms.Label();
             groupBox1 = new System.Windows.Forms.GroupBox();
             groupBox2 = new System.Windows.Forms.GroupBox();
-            label6 = new System.Windows.Forms.Label();
-            label7 = new System.Windows.Forms.Label();
-            label8 = new System.Windows.Forms.Label();
-            label9 = new System.Windows.Forms.Label();
-            label10 = new System.Windows.Forms.Label();
-            label11 = new System.Windows.Forms.Label();
-            label12 = new System.Windows.Forms.Label();
-            label13 = new System.Windows.Forms.Label();
             label14 = new System.Windows.Forms.Label();
             label15 = new System.Windows.Forms.Label();
             label16 = new System.Windows.Forms.Label();
             label17 = new System.Windows.Forms.Label();
+            label10 = new System.Windows.Forms.Label();
+            label11 = new System.Windows.Forms.Label();
+            label12 = new System.Windows.Forms.Label();
+            label13 = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
+            label6 = new System.Windows.Forms.Label();
             groupBox3 = new System.Windows.Forms.GroupBox();
+            label18 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.radioOnePanTrack)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radioTwoPanTrack)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.radioThreePanTrack)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radioTwoPanTrack)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radioOnePanTrack)).BeginInit();
             groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // exportEnabledCaption
             // 
             exportEnabledCaption.AutoSize = true;
-            exportEnabledCaption.Location = new System.Drawing.Point(7, 116);
+            exportEnabledCaption.Location = new System.Drawing.Point(7, 141);
             exportEnabledCaption.Name = "exportEnabledCaption";
             exportEnabledCaption.Size = new System.Drawing.Size(81, 13);
             exportEnabledCaption.TabIndex = 4;
@@ -165,88 +171,6 @@
             label4.TabIndex = 25;
             label4.Text = "Common PTT";
             // 
-            // teamSpeakPathTextBox
-            // 
-            this.teamSpeakPathTextBox.Location = new System.Drawing.Point(9, 54);
-            this.teamSpeakPathTextBox.Name = "teamSpeakPathTextBox";
-            this.teamSpeakPathTextBox.ReadOnly = true;
-            this.teamSpeakPathTextBox.Size = new System.Drawing.Size(370, 20);
-            this.teamSpeakPathTextBox.TabIndex = 0;
-            this.teamSpeakPathTextBox.TextChanged += new System.EventHandler(this.OnTeamSpeakPathTextBoxTextChanged);
-            // 
-            // selectPathButton
-            // 
-            this.selectPathButton.Location = new System.Drawing.Point(385, 53);
-            this.selectPathButton.Name = "selectPathButton";
-            this.selectPathButton.Size = new System.Drawing.Size(75, 21);
-            this.selectPathButton.TabIndex = 1;
-            this.selectPathButton.Text = "Select";
-            this.selectPathButton.UseVisualStyleBackColor = true;
-            this.selectPathButton.Click += new System.EventHandler(this.OnSelectPathButtonClick);
-            // 
-            // saveButton
-            // 
-            this.saveButton.Location = new System.Drawing.Point(385, 80);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(75, 21);
-            this.saveButton.TabIndex = 2;
-            this.saveButton.Text = "Save";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.OnSaveButtonClick);
-            // 
-            // pluginInstalledLabel
-            // 
-            this.pluginInstalledLabel.AutoSize = true;
-            this.pluginInstalledLabel.Location = new System.Drawing.Point(93, 89);
-            this.pluginInstalledLabel.Name = "pluginInstalledLabel";
-            this.pluginInstalledLabel.Size = new System.Drawing.Size(14, 13);
-            this.pluginInstalledLabel.TabIndex = 6;
-            this.pluginInstalledLabel.Text = "X";
-            // 
-            // exportEnabledLabel
-            // 
-            this.exportEnabledLabel.AutoSize = true;
-            this.exportEnabledLabel.Location = new System.Drawing.Point(93, 116);
-            this.exportEnabledLabel.Name = "exportEnabledLabel";
-            this.exportEnabledLabel.Size = new System.Drawing.Size(14, 13);
-            this.exportEnabledLabel.TabIndex = 7;
-            this.exportEnabledLabel.Text = "X";
-            // 
-            // setSelectPttOneButton
-            // 
-            this.setSelectPttOneButton.Location = new System.Drawing.Point(385, 40);
-            this.setSelectPttOneButton.Name = "setSelectPttOneButton";
-            this.setSelectPttOneButton.Size = new System.Drawing.Size(75, 23);
-            this.setSelectPttOneButton.TabIndex = 8;
-            this.setSelectPttOneButton.Tag = "SELECT_PTT_1";
-            this.setSelectPttOneButton.Text = "Set";
-            this.setSelectPttOneButton.UseVisualStyleBackColor = true;
-            this.setSelectPttOneButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
-            // 
-            // inputListener
-            // 
-            this.inputListener.DoWork += new System.ComponentModel.DoWorkEventHandler(this.OnInputListenerDoWork);
-            this.inputListener.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.OnInputListenerRunWorkerCompleted);
-            // 
-            // selectPttOneDeviceLabel
-            // 
-            this.selectPttOneDeviceLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.selectPttOneDeviceLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.selectPttOneDeviceLabel.Location = new System.Drawing.Point(149, 41);
-            this.selectPttOneDeviceLabel.Name = "selectPttOneDeviceLabel";
-            this.selectPttOneDeviceLabel.Size = new System.Drawing.Size(189, 20);
-            this.selectPttOneDeviceLabel.TabIndex = 9;
-            this.selectPttOneDeviceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // selectPttOneButtonLabel
-            // 
-            this.selectPttOneButtonLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.selectPttOneButtonLabel.Location = new System.Drawing.Point(344, 41);
-            this.selectPttOneButtonLabel.Name = "selectPttOneButtonLabel";
-            this.selectPttOneButtonLabel.Size = new System.Drawing.Size(35, 20);
-            this.selectPttOneButtonLabel.TabIndex = 10;
-            this.selectPttOneButtonLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // groupBox1
             // 
             groupBox1.Controls.Add(this.setPttCommonButton);
@@ -273,6 +197,35 @@
             groupBox1.TabIndex = 11;
             groupBox1.TabStop = false;
             groupBox1.Text = "Input assignments";
+            // 
+            // setPttCommonButton
+            // 
+            this.setPttCommonButton.Location = new System.Drawing.Point(385, 130);
+            this.setPttCommonButton.Name = "setPttCommonButton";
+            this.setPttCommonButton.Size = new System.Drawing.Size(75, 23);
+            this.setPttCommonButton.TabIndex = 28;
+            this.setPttCommonButton.Tag = "COMMON_PTT";
+            this.setPttCommonButton.Text = "Set";
+            this.setPttCommonButton.UseVisualStyleBackColor = true;
+            this.setPttCommonButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
+            // 
+            // pttCommonButtonLabel
+            // 
+            this.pttCommonButtonLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pttCommonButtonLabel.Location = new System.Drawing.Point(344, 131);
+            this.pttCommonButtonLabel.Name = "pttCommonButtonLabel";
+            this.pttCommonButtonLabel.Size = new System.Drawing.Size(35, 20);
+            this.pttCommonButtonLabel.TabIndex = 27;
+            this.pttCommonButtonLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // pttCommonDeviceLabel
+            // 
+            this.pttCommonDeviceLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pttCommonDeviceLabel.Location = new System.Drawing.Point(149, 131);
+            this.pttCommonDeviceLabel.Name = "pttCommonDeviceLabel";
+            this.pttCommonDeviceLabel.Size = new System.Drawing.Size(188, 20);
+            this.pttCommonDeviceLabel.TabIndex = 26;
+            this.pttCommonDeviceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // selectPttThreeButtonLabel
             // 
@@ -332,34 +285,35 @@
             this.setSelectPttTwoButton.UseVisualStyleBackColor = true;
             this.setSelectPttTwoButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
             // 
-            // pttCommonDeviceLabel
+            // selectPttOneButtonLabel
             // 
-            this.pttCommonDeviceLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pttCommonDeviceLabel.Location = new System.Drawing.Point(149, 131);
-            this.pttCommonDeviceLabel.Name = "pttCommonDeviceLabel";
-            this.pttCommonDeviceLabel.Size = new System.Drawing.Size(188, 20);
-            this.pttCommonDeviceLabel.TabIndex = 26;
-            this.pttCommonDeviceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.selectPttOneButtonLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.selectPttOneButtonLabel.Location = new System.Drawing.Point(344, 41);
+            this.selectPttOneButtonLabel.Name = "selectPttOneButtonLabel";
+            this.selectPttOneButtonLabel.Size = new System.Drawing.Size(35, 20);
+            this.selectPttOneButtonLabel.TabIndex = 10;
+            this.selectPttOneButtonLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // pttCommonButtonLabel
+            // selectPttOneDeviceLabel
             // 
-            this.pttCommonButtonLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pttCommonButtonLabel.Location = new System.Drawing.Point(344, 131);
-            this.pttCommonButtonLabel.Name = "pttCommonButtonLabel";
-            this.pttCommonButtonLabel.Size = new System.Drawing.Size(35, 20);
-            this.pttCommonButtonLabel.TabIndex = 27;
-            this.pttCommonButtonLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.selectPttOneDeviceLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.selectPttOneDeviceLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.selectPttOneDeviceLabel.Location = new System.Drawing.Point(149, 41);
+            this.selectPttOneDeviceLabel.Name = "selectPttOneDeviceLabel";
+            this.selectPttOneDeviceLabel.Size = new System.Drawing.Size(189, 20);
+            this.selectPttOneDeviceLabel.TabIndex = 9;
+            this.selectPttOneDeviceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // setPttCommonButton
+            // setSelectPttOneButton
             // 
-            this.setPttCommonButton.Location = new System.Drawing.Point(385, 130);
-            this.setPttCommonButton.Name = "setPttCommonButton";
-            this.setPttCommonButton.Size = new System.Drawing.Size(75, 23);
-            this.setPttCommonButton.TabIndex = 28;
-            this.setPttCommonButton.Tag = "COMMON_PTT";
-            this.setPttCommonButton.Text = "Set";
-            this.setPttCommonButton.UseVisualStyleBackColor = true;
-            this.setPttCommonButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
+            this.setSelectPttOneButton.Location = new System.Drawing.Point(385, 40);
+            this.setSelectPttOneButton.Name = "setSelectPttOneButton";
+            this.setSelectPttOneButton.Size = new System.Drawing.Size(75, 23);
+            this.setSelectPttOneButton.TabIndex = 8;
+            this.setSelectPttOneButton.Tag = "SELECT_PTT_1";
+            this.setSelectPttOneButton.Text = "Set";
+            this.setSelectPttOneButton.UseVisualStyleBackColor = true;
+            this.setSelectPttOneButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
             // 
             // groupBox2
             // 
@@ -384,102 +338,6 @@
             groupBox2.TabIndex = 12;
             groupBox2.TabStop = false;
             groupBox2.Text = "Radio balance";
-            // 
-            // radioOnePanTrack
-            // 
-            this.radioOnePanTrack.LargeChange = 50;
-            this.radioOnePanTrack.Location = new System.Drawing.Point(37, 49);
-            this.radioOnePanTrack.Maximum = 100;
-            this.radioOnePanTrack.Minimum = -100;
-            this.radioOnePanTrack.Name = "radioOnePanTrack";
-            this.radioOnePanTrack.Size = new System.Drawing.Size(85, 45);
-            this.radioOnePanTrack.SmallChange = 10;
-            this.radioOnePanTrack.TabIndex = 0;
-            this.radioOnePanTrack.TickFrequency = 100;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(60, 29);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(44, 13);
-            label6.TabIndex = 27;
-            label6.Text = "Radio 1";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(44, 81);
-            label7.Name = "label7";
-            label7.Size = new System.Drawing.Size(13, 13);
-            label7.TabIndex = 28;
-            label7.Text = "L";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(73, 81);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(14, 13);
-            label8.TabIndex = 29;
-            label8.Text = "C";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(101, 81);
-            label9.Name = "label9";
-            label9.Size = new System.Drawing.Size(15, 13);
-            label9.TabIndex = 30;
-            label9.Text = "R";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Location = new System.Drawing.Point(213, 81);
-            label10.Name = "label10";
-            label10.Size = new System.Drawing.Size(15, 13);
-            label10.TabIndex = 35;
-            label10.Text = "R";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new System.Drawing.Point(185, 81);
-            label11.Name = "label11";
-            label11.Size = new System.Drawing.Size(14, 13);
-            label11.TabIndex = 34;
-            label11.Text = "C";
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new System.Drawing.Point(156, 81);
-            label12.Name = "label12";
-            label12.Size = new System.Drawing.Size(13, 13);
-            label12.TabIndex = 33;
-            label12.Text = "L";
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Location = new System.Drawing.Point(172, 29);
-            label13.Name = "label13";
-            label13.Size = new System.Drawing.Size(44, 13);
-            label13.TabIndex = 32;
-            label13.Text = "Radio 2";
-            // 
-            // radioTwoPanTrack
-            // 
-            this.radioTwoPanTrack.LargeChange = 50;
-            this.radioTwoPanTrack.Location = new System.Drawing.Point(149, 49);
-            this.radioTwoPanTrack.Maximum = 100;
-            this.radioTwoPanTrack.Minimum = -100;
-            this.radioTwoPanTrack.Name = "radioTwoPanTrack";
-            this.radioTwoPanTrack.Size = new System.Drawing.Size(85, 45);
-            this.radioTwoPanTrack.SmallChange = 10;
-            this.radioTwoPanTrack.TabIndex = 31;
-            this.radioTwoPanTrack.TickFrequency = 100;
             // 
             // label14
             // 
@@ -529,12 +387,113 @@
             this.radioThreePanTrack.TabIndex = 36;
             this.radioThreePanTrack.TickFrequency = 100;
             // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new System.Drawing.Point(213, 81);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(15, 13);
+            label10.TabIndex = 35;
+            label10.Text = "R";
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new System.Drawing.Point(185, 81);
+            label11.Name = "label11";
+            label11.Size = new System.Drawing.Size(14, 13);
+            label11.TabIndex = 34;
+            label11.Text = "C";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new System.Drawing.Point(156, 81);
+            label12.Name = "label12";
+            label12.Size = new System.Drawing.Size(13, 13);
+            label12.TabIndex = 33;
+            label12.Text = "L";
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new System.Drawing.Point(172, 29);
+            label13.Name = "label13";
+            label13.Size = new System.Drawing.Size(44, 13);
+            label13.TabIndex = 32;
+            label13.Text = "Radio 2";
+            // 
+            // radioTwoPanTrack
+            // 
+            this.radioTwoPanTrack.LargeChange = 50;
+            this.radioTwoPanTrack.Location = new System.Drawing.Point(149, 49);
+            this.radioTwoPanTrack.Maximum = 100;
+            this.radioTwoPanTrack.Minimum = -100;
+            this.radioTwoPanTrack.Name = "radioTwoPanTrack";
+            this.radioTwoPanTrack.Size = new System.Drawing.Size(85, 45);
+            this.radioTwoPanTrack.SmallChange = 10;
+            this.radioTwoPanTrack.TabIndex = 31;
+            this.radioTwoPanTrack.TickFrequency = 100;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new System.Drawing.Point(101, 81);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(15, 13);
+            label9.TabIndex = 30;
+            label9.Text = "R";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(73, 81);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(14, 13);
+            label8.TabIndex = 29;
+            label8.Text = "C";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(44, 81);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(13, 13);
+            label7.TabIndex = 28;
+            label7.Text = "L";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(60, 29);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(44, 13);
+            label6.TabIndex = 27;
+            label6.Text = "Radio 1";
+            // 
+            // radioOnePanTrack
+            // 
+            this.radioOnePanTrack.LargeChange = 50;
+            this.radioOnePanTrack.Location = new System.Drawing.Point(37, 49);
+            this.radioOnePanTrack.Maximum = 100;
+            this.radioOnePanTrack.Minimum = -100;
+            this.radioOnePanTrack.Name = "radioOnePanTrack";
+            this.radioOnePanTrack.Size = new System.Drawing.Size(85, 45);
+            this.radioOnePanTrack.SmallChange = 10;
+            this.radioOnePanTrack.TabIndex = 0;
+            this.radioOnePanTrack.TickFrequency = 100;
+            // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(this.disableExportButton);
+            groupBox3.Controls.Add(this.enableExportButton);
+            groupBox3.Controls.Add(this.installScriptButton);
+            groupBox3.Controls.Add(this.installPluginButton);
+            groupBox3.Controls.Add(this.scriptInstalledLabel);
+            groupBox3.Controls.Add(label18);
             groupBox3.Controls.Add(label5);
             groupBox3.Controls.Add(this.teamSpeakPathTextBox);
             groupBox3.Controls.Add(this.selectPathButton);
-            groupBox3.Controls.Add(this.saveButton);
             groupBox3.Controls.Add(this.exportEnabledLabel);
             groupBox3.Controls.Add(pluginInstalledCaption);
             groupBox3.Controls.Add(this.pluginInstalledLabel);
@@ -546,6 +505,54 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "General settings";
             // 
+            // enableExportButton
+            // 
+            this.enableExportButton.Location = new System.Drawing.Point(159, 136);
+            this.enableExportButton.Name = "enableExportButton";
+            this.enableExportButton.Size = new System.Drawing.Size(75, 23);
+            this.enableExportButton.TabIndex = 13;
+            this.enableExportButton.Text = "Enable";
+            this.enableExportButton.UseVisualStyleBackColor = true;
+            this.enableExportButton.Click += new System.EventHandler(this.OnEnableExportButtonClick);
+            // 
+            // installScriptButton
+            // 
+            this.installScriptButton.Location = new System.Drawing.Point(159, 110);
+            this.installScriptButton.Name = "installScriptButton";
+            this.installScriptButton.Size = new System.Drawing.Size(75, 23);
+            this.installScriptButton.TabIndex = 13;
+            this.installScriptButton.Text = "Install";
+            this.installScriptButton.UseVisualStyleBackColor = true;
+            this.installScriptButton.Click += new System.EventHandler(this.OnInstallScriptButtonClick);
+            // 
+            // installPluginButton
+            // 
+            this.installPluginButton.Location = new System.Drawing.Point(159, 84);
+            this.installPluginButton.Name = "installPluginButton";
+            this.installPluginButton.Size = new System.Drawing.Size(75, 23);
+            this.installPluginButton.TabIndex = 13;
+            this.installPluginButton.Text = "Install";
+            this.installPluginButton.UseVisualStyleBackColor = true;
+            this.installPluginButton.Click += new System.EventHandler(this.OnInstallPluginButtonClick);
+            // 
+            // scriptInstalledLabel
+            // 
+            this.scriptInstalledLabel.AutoSize = true;
+            this.scriptInstalledLabel.Location = new System.Drawing.Point(93, 115);
+            this.scriptInstalledLabel.Name = "scriptInstalledLabel";
+            this.scriptInstalledLabel.Size = new System.Drawing.Size(14, 13);
+            this.scriptInstalledLabel.TabIndex = 12;
+            this.scriptInstalledLabel.Text = "X";
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new System.Drawing.Point(6, 115);
+            label18.Name = "label18";
+            label18.Size = new System.Drawing.Size(78, 13);
+            label18.TabIndex = 11;
+            label18.Text = "Script installed:";
+            // 
             // label5
             // 
             label5.AutoSize = true;
@@ -554,6 +561,58 @@
             label5.Size = new System.Drawing.Size(92, 13);
             label5.TabIndex = 10;
             label5.Text = "TeamSpeak path:";
+            // 
+            // teamSpeakPathTextBox
+            // 
+            this.teamSpeakPathTextBox.Location = new System.Drawing.Point(9, 54);
+            this.teamSpeakPathTextBox.Name = "teamSpeakPathTextBox";
+            this.teamSpeakPathTextBox.ReadOnly = true;
+            this.teamSpeakPathTextBox.Size = new System.Drawing.Size(370, 20);
+            this.teamSpeakPathTextBox.TabIndex = 0;
+            this.teamSpeakPathTextBox.TextChanged += new System.EventHandler(this.OnTeamSpeakPathTextBoxTextChanged);
+            // 
+            // selectPathButton
+            // 
+            this.selectPathButton.Location = new System.Drawing.Point(385, 53);
+            this.selectPathButton.Name = "selectPathButton";
+            this.selectPathButton.Size = new System.Drawing.Size(75, 21);
+            this.selectPathButton.TabIndex = 1;
+            this.selectPathButton.Text = "Select";
+            this.selectPathButton.UseVisualStyleBackColor = true;
+            this.selectPathButton.Click += new System.EventHandler(this.OnSelectPathButtonClick);
+            // 
+            // exportEnabledLabel
+            // 
+            this.exportEnabledLabel.AutoSize = true;
+            this.exportEnabledLabel.Location = new System.Drawing.Point(93, 141);
+            this.exportEnabledLabel.Name = "exportEnabledLabel";
+            this.exportEnabledLabel.Size = new System.Drawing.Size(14, 13);
+            this.exportEnabledLabel.TabIndex = 7;
+            this.exportEnabledLabel.Text = "X";
+            // 
+            // pluginInstalledLabel
+            // 
+            this.pluginInstalledLabel.AutoSize = true;
+            this.pluginInstalledLabel.Location = new System.Drawing.Point(93, 89);
+            this.pluginInstalledLabel.Name = "pluginInstalledLabel";
+            this.pluginInstalledLabel.Size = new System.Drawing.Size(14, 13);
+            this.pluginInstalledLabel.TabIndex = 6;
+            this.pluginInstalledLabel.Text = "X";
+            // 
+            // inputListener
+            // 
+            this.inputListener.DoWork += new System.ComponentModel.DoWorkEventHandler(this.OnInputListenerDoWork);
+            this.inputListener.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.OnInputListenerRunWorkerCompleted);
+            // 
+            // disableExportButton
+            // 
+            this.disableExportButton.Location = new System.Drawing.Point(240, 136);
+            this.disableExportButton.Name = "disableExportButton";
+            this.disableExportButton.Size = new System.Drawing.Size(75, 23);
+            this.disableExportButton.TabIndex = 14;
+            this.disableExportButton.Text = "Disable";
+            this.disableExportButton.UseVisualStyleBackColor = true;
+            this.disableExportButton.Click += new System.EventHandler(this.OnDisableExportButtonClick);
             // 
             // MainForm
             // 
@@ -569,13 +628,14 @@
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.Text = "MARS Control Panel";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnMainFormClosing);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.radioOnePanTrack)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.radioTwoPanTrack)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.radioThreePanTrack)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radioTwoPanTrack)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.radioOnePanTrack)).EndInit();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             this.ResumeLayout(false);
@@ -586,7 +646,6 @@
 
         private System.Windows.Forms.TextBox teamSpeakPathTextBox;
         private System.Windows.Forms.Button selectPathButton;
-        private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Label pluginInstalledLabel;
         private System.Windows.Forms.Label exportEnabledLabel;
         private System.Windows.Forms.Button setSelectPttOneButton;
@@ -605,5 +664,10 @@
         private System.Windows.Forms.TrackBar radioThreePanTrack;
         private System.Windows.Forms.TrackBar radioTwoPanTrack;
         private System.Windows.Forms.TrackBar radioOnePanTrack;
+        private System.Windows.Forms.Label scriptInstalledLabel;
+        private System.Windows.Forms.Button enableExportButton;
+        private System.Windows.Forms.Button installScriptButton;
+        private System.Windows.Forms.Button installPluginButton;
+        private System.Windows.Forms.Button disableExportButton;
     }
 }
