@@ -141,21 +141,29 @@ namespace MARS
 		this->secondaryBuffer->Play(0, 0, 0);
 	}
 
-	SoundPlayer::~SoundPlayer()
+	void SoundPlayer::Shutdown()
 	{
 		if (this->secondaryBuffer != nullptr)
 		{
 			this->secondaryBuffer->Release();
+			this->secondaryBuffer = nullptr;
 		}
 
 		if (this->primaryBuffer != nullptr)
 		{
 			this->primaryBuffer->Release();
+			this->primaryBuffer = nullptr;
 		}
 
 		if (this->directSound != nullptr)
 		{
 			this->directSound->Release();
+			this->directSound = nullptr;
 		}
+	}
+
+	SoundPlayer::~SoundPlayer()
+	{
+		this->Shutdown();
 	}
 }

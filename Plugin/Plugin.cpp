@@ -232,6 +232,11 @@ namespace MARS
 		this->player.Load(path);
 	}
 
+	void Plugin::shutdownSoundPlayer()
+	{
+		this->player.Shutdown();
+	}
+
 	void Plugin::loadConfiguration()
 	{
 		this->configuration = Configuration::load();
@@ -940,6 +945,7 @@ void ts3plugin_shutdown()
 {
 	plugin.shutdownListener();
 	plugin.shutdownInput();
+	plugin.shutdownSoundPlayer();
 	plugin.stop();
 	plugin.clearMetaData();
 }

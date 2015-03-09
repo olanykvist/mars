@@ -45,6 +45,7 @@ namespace MARS
 		void shutdownInput();
 
 		void initSoundPlayer();
+		void shutdownSoundPlayer();
 
 		void loadConfiguration();
 		

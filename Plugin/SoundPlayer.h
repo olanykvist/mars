@@ -17,6 +17,7 @@ namespace MARS
 		void Initialize();
 		void Play(float pan);
 		void Load(const char* file);
+		void Shutdown();
 
 	private:
 		IDirectSound8* directSound;
