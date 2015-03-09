@@ -23,7 +23,16 @@ namespace PluginTest
 
 			}
 
-			player.Play("C:\\Users\\Ola\\Desktop\\ptt_up.raw");
+			player.Play(-1.0f);
+			Sleep(1000);
+			player.Play(-0.5f);
+			Sleep(1000);
+			player.Play(0.0f);
+			Sleep(1000);
+			player.Play(0.5f);
+			Sleep(1000);
+			player.Play(1.0f);
+			Sleep(1000);
 		}
 	};
 }

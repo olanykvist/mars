@@ -15,7 +15,7 @@ namespace MARS
 		SoundPlayer();
 		~SoundPlayer();
 		void Initialize();
-		void Play(const char* file);
+		void Play(float pan);
 		void Load(const char* file);
 
 	private:
