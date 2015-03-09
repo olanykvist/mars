@@ -15,6 +15,7 @@
 #include "InputListener.h"
 #include "ClientMetaData.h"
 #include "Configuration.h"
+#include "SoundPlayer.h"
 
 namespace MARS
 {
@@ -42,6 +43,8 @@ namespace MARS
 
 		void initInput();
 		void shutdownInput();
+
+		void initSoundPlayer();
 
 		void loadConfiguration();
 		
@@ -79,6 +82,7 @@ namespace MARS
 		Radio* currentRadio;
 		SocketListener socketListener;
 		InputListener inputListener;
+		SoundPlayer player;
 		std::string name;
 		std::string unit;
 		ClientMetaData metaData;

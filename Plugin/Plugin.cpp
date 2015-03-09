@@ -36,6 +36,7 @@ namespace MARS
 		, currentRadio(nullptr)
 		, socketListener()
 		, inputListener()
+		, player()
 		, metaData()
 		, position()
 		, configuration()
@@ -206,6 +207,31 @@ namespace MARS
 		this->inputListener.Stop();
 	}
 
+	void Plugin::initSoundPlayer()
+	{
+		char buffer[MAX_PATH];
+		char* path;
+		HKEY key;
+		DWORD size;
+
+		LONG result = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Master Arms\\MARS", 0, KEY_READ, &key);
+		if (result == ERROR_SUCCESS)
+		{
+			size = MAX_PATH;
+			result = RegQueryValueExA(key, "InstallPath", nullptr, nullptr, (BYTE*)buffer, &size);
+			if (result == ERROR_SUCCESS)
+			{
+				path = buffer;
+			}
+			RegCloseKey(key);
+		}
+
+		strcat_s(path, MAX_PATH, "Sounds\\ptt_up.raw");
+		
+		this->player.Initialize();
+		this->player.Load(path);
+	}
+
 	void Plugin::loadConfiguration()
 	{
 		this->configuration = Configuration::load();
@@ -284,9 +310,6 @@ namespace MARS
 
 	void Plugin::onClientTalkStatusChanged(uint64 serverConnectionHandlerId, int status, anyID clientId)
 	{
-		// PTT ner och upp när annan sänder (som man kan höra)
-		// Endast PTT upp när man själv sänder
-
 		if (this->inGame == false)
 		{
 			return;
@@ -299,11 +322,14 @@ namespace MARS
 			return;
 		}
 
+		Radio* radio = nullptr;
+
 		if (clientId == myId)
 		{
 			if (status == STATUS_NOT_TALKING) // Only play ppt "up" sound
 			{
-
+				radio = this->currentRadio;
+				this->player.Play(radio->getPan());
 			}
 		}
 		else
@@ -314,7 +340,11 @@ namespace MARS
 			}
 			else if (status == STATUS_NOT_TALKING)
 			{
-
+				radio = this->receivers.at(clientId);
+				if (radio != nullptr)
+				{
+					this->player.Play(radio->getPan());
+				}
 			}
 		}
 	}
@@ -884,9 +914,18 @@ void ts3plugin_setFunctionPointers(const struct TS3Functions funcs)
 */
 int ts3plugin_init()
 {
-	plugin.loadConfiguration();
-	plugin.initListener();
-	plugin.initInput();
+	try
+	{
+		plugin.loadConfiguration();
+		plugin.initListener();
+		plugin.initInput();
+		plugin.initSoundPlayer();
+	}
+	catch (...)
+	{
+		return 1;
+	}
+
 	plugin.updateMetaData();
 
 	return 0;
