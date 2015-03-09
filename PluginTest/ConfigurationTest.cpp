@@ -5,7 +5,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using MARS::Configuration;
-using std::string;
+using std::wstring;
 
 namespace PluginTest
 {
@@ -14,7 +14,7 @@ namespace PluginTest
 	public:
 		TEST_METHOD(LoadConfiguration)
 		{
-			string empty;
+			wstring empty;
 			Configuration config = Configuration::load();
 
 			Assert::AreNotEqual(empty, config.getSelectPttOneDevice());
