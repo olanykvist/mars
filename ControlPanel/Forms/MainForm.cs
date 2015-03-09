@@ -357,6 +357,7 @@ namespace MARS.ControlPanel.Forms
 
         private void OnTeamSpeakPathTextBoxTextChanged(object sender, EventArgs e)
         {
+            this.configuration.TeamSpeakPath = this.teamSpeakPathTextBox.Text;
             this.CheckInstallation();
         }
 
