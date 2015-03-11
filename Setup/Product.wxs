@@ -24,6 +24,7 @@
           <Directory Id="INSTALLFOLDER" Name="MARS">
             <Directory Id="PluginFolder" Name="Plugin" />
             <Directory Id="ScriptsFolder" Name="Scripts" />
+            <Directory Id="SoundsFolder" Name="Sounds" />
           </Directory>
         </Directory>
       </Directory>
@@ -70,6 +71,11 @@
     <ComponentGroup Id="Plugin" Directory="PluginFolder">
       <Component>
         <File Source="$(var.Plugin.TargetPath)" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+    <ComponentGroup Id="Sounds" Directory="SoundsFolder">
+      <Component>
+        <File Source="$(var.SolutionDir)\Sounds\ptt_up.raw" KeyPath="yes" />
       </Component>
     </ComponentGroup>
   </Fragment>

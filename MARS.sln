@@ -40,6 +40,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E67088
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sounds", "Sounds", "{170B7B6D-96AA-4DD1-AB4A-DAF5D2208D59}"
+	ProjectSection(SolutionItems) = preProject
+		Sounds\ptt_up.raw = Sounds\ptt_up.raw
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
