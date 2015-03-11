@@ -2,7 +2,10 @@
 #define MARS_SOUNDPLAYER_H
 
 #define INIT_GUID
+
 #include <dsound.h>
+#include <string>
+#include <unordered_map>
 
 #pragma comment(lib, "dsound.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -15,14 +18,15 @@ namespace MARS
 		SoundPlayer();
 		~SoundPlayer();
 		void Initialize();
-		void Play(float pan);
-		void Load(const char* file);
+		void Load(std::string name);
+		void Play(std::string name, float pan = 0.0f, float volume = 1.0f);
 		void Shutdown();
 
 	private:
 		IDirectSound8* directSound;
 		IDirectSoundBuffer* primaryBuffer;
-		IDirectSoundBuffer8* secondaryBuffer;
+		std::unordered_map<std::string, IDirectSoundBuffer8*> sounds;
+		static std::string GetSoundsFolder();
 	};
 };
 

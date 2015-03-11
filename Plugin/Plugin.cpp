@@ -208,28 +208,9 @@ namespace MARS
 	}
 
 	void Plugin::initSoundPlayer()
-	{
-		char buffer[MAX_PATH];
-		char* path;
-		HKEY key;
-		DWORD size;
-
-		LONG result = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Master Arms\\MARS", 0, KEY_READ, &key);
-		if (result == ERROR_SUCCESS)
-		{
-			size = MAX_PATH;
-			result = RegQueryValueExA(key, "InstallPath", nullptr, nullptr, (BYTE*)buffer, &size);
-			if (result == ERROR_SUCCESS)
-			{
-				path = buffer;
-			}
-			RegCloseKey(key);
-		}
-
-		strcat_s(path, MAX_PATH, "Sounds\\ptt_up.raw");
-		
+	{	
 		this->player.Initialize();
-		this->player.Load(path);
+		this->player.Load("ptt_up.raw");
 	}
 
 	void Plugin::shutdownSoundPlayer()
@@ -334,7 +315,7 @@ namespace MARS
 			if (status == STATUS_NOT_TALKING) // Only play ppt "up" sound
 			{
 				radio = this->currentRadio;
-				this->player.Play(radio->getPan());
+				this->player.Play("ptt_up.raw", radio->getPan());
 			}
 		}
 		else
@@ -348,7 +329,7 @@ namespace MARS
 				radio = this->receivers.at(clientId);
 				if (radio != nullptr)
 				{
-					this->player.Play(radio->getPan());
+					this->player.Play("ptt_up.raw", radio->getPan());
 				}
 			}
 		}

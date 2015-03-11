@@ -16,22 +16,22 @@ namespace PluginTest
 			try
 			{
 				player.Initialize();
-				player.Load("C:\\Users\\Ola\\Desktop\\ptt_up.raw");
+				player.Load("ptt_up.raw");
 			}
-			catch (char* error)
+			catch (...)
 			{
 
 			}
 
-			player.Play(-1.0f);
+			player.Play("ptt_up.raw", -1.0f);
 			Sleep(1000);
-			player.Play(-0.5f);
+			player.Play("ptt_up.raw", -0.5f);
 			Sleep(1000);
-			player.Play(0.0f);
+			player.Play("ptt_up.raw", 0.0f);
 			Sleep(1000);
-			player.Play(0.5f);
+			player.Play("ptt_up.raw", 0.5f);
 			Sleep(1000);
-			player.Play(1.0f);
+			player.Play("ptt_up.raw", 1.0f);
 			Sleep(1000);
 		}
 	};

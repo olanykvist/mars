@@ -1,6 +1,8 @@
 #include "SoundPlayer.h"
 #include <fstream>
+#include <sstream>
 
+using std::stringstream;
 using std::ifstream;
 using std::streampos;
 using std::ios;
@@ -10,7 +12,7 @@ namespace MARS
 	SoundPlayer::SoundPlayer()
 		: directSound(nullptr)
 		, primaryBuffer(nullptr)
-		, secondaryBuffer(nullptr)
+		, sounds()
 	{
 	}
 
@@ -63,12 +65,16 @@ namespace MARS
 		}
 	}
 
-	void SoundPlayer::Load(const char* file)
+	void SoundPlayer::Load(std::string name)
 	{
-		streampos size;
-		char* block;
+		stringstream path;
+		path << SoundPlayer::GetSoundsFolder();
+		path << name;
 
-		ifstream stream(file, ios::binary | ios::ate);
+		streampos size = 0;
+		char* block = nullptr;
+
+		ifstream stream(path.str(), ios::binary | ios::ate);
 		if (stream.is_open())
 		{
 			size = stream.tellg();
@@ -76,6 +82,10 @@ namespace MARS
 			stream.seekg(0, ios::beg);
 			stream.read(block, size);
 			stream.close();
+		}
+		else
+		{
+			throw "Failed to load file";
 		}
 
 		HRESULT result = DS_OK;
@@ -91,13 +101,14 @@ namespace MARS
 
 		DSBUFFERDESC bd = { 0 };
 		bd.dwSize = sizeof bd;
-		bd.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLPAN;
+		bd.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPAN;
 		bd.dwBufferBytes = size;
 		bd.dwReserved = 0;
 		bd.lpwfxFormat = &wf;
 		bd.guid3DAlgorithm = GUID_NULL;
 
 		IDirectSoundBuffer* tmp = nullptr;
+		IDirectSoundBuffer8* secondaryBuffer = nullptr;
 
 		result = this->directSound->CreateSoundBuffer(&bd, &tmp, nullptr);
 		if (FAILED(result))
@@ -105,7 +116,7 @@ namespace MARS
 			throw "CreateSoundBuffer failed";
 		}
 
-		result = tmp->QueryInterface(IID_IDirectSoundBuffer8, (void**)&(this->secondaryBuffer));
+		result = tmp->QueryInterface(IID_IDirectSoundBuffer8, (void**)&secondaryBuffer);
 		if (FAILED(result))
 		{
 			throw "QueryInterface failed";
@@ -116,38 +127,46 @@ namespace MARS
 
 		unsigned char *bufferPtr;
 		unsigned long bufferSize;
-		result = this->secondaryBuffer->Lock(0, size, (void**)&bufferPtr, (DWORD*)&bufferSize, nullptr, 0, DSBLOCK_ENTIREBUFFER);
+		result = secondaryBuffer->Lock(0, size, (void**)&bufferPtr, (DWORD*)&bufferSize, nullptr, 0, DSBLOCK_ENTIREBUFFER);
 		if (FAILED(result))
 		{
-			throw "QueryInterface failed";
+			throw "Lock failed";
 		}
 
 		memcpy(bufferPtr, block, bufferSize);
 
-		result = this->secondaryBuffer->Unlock((void*)bufferPtr, bufferSize, nullptr, 0);
+		result = secondaryBuffer->Unlock((void*)bufferPtr, bufferSize, nullptr, 0);
 		if (FAILED(result))
 		{
-			throw "QueryInterface failed";
+			throw "Unlock failed";
 		}
+
+		this->sounds[name] = secondaryBuffer;
 
 		delete[] block;
 	}
 
-	void SoundPlayer::Play(float pan)
+	void SoundPlayer::Play(std::string name, float pan, float volume)
 	{
-		long p = pan * 10000;
-		this->secondaryBuffer->SetCurrentPosition(0);
-		this->secondaryBuffer->SetPan(p);
-		this->secondaryBuffer->Play(0, 0, 0);
+		// DSBVOLUME_MIN  -10000
+		// DSBVOLUME_MAX       0
+
+		IDirectSoundBuffer8* buffer = this->sounds.at(name);
+		buffer->SetCurrentPosition(0);
+		buffer->SetPan(static_cast<LONG>(pan * 10000));
+		buffer->SetVolume(static_cast<LONG>(DSBVOLUME_MAX));
+		buffer->Play(0, 0, 0);
 	}
 
 	void SoundPlayer::Shutdown()
 	{
-		if (this->secondaryBuffer != nullptr)
+		for (auto& sound : this->sounds)
 		{
-			this->secondaryBuffer->Release();
-			this->secondaryBuffer = nullptr;
+			sound.second->Release();
+			sound.second = nullptr;
 		}
+
+		this->sounds.clear();
 
 		if (this->primaryBuffer != nullptr)
 		{
@@ -160,6 +179,30 @@ namespace MARS
 			this->directSound->Release();
 			this->directSound = nullptr;
 		}
+	}
+
+	std::string SoundPlayer::GetSoundsFolder()
+	{
+		char buffer[MAX_PATH];
+		char* path;
+		HKEY key;
+		DWORD size;
+
+		LONG result = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Master Arms\\MARS", 0, KEY_READ, &key);
+		if (result == ERROR_SUCCESS)
+		{
+			size = MAX_PATH;
+			result = RegQueryValueExA(key, "InstallPath", nullptr, nullptr, (BYTE*)buffer, &size);
+			if (result == ERROR_SUCCESS)
+			{
+				path = buffer;
+			}
+			RegCloseKey(key);
+		}
+
+		strcat_s(path, MAX_PATH, "Sounds\\");
+
+		return std::string(path);
 	}
 
 	SoundPlayer::~SoundPlayer()
