@@ -162,7 +162,7 @@ namespace MARS.RadioPanel.Controls
 
         private void amRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            this.SetModulation();
+            //this.SetModulation();
         }
 
         private void fmRadioButton_CheckedChanged(object sender, EventArgs e)

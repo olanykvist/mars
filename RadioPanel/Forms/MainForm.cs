@@ -47,9 +47,10 @@ namespace MARS.RadioPanel.Forms
                 control.Text = "Connected!";
                 connectDone.Set();
             }
-            catch (SocketException exception)
+            catch (SocketException)
             {
-                control.Text = exception.Message;
+                control.Text = "Connection failed!";
+                connectDone.Set();
             }
         }
 
