@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" RequiredVersion="3.9.1006.0">
-  <Product Id="{F9AF699C-76BE-4D60-9D3B-678B8DCDC58A}" Name="MARS" Language="1033" Version="1.0.0.150308" Manufacturer="Master Arms" UpgradeCode="{9B36C710-11BE-4828-9274-4540C306F6BE}">
+  <Product Id="*" Name="MARS" Language="1033" Version="1.0.0.150308" Manufacturer="Master Arms" UpgradeCode="{9B36C710-11BE-4828-9274-4540C306F6BE}">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" />
     <WixVariable Id="WixUIBannerBmp" Value="Banner.bmp" />
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <Icon Id="mars.ico" SourceFile="mars.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="mars.ico" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <UIRef Id="WixUI_InstallDir" />
     <Feature Id="MainFeature">

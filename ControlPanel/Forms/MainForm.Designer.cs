@@ -56,6 +56,7 @@
             this.radioThreePanTrack = new System.Windows.Forms.TrackBar();
             this.radioTwoPanTrack = new System.Windows.Forms.TrackBar();
             this.radioOnePanTrack = new System.Windows.Forms.TrackBar();
+            this.disableExportButton = new System.Windows.Forms.Button();
             this.enableExportButton = new System.Windows.Forms.Button();
             this.installScriptButton = new System.Windows.Forms.Button();
             this.installPluginButton = new System.Windows.Forms.Button();
@@ -65,7 +66,6 @@
             this.exportEnabledLabel = new System.Windows.Forms.Label();
             this.pluginInstalledLabel = new System.Windows.Forms.Label();
             this.inputListener = new System.ComponentModel.BackgroundWorker();
-            this.disableExportButton = new System.Windows.Forms.Button();
             exportEnabledCaption = new System.Windows.Forms.Label();
             pluginInstalledCaption = new System.Windows.Forms.Label();
             selectPttOneDeviceCaption = new System.Windows.Forms.Label();
@@ -505,6 +505,16 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "General settings";
             // 
+            // disableExportButton
+            // 
+            this.disableExportButton.Location = new System.Drawing.Point(240, 136);
+            this.disableExportButton.Name = "disableExportButton";
+            this.disableExportButton.Size = new System.Drawing.Size(75, 23);
+            this.disableExportButton.TabIndex = 14;
+            this.disableExportButton.Text = "Disable";
+            this.disableExportButton.UseVisualStyleBackColor = true;
+            this.disableExportButton.Click += new System.EventHandler(this.OnDisableExportButtonClick);
+            // 
             // enableExportButton
             // 
             this.enableExportButton.Location = new System.Drawing.Point(159, 136);
@@ -604,16 +614,6 @@
             this.inputListener.DoWork += new System.ComponentModel.DoWorkEventHandler(this.OnInputListenerDoWork);
             this.inputListener.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.OnInputListenerRunWorkerCompleted);
             // 
-            // disableExportButton
-            // 
-            this.disableExportButton.Location = new System.Drawing.Point(240, 136);
-            this.disableExportButton.Name = "disableExportButton";
-            this.disableExportButton.Size = new System.Drawing.Size(75, 23);
-            this.disableExportButton.TabIndex = 14;
-            this.disableExportButton.Text = "Disable";
-            this.disableExportButton.UseVisualStyleBackColor = true;
-            this.disableExportButton.Click += new System.EventHandler(this.OnDisableExportButtonClick);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -624,6 +624,7 @@
             this.Controls.Add(groupBox3);
             this.Controls.Add(groupBox2);
             this.Controls.Add(groupBox1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";

@@ -96,6 +96,7 @@
   <ItemGroup>
     <Content Include="Banner.bmp" />
     <Content Include="License.rtf" />
+    <Content Include="mars.ico" />
   </ItemGroup>
   <ItemGroup>
     <WixExtension Include="WixUIExtension">

@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.connectionTimer = new System.Windows.Forms.Timer(this.components);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            this.connectionTimer = new System.Windows.Forms.Timer();
             this.mainStatusStrip = new System.Windows.Forms.StatusStrip();
             this.mainSatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.radio3 = new MARS.RadioPanel.Controls.Radio();
@@ -106,6 +106,7 @@
             this.Controls.Add(this.radio1);
             this.Controls.Add(this.mainStatusStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";
