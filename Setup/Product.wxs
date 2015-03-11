@@ -14,7 +14,9 @@
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentGroupRef Id="Scripts" />
       <ComponentGroupRef Id="Plugin" />
+      <ComponentGroupRef Id="Sounds" />
       <ComponentRef Id="RegistryEntries" />
+      <ComponentRef Id="ProgramMenuDir" />
     </Feature>
   </Product>
   <Fragment>
@@ -26,6 +28,14 @@
             <Directory Id="ScriptsFolder" Name="Scripts" />
             <Directory Id="SoundsFolder" Name="Sounds" />
           </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramMenuFolder" Name="MARS">
+          <Component Id="ProgramMenuDir">
+            <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+            <RegistryValue Root="HKMU" Key="Software\Master Arms\MARS" Type="integer" Name="Installed" Value="1" KeyPath="yes" />
+          </Component>
         </Directory>
       </Directory>
     </Directory>
@@ -43,6 +53,7 @@
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER" >
       <Component>
         <File Source="$(var.ControlPanel.TargetPath)" KeyPath="yes" />
+        <Shortcut Id="ControlPanelShortcut" Name="MARS Control Panel" Icon="mars.ico" Directory="ApplicationProgramMenuFolder" Advertise="yes" />
       </Component>
       <Component>
         <File Source="$(var.ControlPanel.TargetDir)\SharpDX.dll" KeyPath="yes" />
@@ -52,6 +63,7 @@
       </Component>
       <Component>
         <File Source="$(var.RadioPanel.TargetPath)" KeyPath="yes" />
+        <Shortcut Id="RadioPanelShortcut" Name="MARS Radio Panel" Icon="mars.ico" Directory="ApplicationProgramMenuFolder" Advertise="yes" />
       </Component>
       <Component>
         <File Source="$(var.RadioPanel.TargetDir)\Newtonsoft.Json.dll" KeyPath="yes" />
