@@ -1,4 +1,4 @@
--- MARS Export Script, v1.0.0-beta.2
+-- MARS Export Script, v1.0.0-beta.3
 
 package.path  = package.path..";.\\LuaSocket\\?.lua"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll"

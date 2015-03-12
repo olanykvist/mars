@@ -19,7 +19,7 @@ static MARS::Plugin plugin;
 namespace MARS
 {
 	const char* Plugin::NAME = "MARS";
-	const char* Plugin::VERSION = "1.0.0-beta.2";
+	const char* Plugin::VERSION = "1.0.0-beta.3";
 	const char* Plugin::AUTHOR = "Master Arms";
 	const char* Plugin::DESCRIPTION = "MARS, Master Arms Radio System, integrates the radios in DCS World with TeamSpeak for a more realistic radio experience.";
 	const char* Plugin::COMMAND_KEYWORD = "mars";
