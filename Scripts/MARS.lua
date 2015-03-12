@@ -62,6 +62,7 @@ MARS.InitializeData = function()
 		unit = "init",
 		pos = {x = 0, y = 0, z = 0},
 		selected = -1,
+		volume = {-1, -1, -1},
 		radios =
 		{
 			{ id = 1, name = "init", primary = 0, secondary = 0, modulation = 0 },
@@ -424,9 +425,17 @@ MARS.ExportF86 = function()
 	}
 	
 	local panel = GetDevice(0)
-	local knob = panel:get_argument_value(805) -- Function selector knob
+	local knob = panel:get_argument_value(805)
 	if MARS.NearEqual(knob, 0.2, 0.03) and radio.primary > 0 then
 		radio.secondary = 243000000
+	end
+	
+	local volume = panel:get_argument_value(806) -- 0.1 - 0.9
+	volume = MARS.ReRange(volume, 0.1, 0.9, 0.001, 1.0)
+	
+	if MARS.data.volume[1] ~= volume then
+		MARS.SendVolCommand(1, volume)
+		MARS.data.volume[1] = volume
 	end
 	
 	local selected = 1
@@ -495,25 +504,31 @@ MARS.ExportMIG21 = function()
 		modulation = MARS.modulation.AM
 	}
 	
+	local panel = GetDevice(0)
+	local volume = panel:get_argument_value(210)
+	if MARS.data.volume[1] ~= volume then
+		MARS.SendVolCommand(1, volume)
+		MARS.data.volume[1] = volume
+	end
+	
 	local selected = 1
 
 	if MARS.data.selected ~= selected then
 		MARS.SendSelectCommand(selected)
 		MARS.data.selected = selected
 	end
-	
+
 	MARS.CheckRadio(1, radio)
 	MARS.ClearRadio(2)
 	MARS.ClearRadio(3)
 end
 
 MARS.CheckRadio = function(id, radio)
-{
 	if not MARS.FastCompare(MARS.data.radios[id], radio) then
 		MARS.SendSetCommand(radio)
 		MARS.data.radios[id] = MARS.FastCopy(radio)
 	end
-}
+end
 
 MARS.ClearRadio = function(id)
 	local radio = { id = id, name = "N/A", primary = 0, secondary = 0, modulation = 0 }
@@ -558,6 +573,18 @@ MARS.SendPosCommand = function(pos)
 		x = pos.x,
 		y = pos.y,
 		z = pos.z
+	}
+	
+	local json = MARS.JSON:encode(command)
+	MARS.QueueMessage(json)
+end
+
+MARS.SendVolCommand = function(id, volume)
+	local command =
+	{
+		command = "vol",
+		radio = id,
+		volume = volume
 	}
 	
 	local json = MARS.JSON:encode(command)
@@ -721,6 +748,10 @@ end
 
 MARS.NearEqual = function(a, b, epsilon)
 	return math.abs(a - b) < epsilon
+end
+
+MARS.ReRange = function(value, oldmin, oldmax, newmin, newmax)
+	return (((value - oldmin) * (newmax - newmin)) / (oldmax - oldmin)) + newmin
 end
 
 MARS.UnitHasInternalRadio = function(unit)

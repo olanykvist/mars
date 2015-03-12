@@ -11,8 +11,10 @@
 #include "Transmission.h"
 #include "json/json.h"
 #include "filt.h"
+#include <sstream>
 
 using std::string;
+using std::stringstream;
 
 static MARS::Plugin plugin;
 
@@ -509,6 +511,15 @@ namespace MARS
 				{
 					plugin.useExternalRadios();
 				}
+			}
+			else if (command == "vol")
+			{
+				int id = root["radio"].asInt();
+				float volume = root["volume"].asFloat();
+
+				stringstream stream;
+				stream << "Volume: " << volume << std::endl;
+				plugin.teamspeak.printMessageToCurrentTab(stream.str().c_str());
 			}
 			else if (command == "info")
 			{
