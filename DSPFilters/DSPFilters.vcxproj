@@ -85,12 +85,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
-    <IntDir>$(SolutionDir)build\</IntDir>
+    <IntDir>$(ProjectDir)build\</IntDir>
     <IncludePath>C:\Users\Ola\Git\MARS\DSPFilters\include;..\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
-    <IntDir>$(SolutionDir)build\</IntDir>
+    <IntDir>$(ProjectDir)build\</IntDir>
     <IncludePath>C:\Users\Ola\Git\MARS\DSPFilters\include;..\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

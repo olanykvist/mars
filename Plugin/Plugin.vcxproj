@@ -56,17 +56,23 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetName>MARS</TargetName>
     <IncludePath>C:\Users\Ola\AppData\Local\TeamSpeak 3 Client 3.0.15\pluginsdk\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <IntDir>$(ProjectDir)build\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>MARS</TargetName>
     <TargetExt>.lib</TargetExt>
     <IncludePath>C:\Users\Ola\AppData\Local\TeamSpeak 3 Client 3.0.15\pluginsdk\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <IntDir>$(ProjectDir)build\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>MARS</TargetName>
     <IncludePath>C:\Users\Ola\AppData\Local\TeamSpeak 3 Client 3.0.15\pluginsdk\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)bin\</OutDir>
+    <IntDir>$(ProjectDir)build\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
