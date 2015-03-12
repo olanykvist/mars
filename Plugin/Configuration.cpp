@@ -53,13 +53,13 @@ namespace MARS
 		configuration.pttCommonButton = GetPrivateProfileIntW(L"COMMON_PTT", L"Button", 0, file.c_str());
 
 		GetPrivateProfileStringW(L"PAN", L"Radio1", L"", buffer, BUFFER_SIZE, file.c_str());
-		configuration.radioOnePan = _wtof(buffer);
+		configuration.radioOnePan = static_cast<float>(_wtof(buffer));
 
 		GetPrivateProfileStringW(L"PAN", L"Radio2", L"", buffer, BUFFER_SIZE, file.c_str());
-		configuration.radioTwoPan = _wtof(buffer);
+		configuration.radioTwoPan = static_cast<float>(_wtof(buffer));
 
 		GetPrivateProfileStringW(L"PAN", L"Radio3", L"", buffer, BUFFER_SIZE, file.c_str());
-		configuration.radioThreePan = _wtof(buffer);
+		configuration.radioThreePan = static_cast<float>(_wtof(buffer));
 
 		return configuration;
 	}

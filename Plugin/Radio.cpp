@@ -6,6 +6,7 @@ namespace MARS
 		: primary(0)
 		, secondary(0)
 		, pan(0.0f)
+		, volume(1.0f)
 		, modulation(AM)
 		, name()
 	{
@@ -39,6 +40,16 @@ namespace MARS
 	void Radio::setPan(float pan)
 	{
 		this->pan = pan;
+	}
+
+	float Radio::getVolume() const
+	{
+		return this->volume;
+	}
+
+	void Radio::setVolume(float volume)
+	{
+		this->volume = volume;
 	}
 
 	Modulation Radio::getModulation() const

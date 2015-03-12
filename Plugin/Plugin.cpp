@@ -384,6 +384,8 @@ namespace MARS
 
 		Radio* radio = nullptr;
 		float pan = 0.0f;
+		float volume = 1.0f;
+
 		try
 		{
 			radio = this->receivers.at(clientId);
@@ -393,6 +395,7 @@ namespace MARS
 			}
 
 			pan = radio->getPan();
+			volume = radio->getVolume();
 		}
 		catch (std::out_of_range)
 		{
@@ -420,17 +423,24 @@ namespace MARS
 		{
 			for (int i = 0; i < sampleCount; ++i)
 			{
-				if (pan <= -0.1) // Left (mute right)
+				if (pan <= -0.2)
 				{
+					// Mute right
 					samples[right + (i * channels)] = 0;
+
+					// Volume modify left
+					samples[left + (i * channels)] = static_cast<short>(samples[left + (i * channels)] * volume);
 				}
-				else if (pan >= 0.1) // Right (mute left)
+				else if (pan >= 0.2) // Right (mute left)
 				{
+					// Mute left
 					samples[left + (i * channels)] = 0;
+
+					// Volume modify right
+					samples[right + (i * channels)] = static_cast<short>(samples[right + (i * channels)] * volume);
 				}
 			}
 		}
-
 	}
 
 	void Plugin::processAudio(short* samples, int sampleCount, int channels)
@@ -867,6 +877,20 @@ namespace MARS
 		this->position.y = y;
 		this->position.z = z;
 		this->updateMetaData();
+	}
+
+	void Plugin::setVolume(int radio, float volume)
+	{
+		int index = radio - 1;
+
+		if (this->usingExternal)
+		{
+			this->external[index].setVolume(volume);
+		}
+		else
+		{
+			this->internal[index].setVolume(volume);
+		}
 	}
 }
 

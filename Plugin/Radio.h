@@ -18,6 +18,8 @@ namespace MARS
 		void setSecondaryFrequency(int frequency);
 		float getPan() const;
 		void setPan(float pan);
+		float getVolume() const;
+		void setVolume(float volume);
 		Modulation getModulation() const;
 		void setModulation(Modulation modulation);
 		const std::string& getName() const;
@@ -28,6 +30,7 @@ namespace MARS
 		int primary;
 		int secondary;
 		float pan;
+		float volume;
 		Modulation modulation;
 		std::string name;
 	};

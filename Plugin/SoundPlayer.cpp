@@ -102,7 +102,7 @@ namespace MARS
 		DSBUFFERDESC bd = { 0 };
 		bd.dwSize = sizeof bd;
 		bd.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPAN;
-		bd.dwBufferBytes = size;
+		bd.dwBufferBytes = static_cast<DWORD>(size);
 		bd.dwReserved = 0;
 		bd.lpwfxFormat = &wf;
 		bd.guid3DAlgorithm = GUID_NULL;
@@ -127,7 +127,7 @@ namespace MARS
 
 		unsigned char *bufferPtr;
 		unsigned long bufferSize;
-		result = secondaryBuffer->Lock(0, size, (void**)&bufferPtr, (DWORD*)&bufferSize, nullptr, 0, DSBLOCK_ENTIREBUFFER);
+		result = secondaryBuffer->Lock(0, static_cast<DWORD>(size), (void**)&bufferPtr, static_cast<DWORD*>(&bufferSize), nullptr, 0, DSBLOCK_ENTIREBUFFER);
 		if (FAILED(result))
 		{
 			throw "Lock failed";

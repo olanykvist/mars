@@ -20,6 +20,11 @@ select (select active radio)
 	command = "select"
 	radio = int
 
+volume (change volume)
+	command = "vol"
+	radio = int
+	volume = float (0.0 - 1.0)
+
 use (select internal/external radio)
 	command = "use"
 	mode = string (internal | external)
@@ -39,7 +44,7 @@ Console commands
 ================
 
 dump (dumps own metada to current tab)
-	mars /dump
+	/mars dump
 
 CLIENT_METADATA
 ===============
