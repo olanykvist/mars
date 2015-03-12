@@ -186,10 +186,7 @@ MARS.ExportA10 = function()
 		modulation = MARS.modulation.AM
 	}
 	
-	if not MARS.FastCompare(MARS.data.radios[1], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[1] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(1, radio)
 	
 	radio =
 	{
@@ -206,10 +203,7 @@ MARS.ExportA10 = function()
 		radio.secondary = 243000000
 	end
 	
-	if not MARS.FastCompare(MARS.data.radios[2], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[2] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(2, radio)
 	
 	radio =
 	{
@@ -220,10 +214,7 @@ MARS.ExportA10 = function()
 		modulation = MARS.modulation.FM
 	}
 	
-	if not MARS.FastCompare(MARS.data.radios[3], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[3] = MARS.FastCopy(radio)
-	end		
+	MARS.CheckRadio(3, radio)
 end
 
 MARS.ExportP51 = function()
@@ -243,11 +234,7 @@ MARS.ExportP51 = function()
 		MARS.data.selected = selected
 	end
 	
-	if not MARS.FastCompare(MARS.data.radios[1], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[1] = MARS.FastCopy(radio)
-	end
-	
+	MARS.CheckRadio(1, radio)
 	MARS.ClearRadio(2)
 	MARS.ClearRadio(3)
 end
@@ -262,10 +249,7 @@ MARS.ExportMI8 = function()
 		modulation = MARS.modulation.FM
 	}
 	
-	if not MARS.FastCompare(MARS.data.radios[1], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[1] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(1, radio)
 	
 	radio =
 	{
@@ -276,10 +260,7 @@ MARS.ExportMI8 = function()
 		modulation = MARS.modulation.AM
 	}
 	
-	if not MARS.FastCompare(MARS.data.radios[2], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[2] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(2, radio)
 	
 	radio =
 	{
@@ -290,10 +271,7 @@ MARS.ExportMI8 = function()
 		modulation = MARS.modulation.AM
 	}
 	
-	if not MARS.FastCompare(MARS.data.radios[3], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[3] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(3, radio)
 	
 	local panel = GetDevice(0)
 	local switch = panel:get_argument_value(550)
@@ -325,10 +303,7 @@ MARS.ExportKA50 = function()
 		modulation = MARS.modulation.FM
 	}
 	
-	if not MARS.FastCompare(MARS.data.radios[1], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[1] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(1, radio)
 
 	radio =
 	{
@@ -357,10 +332,7 @@ MARS.ExportKA50 = function()
 		radio.secondary = 0
 	end
 	
-	if not MARS.FastCompare(MARS.data.radios[2], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[2] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(2, radio)
 
 	-- Get selected radio from SPU-9
 	switch = panel:get_argument_value(428)
@@ -392,10 +364,7 @@ MARS.ExportUH1 = function()
 		modulation = MARS.modulation.FM
 	}
 	
-	if not MARS.FastCompare(MARS.data.radios[1], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[1] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(1, radio)
 	
 	radio =
 	{
@@ -412,10 +381,7 @@ MARS.ExportUH1 = function()
 		radio.secondary = 243000000
 	end
 	
-	if not MARS.FastCompare(MARS.data.radios[2], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[2] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(2, radio)
 	
 	radio =
 	{
@@ -426,10 +392,7 @@ MARS.ExportUH1 = function()
 		modulation = MARS.modulation.AM
 	}
 	
-	if not MARS.FastCompare(MARS.data.radios[3], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[3] = MARS.FastCopy(radio)
-	end
+	MARS.CheckRadio(3, radio)
 	
 	local switch = panel:get_argument_value(30)
 	local selected = 0
@@ -473,11 +436,7 @@ MARS.ExportF86 = function()
 		MARS.data.selected = selected
 	end
 	
-	if not MARS.FastCompare(MARS.data.radios[1], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[1] = MARS.FastCopy(radio)
-	end
-	
+	MARS.CheckRadio(1, radio)
 	MARS.ClearRadio(2)
 	MARS.ClearRadio(3)
 end
@@ -499,11 +458,7 @@ MARS.ExportFW190 = function()
 		MARS.data.selected = selected
 	end
 	
-	if not MARS.FastCompare(MARS.data.radios[1], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[1] = MARS.FastCopy(radio)
-	end
-	
+	MARS.CheckRadio(1, radio)
 	MARS.ClearRadio(2)
 	MARS.ClearRadio(3)
 end
@@ -525,11 +480,7 @@ MARS.ExportBF109 = function()
 		MARS.data.selected = selected
 	end
 	
-	if not MARS.FastCompare(MARS.data.radios[1], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[1] = MARS.FastCopy(radio)
-	end
-	
+	MARS.CheckRadio(1, radio)
 	MARS.ClearRadio(2)
 	MARS.ClearRadio(3)
 end
@@ -551,21 +502,22 @@ MARS.ExportMIG21 = function()
 		MARS.data.selected = selected
 	end
 	
-	if not MARS.FastCompare(MARS.data.radios[1], radio) then
-		MARS.SendSetCommand(radio)
-		MARS.data.radios[1] = MARS.FastCopy(radio)
-	end
-	
+	MARS.CheckRadio(1, radio)
 	MARS.ClearRadio(2)
 	MARS.ClearRadio(3)
 end
 
-MARS.ClearRadio = function(id)
-	local radio = { id = id, name = "N/A", primary = 0, secondary = 0, modulation = 0 }
+MARS.CheckRadio = function(id, radio)
+{
 	if not MARS.FastCompare(MARS.data.radios[id], radio) then
 		MARS.SendSetCommand(radio)
 		MARS.data.radios[id] = MARS.FastCopy(radio)
 	end
+}
+
+MARS.ClearRadio = function(id)
+	local radio = { id = id, name = "N/A", primary = 0, secondary = 0, modulation = 0 }
+	MARS.CheckRadio(id, radio)
 end
 
 MARS.SendUseCommand = function(internal)
