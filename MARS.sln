@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sounds", "Sounds", "{170B7B
 		Sounds\ptt_up.raw = Sounds\ptt_up.raw
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DSPFilters", "DSPFilters\DSPFilters.vcxproj", "{B19EB3EC-8944-4735-B332-5E0879C4ED5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -88,6 +90,11 @@ Global
 		{F044078E-AB66-4355-A5F9-EC37DE1CF954}.Release|x64.ActiveCfg = Release|x64
 		{F044078E-AB66-4355-A5F9-EC37DE1CF954}.Release|x64.Build.0 = Release|x64
 		{F044078E-AB66-4355-A5F9-EC37DE1CF954}.Test|x64.ActiveCfg = Release|x64
+		{B19EB3EC-8944-4735-B332-5E0879C4ED5D}.Debug|x64.ActiveCfg = Debug|x64
+		{B19EB3EC-8944-4735-B332-5E0879C4ED5D}.Release|x64.ActiveCfg = Release|x64
+		{B19EB3EC-8944-4735-B332-5E0879C4ED5D}.Release|x64.Build.0 = Release|x64
+		{B19EB3EC-8944-4735-B332-5E0879C4ED5D}.Test|x64.ActiveCfg = Release|x64
+		{B19EB3EC-8944-4735-B332-5E0879C4ED5D}.Test|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
