@@ -33,6 +33,13 @@ namespace PluginTest
 			Sleep(1000);
 			player.Play("ptt_up.raw", 1.0f);
 			Sleep(1000);
+
+			for (int i = 0; i < 10; ++i)
+			{
+				float vol = i * 0.1f;
+				player.Play("ptt_up.raw", 0.0f, vol);
+				Sleep(500);
+			}
 		}
 	};
 }

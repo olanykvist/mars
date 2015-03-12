@@ -148,13 +148,10 @@ namespace MARS
 
 	void SoundPlayer::Play(std::string name, float pan, float volume)
 	{
-		// DSBVOLUME_MIN  -10000
-		// DSBVOLUME_MAX       0
-
 		IDirectSoundBuffer8* buffer = this->sounds.at(name);
 		buffer->SetCurrentPosition(0);
 		buffer->SetPan(static_cast<LONG>(pan * 10000));
-		buffer->SetVolume(static_cast<LONG>(DSBVOLUME_MAX));
+		buffer->SetVolume(static_cast<LONG>(-(10000 - (10000 * volume))));
 		buffer->Play(0, 0, 0);
 	}
 
