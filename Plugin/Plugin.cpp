@@ -10,6 +10,9 @@
 #include "ClientMetaData.h"
 #include "Transmission.h"
 #include "json/json.h"
+#include <DspFilters/Dsp.h>
+
+#pragma comment(lib, "DSPFilters.lib")
 
 using std::string;
 
@@ -355,29 +358,7 @@ namespace MARS
 			}
 			else
 			{
-				const int noise_level = 150;
-
-				// Filter here
-				// TODO: Add band pass filter and range limit
-				for (int i = 0; i < sampleCount; ++i)
-				{
-					// Add some random noise
-					int noise = rand() % noise_level;
-					samples[i] = samples[i] + noise - noise_level;
-
-					// Distort silent sounds by zeroizing samples
-					if (abs(samples[i]) <= 100)
-					{
-						samples[i] = 0;
-					}
-
-					// Keep every 3rd sample only
-					if (i % 3 == 0)
-					{
-						samples[i + 1] = samples[i];
-						samples[i + 2] = samples[i];
-					}
-				}
+				Plugin::processAudio(samples, sampleCount, channels);
 			}
 		}
 		catch (std::out_of_range)
@@ -442,6 +423,33 @@ namespace MARS
 			}
 		}
 
+	}
+
+	void Plugin::processAudio(short* samples, int sampleCount, int channels)
+	{
+		const int noise_level = 150;
+		const int order = 1;
+		const double rate = 44100;
+		const double center = 2500;
+		const double width = 1200;
+
+		for (int i = 0; i < sampleCount - 1; ++i)
+		{
+			// Add some random noise
+			int noise = rand() % noise_level;
+			samples[i] = samples[i] + noise;
+
+			// Half sample rate
+			if (i % 2 == 0)
+			{
+				samples[i + 1] = samples[i];
+			}
+		}
+
+		// Apply band pass filter
+		Dsp::SimpleFilter<Dsp::Butterworth::BandPass<3>, 1> filter;
+		filter.setup(order, rate, center, width);
+		filter.process(sampleCount, &samples);
 	}
 
 	void Plugin::onMessageReceived(const char* message)
