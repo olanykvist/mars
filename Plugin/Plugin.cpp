@@ -348,31 +348,31 @@ namespace MARS
 	{
 		//Plugin::processAudio(samples, sampleCount, channels);
 
-		//if (plugin.inGame == false)
-		//{
-		//	return;
-		//}
+		if (plugin.inGame == false)
+		{
+			return;
+		}
 
-		//Radio* radio = nullptr;
-		//try
-		//{
-		//	radio = this->receivers.at(clientId);
-		//	if (radio == nullptr) // No radio
-		//	{
-		//		for (int i = 0; i < sampleCount; ++i)
-		//		{
-		//			samples[i] = 0;
-		//		}
-		//	}
-		//	else
-		//	{
-		//		Plugin::processAudio(samples, sampleCount, channels);
-		//	}
-		//}
-		//catch (std::out_of_range)
-		//{
-		//	// Client not found in map
-		//}
+		Radio* radio = nullptr;
+		try
+		{
+			radio = this->receivers.at(clientId);
+			if (radio == nullptr) // No radio
+			{
+				for (int i = 0; i < sampleCount; ++i)
+				{
+					samples[i] = 0;
+				}
+			}
+			else
+			{
+				Plugin::processAudio(samples, sampleCount, channels);
+			}
+		}
+		catch (std::out_of_range)
+		{
+			// Client not found in map
+		}
 	}
 
 	void Plugin::onPostProcessVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels, const unsigned int* channelSpeakerArray, unsigned int* channelFillMask)
