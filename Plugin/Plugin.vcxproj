@@ -131,6 +131,7 @@
   <ItemGroup>
     <ClInclude Include="ClientMetaData.h" />
     <ClInclude Include="Configuration.h" />
+    <ClInclude Include="filt.h" />
     <ClInclude Include="InputListener.h" />
     <ClInclude Include="json\json-forwards.h" />
     <ClInclude Include="json\json.h" />
@@ -145,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="ClientMetaData.cpp" />
     <ClCompile Include="Configuration.cpp" />
+    <ClCompile Include="filt.cpp" />
     <ClCompile Include="InputListener.cpp" />
     <ClCompile Include="jsoncpp.cpp" />
     <ClCompile Include="Plugin.cpp" />

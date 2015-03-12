@@ -10,9 +10,7 @@
 #include "ClientMetaData.h"
 #include "Transmission.h"
 #include "json/json.h"
-#include <DspFilters/Dsp.h>
-
-#pragma comment(lib, "DSPFilters.lib")
+#include "filt.h"
 
 using std::string;
 
@@ -317,7 +315,15 @@ namespace MARS
 		{
 			if (status == STATUS_NOT_TALKING) // Only play ppt "up" sound
 			{
-				radio = this->currentRadio;
+				if (this->usingExternal)
+				{
+					radio = &this->external[this->selectedRadioIndex];
+				}
+				else
+				{
+					radio = &this->internal[this->selectedRadioIndex];
+				}
+				//radio = this->currentRadio;
 				this->player.Play("ptt_up.raw", radio->getPan());
 			}
 		}
@@ -340,31 +346,33 @@ namespace MARS
 
 	void Plugin::onPlaybackVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels)
 	{
-		if (plugin.inGame == false)
-		{
-			return;
-		}
+		//Plugin::processAudio(samples, sampleCount, channels);
 
-		Radio* radio = nullptr;
-		try
-		{
-			radio = this->receivers.at(clientId);
-			if (radio == nullptr) // No radio
-			{
-				for (int i = 0; i < sampleCount; ++i)
-				{
-					samples[i] = 0;
-				}
-			}
-			else
-			{
-				Plugin::processAudio(samples, sampleCount, channels);
-			}
-		}
-		catch (std::out_of_range)
-		{
-			// Client not found in map
-		}
+		//if (plugin.inGame == false)
+		//{
+		//	return;
+		//}
+
+		//Radio* radio = nullptr;
+		//try
+		//{
+		//	radio = this->receivers.at(clientId);
+		//	if (radio == nullptr) // No radio
+		//	{
+		//		for (int i = 0; i < sampleCount; ++i)
+		//		{
+		//			samples[i] = 0;
+		//		}
+		//	}
+		//	else
+		//	{
+		//		Plugin::processAudio(samples, sampleCount, channels);
+		//	}
+		//}
+		//catch (std::out_of_range)
+		//{
+		//	// Client not found in map
+		//}
 	}
 
 	void Plugin::onPostProcessVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels, const unsigned int* channelSpeakerArray, unsigned int* channelFillMask)
@@ -428,16 +436,12 @@ namespace MARS
 	void Plugin::processAudio(short* samples, int sampleCount, int channels)
 	{
 		const int noise_level = 150;
-		const int order = 1;
-		const double rate = 44100;
-		const double center = 2500;
-		const double width = 1200;
 
 		for (int i = 0; i < sampleCount - 1; ++i)
 		{
 			// Add some random noise
 			int noise = rand() % noise_level;
-			samples[i] = samples[i] + noise;
+			samples[i] = samples[i] + noise - noise_level;
 
 			// Half sample rate
 			if (i % 2 == 0)
@@ -445,18 +449,10 @@ namespace MARS
 				samples[i + 1] = samples[i];
 			}
 		}
-
-		// Apply band pass filter
-		Dsp::SimpleFilter<Dsp::Butterworth::BandPass<3>, 1> filter;
-		filter.setup(order, rate, center, width);
-		filter.process(sampleCount, &samples);
 	}
 
 	void Plugin::onMessageReceived(const char* message)
 	{
-		// Debug output
-		plugin.teamspeak.printMessageToCurrentTab(message);
-
 		string json(message);
 		Json::Reader reader;
 		Json::Value root;
@@ -800,6 +796,14 @@ namespace MARS
 		if (id - 1 != this->selectedRadioIndex)
 		{
 			this->selectedRadioIndex = id - 1;
+			//if (this->usingExternal)
+			//{
+			//	this->currentRadio = &this->external[this->selectedRadioIndex];
+			//}
+			//else
+			//{
+			//	this->currentRadio = &this->internal[this->selectedRadioIndex];
+			//}
 			this->updateMetaData(true);
 		}
 	}
