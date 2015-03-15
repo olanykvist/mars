@@ -325,7 +325,7 @@ namespace MARS
 				{
 					radio = &this->internal[this->selectedRadioIndex];
 				}
-				//radio = this->currentRadio;
+
 				this->player.Play("ptt_up.raw", radio->getPan());
 			}
 		}
@@ -518,8 +518,10 @@ namespace MARS
 				float volume = root["volume"].asFloat();
 
 				stringstream stream;
-				stream << "Volume: " << volume << std::endl;
+				stream << "Volume " << id << ": " << volume << std::endl;
 				plugin.teamspeak.printMessageToCurrentTab(stream.str().c_str());
+
+				plugin.setVolume(id, volume);
 			}
 			else if (command == "info")
 			{

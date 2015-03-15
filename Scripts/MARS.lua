@@ -178,6 +178,8 @@ MARS.ExportCommon = function()
 end
 
 MARS.ExportA10 = function()
+	local panel = GetDevice(0)
+	
 	local radio =
 	{
 		id = 1,
@@ -189,6 +191,9 @@ MARS.ExportA10 = function()
 	
 	MARS.CheckRadio(1, radio)
 	
+	local volume = panel:get_argument_value(133)
+	MARS.CheckVolume(1, volume)
+	
 	radio =
 	{
 		id = 2,
@@ -198,11 +203,13 @@ MARS.ExportA10 = function()
 		modulation = MARS.modulation.AM
 	}
 	
-	local panel = GetDevice(0)
 	local knob = panel:get_argument_value(168) -- Function selector knob
 	if MARS.NearEqual(knob, 0.2, 0.03) and radio.primary > 0 then
 		radio.secondary = 243000000
 	end
+	
+	volume = panel:get_argument_value(171)
+	MARS.CheckVolume(2, volume)
 	
 	MARS.CheckRadio(2, radio)
 	
@@ -216,6 +223,9 @@ MARS.ExportA10 = function()
 	}
 	
 	MARS.CheckRadio(3, radio)
+	
+	volume = panel:get_argument_value(147)
+	MARS.CheckVolume(3, volume)
 end
 
 MARS.ExportP51 = function()
@@ -295,6 +305,8 @@ MARS.ExportMI8 = function()
 end
 
 MARS.ExportKA50 = function()
+	local panel = GetDevice(0)
+
 	local radio =
 	{
 		id = 1,
@@ -305,6 +317,9 @@ MARS.ExportKA50 = function()
 	}
 	
 	MARS.CheckRadio(1, radio)
+	
+	local volume = panel:get_argument_value(372)
+	MARS.CheckVolume(1, volume)
 
 	radio =
 	{
@@ -316,7 +331,6 @@ MARS.ExportKA50 = function()
 	}
 	
 	-- Get modulation mode
-	local panel = GetDevice(0)
 	local switch = panel:get_argument_value(417)
 	if MARS.NearEqual(switch, 0.0, 0.03) then
 		radio.modulation = MARS.modulation.FM
@@ -356,6 +370,9 @@ MARS.ExportKA50 = function()
 end
 
 MARS.ExportUH1 = function()
+	local panel = GetDevice(0)
+	local volume = 0
+	
 	local radio =
 	{
 		id = 1,
@@ -367,6 +384,16 @@ MARS.ExportUH1 = function()
 	
 	MARS.CheckRadio(1, radio)
 	
+	-- Volume knob
+	volume = -(MARS.ReRange(panel:get_argument_value(37), 0.3, 1.0, 0.001, 1.0) - 1.0)
+	
+	-- Receiver switch
+	if panel:get_argument_value(23) < 0.5 then
+		volume = 0
+	end
+	
+	MARS.CheckVolume(1, volume)
+	
 	radio =
 	{
 		id = 2,
@@ -376,12 +403,18 @@ MARS.ExportUH1 = function()
 		modulation = MARS.modulation.AM
 	}
 	
-	local panel = GetDevice(0)
+	
 	local knob = panel:get_argument_value(17) -- Function selector knob
 	if MARS.NearEqual(knob, 0.2, 0.03) and radio.primary > 0 then
 		radio.secondary = 243000000
 	end
 	
+	volume = -(panel:get_argument_value(21) - 1.0)
+	-- Receiver switch
+	if panel:get_argument_value(24) < 0.5 then
+		volume = 0
+	end
+	MARS.CheckVolume(2, volume)
 	MARS.CheckRadio(2, radio)
 	
 	radio =
@@ -394,6 +427,12 @@ MARS.ExportUH1 = function()
 	}
 	
 	MARS.CheckRadio(3, radio)
+	volume = MARS.ReRange(panel:get_argument_value(8), 0.0, 0.65, 0.001, 1.0)
+		-- Receiver switch
+	if panel:get_argument_value(25) < 0.5 then
+		volume = 0
+	end
+	MARS.CheckVolume(3, volume)
 	
 	local switch = panel:get_argument_value(30)
 	local selected = 0
@@ -432,11 +471,7 @@ MARS.ExportF86 = function()
 	
 	local volume = panel:get_argument_value(806) -- 0.1 - 0.9
 	volume = MARS.ReRange(volume, 0.1, 0.9, 0.001, 1.0)
-	
-	if MARS.data.volume[1] ~= volume then
-		MARS.SendVolCommand(1, volume)
-		MARS.data.volume[1] = volume
-	end
+	MARS.CheckVolume(1, volume)
 	
 	local selected = 1
 
@@ -506,10 +541,7 @@ MARS.ExportMIG21 = function()
 	
 	local panel = GetDevice(0)
 	local volume = panel:get_argument_value(210)
-	if MARS.data.volume[1] ~= volume then
-		MARS.SendVolCommand(1, volume)
-		MARS.data.volume[1] = volume
-	end
+	MARS.CheckVolume(1, volume)
 	
 	local selected = 1
 
@@ -530,9 +562,17 @@ MARS.CheckRadio = function(id, radio)
 	end
 end
 
+MARS.CheckVolume = function(id, volume)
+	if MARS.data.volume[id] ~= volume then
+		MARS.SendVolCommand(id, volume)
+		MARS.data.volume[id] = volume
+	end
+end
+
 MARS.ClearRadio = function(id)
 	local radio = { id = id, name = "N/A", primary = 0, secondary = 0, modulation = 0 }
 	MARS.CheckRadio(id, radio)
+	MARS.CheckVolume(id, 1.0)
 end
 
 MARS.SendUseCommand = function(internal)
