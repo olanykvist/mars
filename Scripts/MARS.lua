@@ -530,6 +530,8 @@ MARS.ExportBF109 = function()
 end
 
 MARS.ExportMIG21 = function()
+	local panel = GetDevice(0)
+	
 	local radio =
 	{
 		id = 1,
@@ -539,7 +541,11 @@ MARS.ExportMIG21 = function()
 		modulation = MARS.modulation.AM
 	}
 	
-	local panel = GetDevice(0)
+	-- Check compass/radio switch
+	if panel:get_argument_value(208) < 0.5 then
+		radio.primary = 0
+	end
+	
 	local volume = panel:get_argument_value(210)
 	MARS.CheckVolume(1, volume)
 	
