@@ -24,6 +24,8 @@ namespace MARS
 		void setModulation(Modulation modulation);
 		const std::string& getName() const;
 		void setName(const std::string& name);
+		bool getIsTransmitting() const;
+		void setIsTransmitting(bool isTransmitting);
 		bool canReceive(const Transmission& transmission) const;
 
 	private:
@@ -33,6 +35,7 @@ namespace MARS
 		float volume;
 		Modulation modulation;
 		std::string name;
+		bool isTransmitting;
 	};
 };
 

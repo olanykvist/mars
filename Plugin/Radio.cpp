@@ -9,6 +9,7 @@ namespace MARS
 		, volume(1.0f)
 		, modulation(AM)
 		, name()
+		, isTransmitting(false)
 	{
 	}
 
@@ -72,10 +73,25 @@ namespace MARS
 		this->name = std::string(name);
 	}
 
+	bool Radio::getIsTransmitting() const
+	{
+		return this->isTransmitting;
+	}
+
+	void Radio::setIsTransmitting(bool isTransmitting)
+	{
+		this->isTransmitting = isTransmitting;
+	}
+
 	bool Radio::canReceive(const Transmission& transmission) const
 	{
 		int frequency = transmission.getFrequency();
 		Modulation modulation = transmission.getModulation();
+
+		if (this->isTransmitting)
+		{
+			return false;
+		}
 
 		if (frequency == 0)
 		{

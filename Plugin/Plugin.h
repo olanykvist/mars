@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <thread>
 #include "Radio.h"
 #include "SocketListener.h"
 #include "InputListener.h"
@@ -53,12 +54,13 @@ namespace MARS
 		void onClientTalkStatusChanged(uint64 serverConnectionHandlerId, int status, anyID clientId);
 		void onPlaybackVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels);
 		void onPostProcessVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels, const unsigned int* channelSpeakerArray, unsigned int* channelFillMask);
+		void onAliveTick();
 
 		static void processAudio(short* samples, int sampleCount, int channels);
-
 		static void onMessageReceived(const char* message);
 		static void onButtonDown(const wchar_t* device, int button);
 		static void onButtonUp(const wchar_t* device, int button);
+
 		void updateMetaData(bool flush = false);
 		void clearMetaData();
 		void start();
@@ -93,6 +95,8 @@ namespace MARS
 		Vector3 position;
 		Configuration configuration;
 		std::map<anyID, Radio*> receivers;
+		ULONGLONG lastMessageTime;
+		std::thread aliveChecker;
 	};
 };
 

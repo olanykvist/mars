@@ -65,6 +65,9 @@ namespace MARS
 		this->external[2].setName("EXT 3");
 		this->external[2].setPrimaryFrequency(40500000);
 		this->external[2].setModulation(Modulation::FM);
+
+		// Initial value
+		this->lastMessageTime = GetTickCount64();
 	}
 
 	Plugin::~Plugin()
@@ -211,7 +214,7 @@ namespace MARS
 	}
 
 	void Plugin::initSoundPlayer()
-	{	
+	{
 		this->player.Initialize();
 		this->player.Load("ptt_up.raw");
 	}
@@ -359,7 +362,7 @@ namespace MARS
 		try
 		{
 			radio = this->receivers.at(clientId);
-			if (radio == nullptr) // No radio
+			if (radio == nullptr || radio->getIsTransmitting()) // No radio or transmitting
 			{
 				for (int i = 0; i < sampleCount; ++i)
 				{
@@ -447,24 +450,29 @@ namespace MARS
 
 	void Plugin::processAudio(short* samples, int sampleCount, int channels)
 	{
-		const int noise_level = 150;
+		const short noise_level = 150;
 
-		for (int i = 0; i < sampleCount - 1; ++i)
+		for (int i = 0; i < sampleCount - 1; i++)
 		{
-			// Add some random noise
-			int noise = rand() % noise_level;
-			samples[i] = samples[i] + noise - noise_level;
-
-			// Half sample rate
-			if (i % 2 == 0)
+			for (int j = 0; j < channels; j++)
 			{
-				samples[i + 1] = samples[i];
+				short noise = rand() % noise_level;
+				int pos = (i * channels) + j;
+
+				samples[pos] = samples[pos] + noise_level;
+
+				if (pos % 2 == 0)
+				{
+					samples[pos + 1] = samples[pos];
+				}
 			}
 		}
 	}
 
 	void Plugin::onMessageReceived(const char* message)
 	{
+		plugin.lastMessageTime = GetTickCount64();
+
 		string json(message);
 		Json::Reader reader;
 		Json::Value root;
@@ -560,6 +568,7 @@ namespace MARS
 		uint64 connection = plugin.teamspeak.getCurrentServerConnectionHandlerID();
 
 		// Handle separate PTT:s if using external radios or flying A-10C (for now...)
+		bool transmit = false;
 		if (plugin.usingExternal || plugin.unit == "A-10C")
 		{
 			if (device == plugin.configuration.getSelectPttOneDevice())
@@ -568,6 +577,7 @@ namespace MARS
 				{
 					plugin.selectActiveRadio(1);
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
+					transmit = true;
 				}
 			}
 
@@ -577,6 +587,7 @@ namespace MARS
 				{
 					plugin.selectActiveRadio(2);
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
+					transmit = true;
 				}
 			}
 
@@ -586,6 +597,7 @@ namespace MARS
 				{
 					plugin.selectActiveRadio(3);
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
+					transmit = true;
 				}
 			}
 		}
@@ -597,7 +609,20 @@ namespace MARS
 				if (button == plugin.configuration.getPttCommonButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
+					transmit = true;
 				}
+			}
+		}
+
+		if (transmit)
+		{
+			if (plugin.usingExternal)
+			{
+				plugin.external[plugin.selectedRadioIndex].setIsTransmitting(true);
+			}
+			else
+			{
+				plugin.internal[plugin.selectedRadioIndex].setIsTransmitting(true);
 			}
 		}
 	}
@@ -613,6 +638,7 @@ namespace MARS
 		uint64 connection = plugin.teamspeak.getCurrentServerConnectionHandlerID();
 
 		// Handle separate PTT:s if using external radios or flying A-10C (for now...)
+		bool stop = false;
 		if (plugin.usingExternal || plugin.unit == "A-10C")
 		{
 			if (device == plugin.configuration.getSelectPttOneDevice())
@@ -620,6 +646,7 @@ namespace MARS
 				if (button == plugin.configuration.getSelectPttOneButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
+					stop = true;
 				}
 			}
 
@@ -628,6 +655,7 @@ namespace MARS
 				if (button == plugin.configuration.getSelectPttTwoButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
+					stop = true;
 				}
 			}
 
@@ -636,6 +664,7 @@ namespace MARS
 				if (button == plugin.configuration.getSelectPttThreeButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
+					stop = true;
 				}
 			}
 		}
@@ -647,8 +676,36 @@ namespace MARS
 				if (button == plugin.configuration.getPttCommonButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
+					stop = true;
 				}
 			}
+		}
+
+		if (stop)
+		{
+			if (plugin.usingExternal)
+			{
+				plugin.external[plugin.selectedRadioIndex].setIsTransmitting(false);
+			}
+			else
+			{
+				plugin.internal[plugin.selectedRadioIndex].setIsTransmitting(false);
+			}
+		}
+	}
+
+	void Plugin::onAliveTick()
+	{
+		while (this->inGame)
+		{
+			ULONGLONG tick = GetTickCount64();
+
+			if (tick - this->lastMessageTime > 6000)
+			{
+				this->stop();
+			}
+
+			Sleep(1000);
 		}
 	}
 
@@ -706,7 +763,7 @@ namespace MARS
 			return;
 		}
 
-		if (this->teamspeak.setClientSelfVariableAsString(connection, CLIENT_META_DATA, "") != ERROR_ok)
+		if (this->teamspeak.setClientSelfVariableAsString(connection, CLIENT_META_DATA, "\0") != ERROR_ok)
 		{
 			this->teamspeak.logMessage("Failed to clear metadata", LogLevel_ERROR, "MARS", 0);
 		}
@@ -726,6 +783,8 @@ namespace MARS
 
 		this->inGame = true;
 		this->updateMetaData(true);
+		this->lastMessageTime = GetTickCount64();
+		this->aliveChecker = thread(&Plugin::onAliveTick, this);
 	}
 
 	void Plugin::stop()
@@ -737,6 +796,11 @@ namespace MARS
 
 		this->inGame = false;
 		this->updateMetaData(true);
+
+		if (this->aliveChecker.joinable())
+		{
+			this->aliveChecker.join();
+		}
 	}
 
 	/// <summary>
