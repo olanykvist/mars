@@ -54,12 +54,12 @@ namespace MARS
 		void onClientTalkStatusChanged(uint64 serverConnectionHandlerId, int status, anyID clientId);
 		void onPlaybackVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels);
 		void onPostProcessVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels, const unsigned int* channelSpeakerArray, unsigned int* channelFillMask);
-		void onAliveTick();
-
+		
 		static void processAudio(short* samples, int sampleCount, int channels);
 		static void onMessageReceived(const char* message);
 		static void onButtonDown(const wchar_t* device, int button);
 		static void onButtonUp(const wchar_t* device, int button);
+		//static void onAliveTick();
 
 		void updateMetaData(bool flush = false);
 		void clearMetaData();
@@ -96,7 +96,8 @@ namespace MARS
 		Configuration configuration;
 		std::map<anyID, Radio*> receivers;
 		ULONGLONG lastMessageTime;
-		std::thread aliveChecker;
+		//std::thread aliveChecker;
+		//static std::mutex cs;
 	};
 };
 

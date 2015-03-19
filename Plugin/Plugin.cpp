@@ -11,7 +11,6 @@
 #include "Transmission.h"
 #include "json/json.h"
 #include "filt.h"
-#include <sstream>
 
 using std::string;
 using std::stringstream;
@@ -65,9 +64,6 @@ namespace MARS
 		this->external[2].setName("EXT 3");
 		this->external[2].setPrimaryFrequency(40500000);
 		this->external[2].setModulation(Modulation::FM);
-
-		// Initial value
-		this->lastMessageTime = GetTickCount64();
 	}
 
 	Plugin::~Plugin()
@@ -329,7 +325,10 @@ namespace MARS
 					radio = &this->internal[this->selectedRadioIndex];
 				}
 
-				this->player.Play("ptt_up.raw", radio->getPan());
+				if (radio->getPrimaryFrequency() != 0)
+				{
+					this->player.Play("ptt_up.raw", radio->getPan(), radio->getVolume());
+				}
 			}
 		}
 		else
@@ -343,7 +342,10 @@ namespace MARS
 				radio = this->receivers.at(clientId);
 				if (radio != nullptr)
 				{
-					this->player.Play("ptt_up.raw", radio->getPan());
+					if (radio->getPrimaryFrequency() != 0)
+					{
+						this->player.Play("ptt_up.raw", radio->getPan(), radio->getVolume());
+					}
 				}
 			}
 		}
@@ -525,10 +527,6 @@ namespace MARS
 				int id = root["radio"].asInt();
 				float volume = root["volume"].asFloat();
 
-				stringstream stream;
-				stream << "Volume " << id << ": " << volume << std::endl;
-				plugin.teamspeak.printMessageToCurrentTab(stream.str().c_str());
-
 				plugin.setVolume(id, volume);
 			}
 			else if (command == "info")
@@ -694,21 +692,6 @@ namespace MARS
 		}
 	}
 
-	void Plugin::onAliveTick()
-	{
-		while (this->inGame)
-		{
-			ULONGLONG tick = GetTickCount64();
-
-			if (tick - this->lastMessageTime > 6000)
-			{
-				this->stop();
-			}
-
-			Sleep(1000);
-		}
-	}
-
 	void Plugin::updateMetaData(bool flush)
 	{
 		this->metaData.version = Plugin::VERSION;
@@ -783,8 +766,6 @@ namespace MARS
 
 		this->inGame = true;
 		this->updateMetaData(true);
-		this->lastMessageTime = GetTickCount64();
-		this->aliveChecker = thread(&Plugin::onAliveTick, this);
 	}
 
 	void Plugin::stop()
@@ -795,12 +776,8 @@ namespace MARS
 		}
 
 		this->inGame = false;
-		this->updateMetaData(true);
-
-		if (this->aliveChecker.joinable())
-		{
-			this->aliveChecker.join();
-		}
+		this->clearMetaData();
+		this->updateMetaData(false);
 	}
 
 	/// <summary>
