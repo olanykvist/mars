@@ -138,6 +138,7 @@
     <ClInclude Include="Modulation.h" />
     <ClInclude Include="Plugin.h" />
     <ClInclude Include="Radio.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SocketListener.h" />
     <ClInclude Include="SoundPlayer.h" />
     <ClInclude Include="Transmission.h" />
@@ -155,6 +156,9 @@
     <ClCompile Include="SoundPlayer.cpp" />
     <ClCompile Include="Transmission.cpp" />
     <ClCompile Include="Vector3.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Plugin.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
