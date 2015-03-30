@@ -89,7 +89,7 @@ namespace MARS
 		}
 		else
 		{
-			// Failed to parse metadata
+			throw string("Failed to parse metadata. Conflicting plugin?");
 		}
 
 		return data;

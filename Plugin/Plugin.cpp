@@ -118,9 +118,9 @@ namespace MARS
 		{
 			client = ClientMetaData::deserialize(metadata);
 		}
-		catch (...)
+		catch (string error)
 		{
-			return "Failed to parse metadata. Conflicting plugin?";
+			return error;
 		}
 
 		sprintf_s(buffer, BUFFER_SIZE, "Installed (version %s)\n", client.version.c_str());
