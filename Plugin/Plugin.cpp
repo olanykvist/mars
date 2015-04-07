@@ -20,7 +20,7 @@ static MARS::Plugin plugin;
 namespace MARS
 {
 	const char* Plugin::NAME = "MARS";
-	const char* Plugin::VERSION = "1.0.0-beta.4";
+	const char* Plugin::VERSION = "1.0.0-beta.4+++";
 	const char* Plugin::AUTHOR = "Master Arms";
 	const char* Plugin::DESCRIPTION = "MARS, Master Arms Radio System, integrates the radios in DCS World with TeamSpeak for a more realistic radio experience.";
 	const char* Plugin::COMMAND_KEYWORD = "mars";
@@ -233,21 +233,16 @@ namespace MARS
 		this->external[2].setPan(this->configuration.getRadioThreePan());
 	}
 
-	// Callback
-	void Plugin::onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId)
+	///
+	///
+	void Plugin::updateReceivers(uint64 serverConnectionHandlerId)
 	{
-		if (this->inGame == false)
-		{
-			return;
-		}
-
 		anyID myId = 0;
 		if (this->teamspeak.getClientID(serverConnectionHandlerId, &myId) != ERROR_ok)
 		{
 			this->teamspeak.logMessage("Failed to get own Id", LogLevel_ERROR, Plugin::NAME, 0);
 			return;
 		}
-
 
 		uint64 channelId = 0;
 		if (this->teamspeak.getChannelOfClient(serverConnectionHandlerId, myId, &channelId) != ERROR_ok)
@@ -267,11 +262,33 @@ namespace MARS
 
 		for (int i = 0; clients[i] != 0; i++)
 		{
-			string json = this->getClientMetaData(serverConnectionHandlerId, clients[i]);
-			ClientMetaData data = ClientMetaData::deserialize(json);
-			Transmission transmission = Transmission(data.radio[data.selected - 1].frequency, data.radio[data.selected - 1].modulation);
+			if (clients[i] == myId)
+			{
+				// Ignore own client id
+				continue;
+			}
 
-			this->receivers[clients[i]] = nullptr;
+			string data = this->getClientMetaData(serverConnectionHandlerId, clients[i]);
+			if (data.size() == 0)
+			{
+				// Client has no metadata - MARS not installed/running or conflicting plugin cleared metadata
+				continue;
+			}
+
+			ClientMetaData metadata;
+
+			try
+			{
+				metadata = ClientMetaData::deserialize(data);
+			}
+			catch (string)
+			{
+				this->teamspeak.logMessage("Failed to parse client metadata", LogLevel_ERROR, Plugin::NAME, 0);
+				continue;
+			}
+
+			int index = metadata.selected - 1;
+			Transmission transmission = Transmission(metadata.radio[index].frequency, metadata.radio[index].modulation);
 
 			if (this->usingExternal)
 			{
@@ -296,6 +313,15 @@ namespace MARS
 		}
 	}
 
+	// Callback
+	void Plugin::onClientUpdated(uint64 serverConnectionHandlerId, anyID clientId, anyID invokerId)
+	{
+		this->updateReceivers(serverConnectionHandlerId);
+	}
+
+	/// <summary>
+	/// Called when someone starts or stops talking.
+	/// </summary>
 	void Plugin::onClientTalkStatusChanged(uint64 serverConnectionHandlerId, int status, anyID clientId)
 	{
 		if (this->inGame == false)
@@ -312,34 +338,41 @@ namespace MARS
 
 		Radio* radio = nullptr;
 
-		if (clientId == myId)
+		if (clientId == myId) // I started or stopped talking
 		{
-			if (status == STATUS_NOT_TALKING) // Only play ppt "up" sound
+			if (this->currentRadio != nullptr)
 			{
-				if (this->usingExternal)
+				if (status == STATUS_TALKING)
 				{
-					radio = &this->external[this->selectedRadioIndex];
 				}
-				else
+				else if (status == STATUS_NOT_TALKING) // Only play ppt "up" sound
 				{
-					radio = &this->internal[this->selectedRadioIndex];
-				}
-
-				if (radio->getPrimaryFrequency() != 0)
-				{
-					this->player.Play("ptt_up.raw", radio->getPan(), radio->getVolume());
+					if (this->currentRadio->getPrimaryFrequency() != 0)
+					{
+						this->player.Play("ptt_up.raw", this->currentRadio->getPan(), this->currentRadio->getVolume());
+					}
 				}
 			}
 		}
-		else
+		else // Someone else started or stopped talking
 		{
+			// Get current radio
+			try
+			{
+				radio = this->receivers.at(clientId);
+			}
+			catch (std::out_of_range)
+			{
+				// Client not in map, return
+				return;
+			}
+
 			if (status == STATUS_TALKING)
 			{
 
 			}
 			else if (status == STATUS_NOT_TALKING)
 			{
-				radio = this->receivers.at(clientId);
 				if (radio != nullptr)
 				{
 					if (radio->getPrimaryFrequency() != 0)
@@ -353,33 +386,57 @@ namespace MARS
 
 	void Plugin::onPlaybackVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels)
 	{
-		//Plugin::processAudio(samples, sampleCount, channels);
-
 		if (plugin.inGame == false)
 		{
 			return;
 		}
 
-		Radio* radio = nullptr;
+		Radio* receiver = nullptr;
 		try
 		{
-			radio = this->receivers.at(clientId);
-			if (radio == nullptr || radio->getIsTransmitting()) // No radio or transmitting
+			receiver = this->receivers.at(clientId);
+		}
+		catch (std::out_of_range)
+		{
+			// Client not found in map, not receiving so leave receiver as nullptr
+		}
+
+		// Is transmitting?
+		int talkFlag;
+		bool isTalking = false;
+		if (this->teamspeak.getClientSelfVariableAsInt(serverConnectionHandlerId, CLIENT_FLAG_TALKING, &talkFlag) == ERROR_ok)
+		{
+			isTalking = talkFlag == STATUS_TALKING;
+		}
+		else
+		{
+			// Failed to get talkFlag value, assume not talking
+		}
+
+		if (receiver == nullptr)
+		{
+			for (int i = 0; i < sampleCount; ++i)
+			{
+				samples[i] = 0;
+			}
+
+			return;
+		}
+
+		if (isTalking)
+		{
+			if (this->currentRadio == receiver)
 			{
 				for (int i = 0; i < sampleCount; ++i)
 				{
 					samples[i] = 0;
 				}
-			}
-			else
-			{
-				Plugin::processAudio(samples, sampleCount, channels);
+
+				return;
 			}
 		}
-		catch (std::out_of_range)
-		{
-			// Client not found in map
-		}
+
+		this->processAudio(samples, sampleCount, channels);
 	}
 
 	void Plugin::onPostProcessVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels, const unsigned int* channelSpeakerArray, unsigned int* channelFillMask)
@@ -452,21 +509,21 @@ namespace MARS
 
 	void Plugin::processAudio(short* samples, int sampleCount, int channels)
 	{
-		const short noise_level = 150;
+		const int noise_level = 150;
 
-		for (int i = 0; i < sampleCount - 1; i++)
+		// Filter here
+		// TODO: Add band pass filter and range limit
+		for (int i = 0; i < sampleCount - 1; ++i)
 		{
-			for (int j = 0; j < channels; j++)
+			// Add some random noise
+			int noise = rand() % noise_level;
+			samples[i] = samples[i] + noise;
+
+			// Keep every 2rd sample only
+			if (i % 2 == 0)
 			{
-				short noise = rand() % noise_level;
-				int pos = (i * channels) + j;
-
-				samples[pos] = samples[pos] + noise_level;
-
-				if (pos % 2 == 0)
-				{
-					samples[pos + 1] = samples[pos];
-				}
+				samples[i + 1] = samples[i];
+				//samples[i + 2] = samples[i];
 			}
 		}
 	}
@@ -566,7 +623,6 @@ namespace MARS
 		uint64 connection = plugin.teamspeak.getCurrentServerConnectionHandlerID();
 
 		// Handle separate PTT:s if using external radios or flying A-10C (for now...)
-		bool transmit = false;
 		if (plugin.usingExternal || plugin.unit == "A-10C")
 		{
 			if (device == plugin.configuration.getSelectPttOneDevice())
@@ -575,7 +631,6 @@ namespace MARS
 				{
 					plugin.selectActiveRadio(1);
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
-					transmit = true;
 				}
 			}
 
@@ -585,7 +640,6 @@ namespace MARS
 				{
 					plugin.selectActiveRadio(2);
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
-					transmit = true;
 				}
 			}
 
@@ -595,7 +649,6 @@ namespace MARS
 				{
 					plugin.selectActiveRadio(3);
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
-					transmit = true;
 				}
 			}
 		}
@@ -607,20 +660,7 @@ namespace MARS
 				if (button == plugin.configuration.getPttCommonButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
-					transmit = true;
 				}
-			}
-		}
-
-		if (transmit)
-		{
-			if (plugin.usingExternal)
-			{
-				plugin.external[plugin.selectedRadioIndex].setIsTransmitting(true);
-			}
-			else
-			{
-				plugin.internal[plugin.selectedRadioIndex].setIsTransmitting(true);
 			}
 		}
 	}
@@ -636,7 +676,6 @@ namespace MARS
 		uint64 connection = plugin.teamspeak.getCurrentServerConnectionHandlerID();
 
 		// Handle separate PTT:s if using external radios or flying A-10C (for now...)
-		bool stop = false;
 		if (plugin.usingExternal || plugin.unit == "A-10C")
 		{
 			if (device == plugin.configuration.getSelectPttOneDevice())
@@ -644,7 +683,6 @@ namespace MARS
 				if (button == plugin.configuration.getSelectPttOneButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
-					stop = true;
 				}
 			}
 
@@ -653,7 +691,6 @@ namespace MARS
 				if (button == plugin.configuration.getSelectPttTwoButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
-					stop = true;
 				}
 			}
 
@@ -662,7 +699,6 @@ namespace MARS
 				if (button == plugin.configuration.getSelectPttThreeButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
-					stop = true;
 				}
 			}
 		}
@@ -674,20 +710,7 @@ namespace MARS
 				if (button == plugin.configuration.getPttCommonButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
-					stop = true;
 				}
-			}
-		}
-
-		if (stop)
-		{
-			if (plugin.usingExternal)
-			{
-				plugin.external[plugin.selectedRadioIndex].setIsTransmitting(false);
-			}
-			else
-			{
-				plugin.internal[plugin.selectedRadioIndex].setIsTransmitting(false);
 			}
 		}
 	}
@@ -724,6 +747,7 @@ namespace MARS
 		{
 			return;
 		}
+
 		if (this->teamspeak.setClientSelfVariableAsString(connection, CLIENT_META_DATA, data.c_str()) != ERROR_ok)
 		{
 			this->teamspeak.logMessage("Failed to update metadata", LogLevel_ERROR, "MARS", 0);
@@ -860,14 +884,14 @@ namespace MARS
 		if (id - 1 != this->selectedRadioIndex)
 		{
 			this->selectedRadioIndex = id - 1;
-			//if (this->usingExternal)
-			//{
-			//	this->currentRadio = &this->external[this->selectedRadioIndex];
-			//}
-			//else
-			//{
-			//	this->currentRadio = &this->internal[this->selectedRadioIndex];
-			//}
+			if (this->usingExternal)
+			{
+				this->currentRadio = &this->external[this->selectedRadioIndex];
+			}
+			else
+			{
+				this->currentRadio = &this->internal[this->selectedRadioIndex];
+			}
 			this->updateMetaData(true);
 		}
 	}
@@ -880,6 +904,7 @@ namespace MARS
 		if (this->usingExternal)
 		{
 			this->usingExternal = false;
+			this->currentRadio = &this->internal[this->selectedRadioIndex];
 			this->updateMetaData(true);
 		}
 	}
@@ -892,6 +917,7 @@ namespace MARS
 		if (!this->usingExternal)
 		{
 			this->usingExternal = true;
+			this->currentRadio = &this->external[this->selectedRadioIndex];
 			this->updateMetaData(true);
 		}
 	}
