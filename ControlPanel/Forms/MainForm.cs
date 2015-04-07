@@ -263,7 +263,11 @@ namespace MARS.ControlPanel.Forms
             }
             catch (UnauthorizedAccessException)
             {
-                MessageBox.Show("Permission denied :-(", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Permission denied :-(\n Change permissions on the TeamSpeak plugins folder, or run this program as administrator", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (IOException exception)
+            {
+                MessageBox.Show("Critical error during file copy: " + exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
