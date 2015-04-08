@@ -20,7 +20,7 @@ static MARS::Plugin plugin;
 namespace MARS
 {
 	const char* Plugin::NAME = "MARS";
-	const char* Plugin::VERSION = "1.0.0-rc.1";
+	const char* Plugin::VERSION = "1.0.0-rc.2";
 	const char* Plugin::AUTHOR = "Master Arms";
 	const char* Plugin::DESCRIPTION = "MARS, Master Arms Radio System, integrates the radios in DCS World with TeamSpeak for a more realistic radio experience.";
 	const char* Plugin::COMMAND_KEYWORD = "mars";
@@ -437,6 +437,13 @@ namespace MARS
 		}
 
 		this->processAudio(samples, sampleCount, channels);
+		if (this->currentRadio != nullptr)
+		{
+			for (int i = 0; i < sampleCount; ++i)
+			{
+				samples[i] = samples[i] * this->currentRadio->getVolume();
+			}
+		}
 	}
 
 	void Plugin::onPostProcessVoiceDataEvent(uint64 serverConnectionHandlerId, anyID clientId, short* samples, int sampleCount, int channels, const unsigned int* channelSpeakerArray, unsigned int* channelFillMask)
@@ -448,7 +455,6 @@ namespace MARS
 
 		Radio* radio = nullptr;
 		float pan = 0.0f;
-		float volume = 1.0f;
 
 		try
 		{
@@ -459,7 +465,6 @@ namespace MARS
 			}
 
 			pan = radio->getPan();
-			volume = radio->getVolume();
 		}
 		catch (std::out_of_range)
 		{
@@ -491,17 +496,11 @@ namespace MARS
 				{
 					// Mute right
 					samples[right + (i * channels)] = 0;
-
-					// Volume modify left
-					samples[left + (i * channels)] = static_cast<short>(samples[left + (i * channels)] * volume);
 				}
 				else if (pan >= 0.2) // Right (mute left)
 				{
 					// Mute left
 					samples[left + (i * channels)] = 0;
-
-					// Volume modify right
-					samples[right + (i * channels)] = static_cast<short>(samples[right + (i * channels)] * volume);
 				}
 			}
 		}
