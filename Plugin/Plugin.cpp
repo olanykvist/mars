@@ -13,7 +13,6 @@
 #include "filt.h"
 
 using std::string;
-using std::stringstream;
 
 static MARS::Plugin plugin;
 
@@ -359,7 +358,10 @@ namespace MARS
 			// Get current radio
 			try
 			{
-				radio = this->receivers.at(clientId);
+				if (this->receivers.empty() == false)
+				{
+					radio = this->receivers.at(clientId);
+				}
 			}
 			catch (std::out_of_range)
 			{
@@ -394,7 +396,10 @@ namespace MARS
 		Radio* receiver = nullptr;
 		try
 		{
-			receiver = this->receivers.at(clientId);
+			if (this->receivers.empty() == false)
+			{
+				receiver = this->receivers.at(clientId);
+			}
 		}
 		catch (std::out_of_range)
 		{
@@ -522,7 +527,6 @@ namespace MARS
 			if (i % 2 == 0)
 			{
 				samples[i + 1] = samples[i];
-				//samples[i + 2] = samples[i];
 			}
 		}
 	}
