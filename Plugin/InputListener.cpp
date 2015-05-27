@@ -26,7 +26,7 @@ namespace MARS
 			throw;
 		}
 
-		result = this->pInput->EnumDevices(DI8DEVCLASS_GAMECTRL, InputListener::OnEnumDevice, this, DIEDFL_ATTACHEDONLY);
+		result = this->pInput->EnumDevices(DI8DEVCLASS_ALL, InputListener::OnEnumDevice, this, DIEDFL_ATTACHEDONLY);
 		if (FAILED(result))
 		{
 			// Log & throw
@@ -77,9 +77,12 @@ namespace MARS
 				result = pDevice->Acquire();
 				listener->vDevices.push_back(pDevice);
 			}
-			else
+			else if ((pDeviceInstance->dwDevType & 0xff) == DI8DEVTYPE_KEYBOARD) // Keyboard
 			{
-
+				result = pDevice->SetDataFormat(&c_dfDIKeyboard);
+				result = pDevice->SetCooperativeLevel(nullptr, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+				result = pDevice->Acquire();
+				listener->vDevices.push_back(pDevice);
 			}
 		}
 		else
@@ -93,20 +96,31 @@ namespace MARS
 	void InputListener::Listen()
 	{
 		vector<byte[128]> last = vector<byte[128]>(this->vDevices.size());
-		DIJOYSTATE2 state = { 0 };
-		DIPROPSTRING name;
-		name.diph.dwSize = sizeof(DIPROPSTRING);
-		name.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-		name.diph.dwObj = 0; // device property 
-		name.diph.dwHow = DIPH_DEVICE;
-		
+		DIJOYSTATE2 joystickState = { 0 };
+		BYTE keyboardState[256] = { 0 };
+		DIDEVICEINSTANCE instance = { 0 };
+		instance.dwSize = sizeof(instance);
+
 		for (size_t i = 0; i < this->vDevices.size(); i++)
 		{
 			this->vDevices[i]->Poll();
-			this->vDevices[i]->GetDeviceState(sizeof(state), &state);
-			for (size_t j = 0; j < 128; j++)
+			this->vDevices[i]->GetDeviceInfo(&instance);
+
+			if (instance.wUsage == 0x04) // Joystick
 			{
-				last[i][j] = state.rgbButtons[j];
+				this->vDevices[i]->GetDeviceState(sizeof(joystickState), &joystickState);
+				for (size_t j = 0; j < 128; j++)
+				{
+					last[i][j] = joystickState.rgbButtons[j];
+				}
+			}
+			else if ((instance.dwDevType & 0xff) == DI8DEVTYPE_KEYBOARD) // Keyboard
+			{
+				this->vDevices[i]->GetDeviceState(sizeof(keyboardState), &keyboardState);
+				for (size_t j = 0; j < 128; j++)
+				{
+					last[i][j] = keyboardState[j];
+				}
 			}
 		}
 
@@ -117,28 +131,55 @@ namespace MARS
 			for (int i = 0; i < this->vDevices.size(); i++) // Each device
 			{
 				this->vDevices[i]->Poll();
-				this->vDevices[i]->GetDeviceState(sizeof(state), &state);
+				this->vDevices[i]->GetDeviceInfo(&instance);
 
-				for (int j = 0; j < 128; j++)
+				if (instance.wUsage == 0x04)
 				{
-					if ((state.rgbButtons[j] & 0x80) && !(last[i][j] & 0x80))
-					{
-						this->vDevices[i]->GetProperty(DIPROP_PRODUCTNAME, &name.diph);
-						if (this->ButtonDown != nullptr)
-						{
-							ButtonDown(name.wsz, j);
-						}
-					}
-					else if (!(state.rgbButtons[j] & 0x80) && (last[i][j] & 0x80))
-					{
-						this->vDevices[i]->GetProperty(DIPROP_PRODUCTNAME, &name.diph);
-						if (this->ButtonUp != nullptr)
-						{
-							ButtonUp(name.wsz, j);
-						}
-					}
+					this->vDevices[i]->GetDeviceState(sizeof(joystickState), &joystickState);
 
-					last[i][j] = state.rgbButtons[j];
+					for (int j = 0; j < 128; j++)
+					{
+						if ((joystickState.rgbButtons[j] & 0x80) && !(last[i][j] & 0x80))
+						{
+							if (this->ButtonDown != nullptr)
+							{
+								ButtonDown(instance.tszProductName, j);
+							}
+						}
+						else if (!(joystickState.rgbButtons[j] & 0x80) && (last[i][j] & 0x80))
+						{
+							if (this->ButtonUp != nullptr)
+							{
+								ButtonUp(instance.tszProductName, j);
+							}
+						}
+
+						last[i][j] = joystickState.rgbButtons[j];
+					}
+				}
+				else if ((instance.dwDevType & 0xff) == DI8DEVTYPE_KEYBOARD) // Keyboard
+				{
+					this->vDevices[i]->GetDeviceState(sizeof(keyboardState), &keyboardState);
+
+					for (int j = 0; j < 128; j++)
+					{
+						if ((keyboardState[j] & 0x80) && !(last[i][j] & 0x80))
+						{
+							if (this->ButtonDown != nullptr)
+							{
+							 	ButtonDown(instance.tszProductName, j);
+							}
+						}
+						else if (!(keyboardState[j] & 0x80) && (last[i][j] & 0x80))
+						{
+							if (this->ButtonUp != nullptr)
+							{
+								ButtonUp(instance.tszProductName, j);
+							}
+						}
+
+						last[i][j] = keyboardState[j];
+					}
 				}
 			}
 

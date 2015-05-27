@@ -225,7 +225,7 @@ namespace MARS.ControlPanel.Forms
         private void DisableExport()
         {
             var lines = File.ReadAllLines(Path.Combine(this.EnsureScriptsPath(), "Export.lua"));
-            
+
             for (int i = 0; i < lines.Length; ++i)
             {
                 if (lines[i].Equals(EXPORT, StringComparison.InvariantCulture))
@@ -306,14 +306,23 @@ namespace MARS.ControlPanel.Forms
         {
             this.input = new DirectInput();
             this.devices = new List<Device>();
-
-            var instances = this.input.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly);
+            var instances = this.input.GetDevices();
 
             foreach (var instance in instances)
             {
+                var device = null as Device;
+
                 if (instance.Usage == UsageId.GenericJoystick)
                 {
-                    var device = new Joystick(this.input, instance.ProductGuid);
+                    device = new Joystick(this.input, instance.ProductGuid);
+                }
+                else if (instance.Type == DeviceType.Keyboard)
+                {
+                    device = new Keyboard(this.input);
+                }
+
+                if (device != null)
+                {
                     device.SetCooperativeLevel(this, CooperativeLevel.Background | CooperativeLevel.NonExclusive);
                     device.Acquire();
 
@@ -372,11 +381,24 @@ namespace MARS.ControlPanel.Forms
             for (int i = 0; i < this.devices.Count; i++)
             {
                 this.devices[i].Poll();
-                var state = (this.devices[i] as Joystick).GetCurrentState();
 
-                for (int j = 0; j < state.Buttons.Length; j++)
+                if (this.devices[i] is Joystick)
                 {
-                    initial[i, j] = state.Buttons[j];
+                    var state = (this.devices[i] as Joystick).GetCurrentState();
+
+                    for (int j = 0; j < 128; j++)
+                    {
+                        initial[i, j] = state.Buttons[j];
+                    }
+                }
+                else if (this.devices[i] is Keyboard)
+                {
+                    var state = (this.devices[i] as Keyboard).GetCurrentState();
+
+                    for (int j = 0; j < 128; j++)
+                    {
+                        initial[i, j] = state.IsPressed(state.AllKeys[j]);
+                    }
                 }
             }
 
@@ -391,16 +413,35 @@ namespace MARS.ControlPanel.Forms
                 for (int i = 0; i < this.devices.Count; i++)
                 {
                     this.devices[i].Poll();
-                    var state = (this.devices[i] as Joystick).GetCurrentState();
 
-                    for (int j = 0; j < state.Buttons.Length; j++)
+                    if (this.devices[i] is Joystick)
                     {
-                        if (state.Buttons[j] && !initial[i, j])
+                        var state = (this.devices[i] as Joystick).GetCurrentState();
+
+                        for (int j = 0; j < 128; j++)
                         {
-                            found = true;
-                            button = j;
-                            device = this.devices[i].Information.ProductName;
-                            break;
+                            if (state.Buttons[j] && !initial[i, j])
+                            {
+                                found = true;
+                                button = j;
+                                device = this.devices[i].Information.ProductName;
+                                break;
+                            }
+                        }
+                    }
+                    else if (this.devices[i] is Keyboard)
+                    {
+                        var state = (this.devices[i] as Keyboard).GetCurrentState();
+
+                        for (int j = 0; j < 128; j++)
+                        {
+                            if (state.IsPressed(state.AllKeys[j]) && !initial[i, j])
+                            {
+                                found = true;
+                                button = j;
+                                device = this.devices[i].Information.ProductName;
+                                break;
+                            }
                         }
                     }
 
