@@ -65,6 +65,7 @@ namespace MARS
 		void updateMetaData(bool flush = false);
 		void clearMetaData();
 		void start();
+		void force();
 		void stop();
 		bool usingVoiceActivation() const;
 		void enableVoiceActivation() const;

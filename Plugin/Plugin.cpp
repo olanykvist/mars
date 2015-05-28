@@ -95,6 +95,18 @@ namespace MARS
 			this->teamspeak.printMessageToCurrentTab(data.c_str());
 			return true;
 		}
+		else if (strcmp(command, "on") == 0)
+		{
+			this->force();
+			this->teamspeak.printMessageToCurrentTab("Force mode: on");
+			return true;
+		}
+		else if (strcmp(command, "off") == 0)
+		{
+			this->stop();
+			this->teamspeak.printMessageToCurrentTab("Force mode: off");
+			return true;
+		}
 
 		return false;
 	}
@@ -791,6 +803,21 @@ namespace MARS
 			this->disableVoiceActivation();
 		}
 
+		this->inGame = true;
+		this->updateMetaData(true);
+	}
+
+	void Plugin::force()
+	{
+		this->usingVAD = this->usingVoiceActivation();
+		if (this->usingVAD)
+		{
+			this->disableVoiceActivation();
+		}
+
+		this->name = "N/A";
+		this->unit = "N/A (forced external)";
+		this->usingExternal = true;
 		this->inGame = true;
 		this->updateMetaData(true);
 	}
