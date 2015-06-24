@@ -1,4 +1,4 @@
--- MARS Export Script, v1.0.0-rc.1
+-- MARS Export Script, v1.0.0
 
 package.path  = package.path..";.\\LuaSocket\\?.lua"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll"
@@ -38,7 +38,8 @@ MARS.unitsWithInternalRadio =
 	["F-86F Sabre"] = true,
 	["FW-190D9"] = true,
 	["Bf-109K-4"] = true,
-	["Mi-8MT"] = true
+	["Mi-8MT"] = true,
+	["MiG-15bis"] = true
 }
 
 MARS.data = {}
@@ -82,6 +83,7 @@ MARS.EnsureConnection = function()
 		else
 			MARS.Log("Connected")
 			MARS.connection:setoption("tcp-nodelay", true)
+			MARS.connection:settimeout(0.001)
 			MARS.InitializeData()
 			MARS.SendStartCommand()
 		end
@@ -170,6 +172,8 @@ MARS.ExportCommon = function()
 		export = MARS.ExportBF109()
 	elseif unit == "Mi-8MT" then
 		export = MARS.ExportMI8()
+	elseif unit == "MiG-15bis" then
+		export = MARS.ExportMIG15()
 	end
 	
 	if export ~= nil then
@@ -188,6 +192,11 @@ MARS.ExportA10 = function()
 		secondary = 0,
 		modulation = MARS.modulation.AM
 	}
+	
+	local selector = panel:get_argument_value(239) -- Intercom selector dial
+	if MARS.NearEqual(selector, 0.0, 0.03) then
+		radio.primary = 0 -- Intercom selected
+	end
 	
 	MARS.CheckRadio(1, radio)
 	
@@ -556,6 +565,28 @@ MARS.ExportMIG21 = function()
 		MARS.data.selected = selected
 	end
 
+	MARS.CheckRadio(1, radio)
+	MARS.ClearRadio(2)
+	MARS.ClearRadio(3)
+end
+
+MARS.ExportMIG15 = function()
+	local radio =
+	{
+		id = 1,
+		name = "RSI-6K",
+		primary = MARS.Round(MARS.GetFrequency(30), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	local selected = 1
+
+	if MARS.data.selected ~= selected then
+		MARS.SendSelectCommand(selected)
+		MARS.data.selected = selected
+	end
+	
 	MARS.CheckRadio(1, radio)
 	MARS.ClearRadio(2)
 	MARS.ClearRadio(3)
