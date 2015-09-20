@@ -216,8 +216,11 @@ namespace MARS.ControlPanel.Forms
             {
                 using (var stream = export.Open(FileMode.Append, FileAccess.Write, FileShare.None))
                 {
-                    var writer = new StreamWriter(stream);
-                    writer.WriteLine(EXPORT);
+                    using (var writer = new StreamWriter(stream))
+                    {
+                        writer.WriteLine();
+                        writer.WriteLine(EXPORT);
+                    }
                 }
             }
         }
