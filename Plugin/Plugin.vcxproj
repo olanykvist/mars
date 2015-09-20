@@ -55,7 +55,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>MARS</TargetName>
-    <IncludePath>C:\Users\Ola\AppData\Local\TeamSpeak 3 Client 3.0.15\pluginsdk\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>$(ProjectDir)build\</IntDir>
   </PropertyGroup>
@@ -63,14 +63,14 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetName>MARS</TargetName>
     <TargetExt>.lib</TargetExt>
-    <IncludePath>C:\Users\Ola\AppData\Local\TeamSpeak 3 Client 3.0.15\pluginsdk\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>$(ProjectDir)build\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>MARS</TargetName>
-    <IncludePath>C:\Users\Ola\AppData\Local\TeamSpeak 3 Client 3.0.15\pluginsdk\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>$(ProjectDir)build\</IntDir>
   </PropertyGroup>
@@ -141,6 +141,13 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SocketListener.h" />
     <ClInclude Include="SoundPlayer.h" />
+    <ClInclude Include="teamspeak\clientlib_publicdefinitions.h" />
+    <ClInclude Include="teamspeak\plugin_definitions.h" />
+    <ClInclude Include="teamspeak\public_definitions.h" />
+    <ClInclude Include="teamspeak\public_errors.h" />
+    <ClInclude Include="teamspeak\public_errors_rare.h" />
+    <ClInclude Include="teamspeak\public_rare_definitions.h" />
+    <ClInclude Include="teamspeak\ts3_functions.h" />
     <ClInclude Include="Transmission.h" />
     <ClInclude Include="Vector3.h" />
   </ItemGroup>
