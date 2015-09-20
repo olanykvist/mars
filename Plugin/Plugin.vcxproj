@@ -89,7 +89,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(TargetPath)" "$(LOCALAPPDATA)\TeamSpeak 3 Client 3.0.15\plugins" /y</Command>
+      <Command>$(SolutionDir)deploy.cmd</Command>
+      <Message>Copy plugin to TeamSpeak</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
@@ -125,7 +126,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(TargetPath)" "$(LOCALAPPDATA)\TeamSpeak 3 Client 3.0.15\plugins" /y</Command>
+      <Command>$(SolutionDir)deploy.cmd</Command>
+      <Message>Copy plugin to TeamSpeak</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
