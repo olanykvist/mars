@@ -39,7 +39,8 @@ MARS.unitsWithInternalRadio =
 	["FW-190D9"] = true,
 	["Bf-109K-4"] = true,
 	["Mi-8MT"] = true,
-	["MiG-15bis"] = true
+	["MiG-15bis"] = true,
+	["L-39C"] = true
 }
 
 MARS.data = {}
@@ -155,25 +156,27 @@ MARS.ExportCommon = function()
 	end
 	
 	if unit == "A-10C" then
-		export = MARS.ExportA10()
+		export = MARS.ExportA10
 	elseif unit == "Ka-50" then
-		export = MARS.ExportKA50()
+		export = MARS.ExportKA50
 	elseif unit == "MiG-21Bis" then
-		export = MARS.ExportMIG21()
+		export = MARS.ExportMIG21
 	elseif unit == "P-51D" or unit == "TF-51D" then
-		export = MARS.ExportP51()
+		export = MARS.ExportP51
 	elseif unit == "UH-1H" then
-		export = MARS.ExportUH1()
+		export = MARS.ExportUH1
 	elseif unit == "F-86F Sabre" then
-		export = MARS.ExportF86()
+		export = MARS.ExportF86
 	elseif unit == "FW-190D9" then
-		export = MARS.ExportFW190()
+		export = MARS.ExportFW190
 	elseif unit == "Bf-109K-4" then
-		export = MARS.ExportBF109()
+		export = MARS.ExportBF109
 	elseif unit == "Mi-8MT" then
-		export = MARS.ExportMI8()
+		export = MARS.ExportMI8
 	elseif unit == "MiG-15bis" then
-		export = MARS.ExportMIG15()
+		export = MARS.ExportMIG15
+	elseif unit == "L-39C" then
+		export = MARS.ExportL39
 	end
 	
 	if export ~= nil then
@@ -576,6 +579,28 @@ MARS.ExportMIG15 = function()
 		id = 1,
 		name = "RSI-6K",
 		primary = MARS.Round(MARS.GetFrequency(30), 5000),
+		secondary = 0,
+		modulation = MARS.modulation.AM
+	}
+	
+	local selected = 1
+
+	if MARS.data.selected ~= selected then
+		MARS.SendSelectCommand(selected)
+		MARS.data.selected = selected
+	end
+	
+	MARS.CheckRadio(1, radio)
+	MARS.ClearRadio(2)
+	MARS.ClearRadio(3)
+end
+
+MARS.ExportL39 = function()
+	local radio =
+	{
+		id = 1,
+		name = "R-832M",
+		primary = MARS.Round(MARS.GetFrequency(20), 5000),
 		secondary = 0,
 		modulation = MARS.modulation.AM
 	}
