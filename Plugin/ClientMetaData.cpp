@@ -10,6 +10,7 @@ namespace MARS
 		, running(false)
 		, name("init")
 		, unit("init")
+		, id(0)
 		, selected(0)
 		, position()
 	{
@@ -28,6 +29,7 @@ namespace MARS
 		root["running"] = this->running;
 		root["name"] = this->name;
 		root["unit"] = this->unit;
+		root["id"] = this->id;
 		root["selected"] = this->selected;
 
 		Json::Value array;
@@ -74,6 +76,7 @@ namespace MARS
 			data.running = root["running"].asBool();
 			data.name = root["name"].asString();
 			data.unit = root["unit"].asString();
+			data.id = root["id"].asInt();
 			data.selected = root["selected"].asInt();
 
 			data.position.x = root["pos"]["x"].asFloat();

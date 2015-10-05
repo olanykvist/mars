@@ -74,7 +74,7 @@ namespace MARS
 		void useInternalRadios();
 		void useExternalRadios();
 		void setRadioInformation(bool internal, const std::string& name, int radio, int primary, int secondary, Modulation modulation);
-		void setPlayerInformation(const std::string& name, const std::string& unit);
+		void setPlayerInformation(const std::string& name, const std::string& unit, int id);
 		void setPosition(float x, float y, float z);
 		void setVolume(int radio, float volume);
 
@@ -93,6 +93,7 @@ namespace MARS
 		SoundPlayer player;
 		std::string name;
 		std::string unit;
+		int id;
 		ClientMetaData metaData;
 		Vector3 position;
 		Configuration configuration;

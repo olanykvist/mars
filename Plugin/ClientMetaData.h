@@ -26,6 +26,7 @@ namespace MARS
 		bool running;
 		std::string name;
 		std::string unit;
+		int id;
 		int selected;
 		Vector3 position;
 		RadioInformation radio[3];

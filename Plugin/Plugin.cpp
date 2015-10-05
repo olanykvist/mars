@@ -140,7 +140,7 @@ namespace MARS
 		if (client.running)
 		{
 			char status[128] = { 0 };
-			sprintf_s(status, 128, "Status: In-game as %s, playing %s\n", client.name.c_str(), client.unit.c_str());
+			sprintf_s(status, 128, "Status: In-game as %s, playing %s (unit id: %d)\n", client.name.c_str(), client.unit.c_str(), client.id);
 			strcat_s(buffer, BUFFER_SIZE, status);
 
 			char pos[128] = { 0 };
@@ -606,8 +606,9 @@ namespace MARS
 			{
 				string name = root["name"].asString();
 				string unit = root["unit"].asString();
+				int id = root["id"].asInt();
 
-				plugin.setPlayerInformation(name, unit);
+				plugin.setPlayerInformation(name, unit, id);
 			}
 			else if (command == "start")
 			{
@@ -737,6 +738,7 @@ namespace MARS
 		this->metaData.running = this->inGame;
 		this->metaData.name = this->name;
 		this->metaData.unit = this->unit;
+		this->metaData.id = this->id;
 		this->metaData.selected = this->selectedRadioIndex + 1;
 		this->metaData.position = this->position;
 
@@ -975,10 +977,11 @@ namespace MARS
 		this->updateMetaData(true);
 	}
 
-	void Plugin::setPlayerInformation(const string& name, const string& unit)
+	void Plugin::setPlayerInformation(const string& name, const string& unit, int id)
 	{
 		this->name = name;
 		this->unit = unit;
+		this->id = id;
 		this->updateMetaData();
 	}
 

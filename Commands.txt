@@ -39,6 +39,7 @@ info (set player info)
 	command = "info"
 	name = string
 	unit = string
+	id = int
 
 Console commands
 ================
@@ -53,6 +54,7 @@ mars
 	running = bool
 	name = string
 	unit = string
+	id = int
 	selected = int
 	radio[...]
 		name = string

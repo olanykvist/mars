@@ -62,6 +62,7 @@ MARS.InitializeData = function()
 		internal = nil,
 		name = "init",
 		unit = "init",
+		id = 0,
 		pos = {x = 0, y = 0, z = 0},
 		selected = -1,
 		volume = {-1, -1, -1},
@@ -112,6 +113,7 @@ MARS.ExportCommon = function()
 	local name = nil
 	local export = nil     -- Unit specific export function
 	local unit = nil
+	local id = nil
 	local internal = true
 	local data = LoGetSelfData()
 	
@@ -125,6 +127,7 @@ MARS.ExportCommon = function()
 	else
 		unit = data.Name
 		name = data.UnitName
+		id = LoGetPlayerPlaneId()
 		MARS.data.pos.x = data.Position.x
 		MARS.data.pos.y = data.Position.y
 		MARS.data.pos.z = data.Position.z
@@ -142,11 +145,12 @@ MARS.ExportCommon = function()
 		end
 	end
 	
-	if MARS.data.name ~= name or MARS.data.unit ~= unit then -- Switched unit
+	if MARS.data.name ~= name or MARS.data.unit ~= unit or MARS.data.id ~= id then -- Switched unit
 		MARS.InitializeData()
-		MARS.SendInfoCommand(name, unit)
+		MARS.SendInfoCommand(name, unit, id)
 		MARS.data.name = name
 		MARS.data.unit = unit
+		MARS.data.id = id
 	end
 	
 	internal = MARS.UnitHasInternalRadio(unit)
@@ -656,12 +660,13 @@ MARS.SendUseCommand = function(internal)
 	MARS.QueueMessage(json)
 end
 
-MARS.SendInfoCommand = function(name, unit)
+MARS.SendInfoCommand = function(name, unit, id)
 	local command =
 	{
 		command = "info",
 		name = name,
-		unit = unit
+		unit = unit,
+		id = id
 	}
 	
 	local json = MARS.JSON:encode(command)
