@@ -11,7 +11,6 @@
 #include "ClientMetaData.h"
 #include "Transmission.h"
 #include "json/json.h"
-#include "filt.h"
 
 using std::string;
 

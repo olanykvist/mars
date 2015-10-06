@@ -19,6 +19,8 @@ namespace MARS
 		int getSelectPttThreeButton() const;
 		const std::wstring& getPttCommonDevice() const;
 		int getPttCommonButton() const;
+		const std::wstring& getPttIntercomDevice() const;
+		int getPttIntercomButton() const;
 		float getRadioOnePan() const;
 		float getRadioTwoPan() const;
 		float getRadioThreePan() const;
@@ -33,6 +35,8 @@ namespace MARS
 		int selectPttThreeButton;
 		std::wstring pttCommonDevice;
 		int pttCommonButton;
+		std::wstring pttIntercomDevice;
+		int pttIntercomButton;
 		float radioOnePan;
 		float radioTwoPan;
 		float radioThreePan;

@@ -17,6 +17,8 @@ namespace MARS
 		, selectPttThreeButton(0)
 		, pttCommonDevice()
 		, pttCommonButton(0)
+		, pttIntercomDevice()
+		, pttIntercomButton(0)
 		, radioOnePan(0.0f)
 		, radioTwoPan(0.0f)
 		, radioThreePan(0.0f)
@@ -51,6 +53,10 @@ namespace MARS
 		GetPrivateProfileStringW(L"COMMON_PTT", L"Device", L"", buffer, BUFFER_SIZE, file.c_str());
 		configuration.pttCommonDevice = wstring(buffer);
 		configuration.pttCommonButton = GetPrivateProfileIntW(L"COMMON_PTT", L"Button", 0, file.c_str());
+
+		GetPrivateProfileStringW(L"INTERCOM_PTT", L"Device", L"", buffer, BUFFER_SIZE, file.c_str());
+		configuration.pttIntercomDevice = wstring(buffer);
+		configuration.pttIntercomButton = GetPrivateProfileIntW(L"INTERCOM_PTT", L"Button", 0, file.c_str());
 
 		GetPrivateProfileStringW(L"PAN", L"Radio1", L"", buffer, BUFFER_SIZE, file.c_str());
 		configuration.radioOnePan = static_cast<float>(_wtof(buffer));
@@ -102,6 +108,16 @@ namespace MARS
 	int Configuration::getPttCommonButton() const
 	{
 		return this->pttCommonButton;
+	}
+
+	const wstring& Configuration::getPttIntercomDevice() const
+	{
+		return this->pttIntercomDevice;
+	}
+
+	int Configuration::getPttIntercomButton() const
+	{
+		return this->pttIntercomButton;
 	}
 
 	float Configuration::getRadioOnePan() const
