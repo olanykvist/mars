@@ -40,6 +40,7 @@
             System.Windows.Forms.GroupBox groupBox3;
             System.Windows.Forms.Label label18;
             System.Windows.Forms.Label label5;
+            System.Windows.Forms.Label label21;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.setPttCommonButton = new System.Windows.Forms.Button();
             this.pttCommonButtonLabel = new System.Windows.Forms.Label();
@@ -66,6 +67,9 @@
             this.exportEnabledLabel = new System.Windows.Forms.Label();
             this.pluginInstalledLabel = new System.Windows.Forms.Label();
             this.inputListener = new System.ComponentModel.BackgroundWorker();
+            this.setPttIntercomButton = new System.Windows.Forms.Button();
+            this.pttIntercomButtonLabel = new System.Windows.Forms.Label();
+            this.pttIntercomDeviceLabel = new System.Windows.Forms.Label();
             exportEnabledCaption = new System.Windows.Forms.Label();
             pluginInstalledCaption = new System.Windows.Forms.Label();
             selectPttOneDeviceCaption = new System.Windows.Forms.Label();
@@ -91,6 +95,7 @@
             groupBox3 = new System.Windows.Forms.GroupBox();
             label18 = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
+            label21 = new System.Windows.Forms.Label();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.radioThreePanTrack)).BeginInit();
@@ -173,6 +178,10 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(this.setPttIntercomButton);
+            groupBox1.Controls.Add(this.pttIntercomButtonLabel);
+            groupBox1.Controls.Add(this.pttIntercomDeviceLabel);
+            groupBox1.Controls.Add(label21);
             groupBox1.Controls.Add(this.setPttCommonButton);
             groupBox1.Controls.Add(this.pttCommonButtonLabel);
             groupBox1.Controls.Add(this.pttCommonDeviceLabel);
@@ -193,7 +202,7 @@
             groupBox1.Controls.Add(this.setSelectPttOneButton);
             groupBox1.Location = new System.Drawing.Point(12, 276);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(469, 162);
+            groupBox1.Size = new System.Drawing.Size(469, 191);
             groupBox1.TabIndex = 11;
             groupBox1.TabStop = false;
             groupBox1.Text = "Input assignments";
@@ -332,7 +341,7 @@
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(this.radioOnePanTrack);
-            groupBox2.Location = new System.Drawing.Point(12, 458);
+            groupBox2.Location = new System.Drawing.Point(12, 484);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new System.Drawing.Size(379, 118);
             groupBox2.TabIndex = 12;
@@ -614,13 +623,51 @@
             this.inputListener.DoWork += new System.ComponentModel.DoWorkEventHandler(this.OnInputListenerDoWork);
             this.inputListener.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.OnInputListenerRunWorkerCompleted);
             // 
+            // setPttIntercomButton
+            // 
+            this.setPttIntercomButton.Location = new System.Drawing.Point(385, 158);
+            this.setPttIntercomButton.Name = "setPttIntercomButton";
+            this.setPttIntercomButton.Size = new System.Drawing.Size(75, 23);
+            this.setPttIntercomButton.TabIndex = 32;
+            this.setPttIntercomButton.Tag = "INTERCOM_PTT";
+            this.setPttIntercomButton.Text = "Set";
+            this.setPttIntercomButton.UseVisualStyleBackColor = true;
+            this.setPttIntercomButton.Click += new System.EventHandler(this.OnSetSelectPttButtonClick);
+            // 
+            // pttIntercomButtonLabel
+            // 
+            this.pttIntercomButtonLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pttIntercomButtonLabel.Location = new System.Drawing.Point(344, 159);
+            this.pttIntercomButtonLabel.Name = "pttIntercomButtonLabel";
+            this.pttIntercomButtonLabel.Size = new System.Drawing.Size(35, 20);
+            this.pttIntercomButtonLabel.TabIndex = 31;
+            this.pttIntercomButtonLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // pttIntercomDeviceLabel
+            // 
+            this.pttIntercomDeviceLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pttIntercomDeviceLabel.Location = new System.Drawing.Point(149, 159);
+            this.pttIntercomDeviceLabel.Name = "pttIntercomDeviceLabel";
+            this.pttIntercomDeviceLabel.Size = new System.Drawing.Size(188, 20);
+            this.pttIntercomDeviceLabel.TabIndex = 30;
+            this.pttIntercomDeviceLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label21
+            // 
+            label21.AutoSize = true;
+            label21.Location = new System.Drawing.Point(6, 163);
+            label21.Name = "label21";
+            label21.Size = new System.Drawing.Size(72, 13);
+            label21.TabIndex = 29;
+            label21.Text = "Intercom PTT";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(493, 587);
+            this.ClientSize = new System.Drawing.Size(493, 615);
             this.Controls.Add(groupBox3);
             this.Controls.Add(groupBox2);
             this.Controls.Add(groupBox1);
@@ -670,5 +717,8 @@
         private System.Windows.Forms.Button installScriptButton;
         private System.Windows.Forms.Button installPluginButton;
         private System.Windows.Forms.Button disableExportButton;
+        private System.Windows.Forms.Button setPttIntercomButton;
+        private System.Windows.Forms.Label pttIntercomButtonLabel;
+        private System.Windows.Forms.Label pttIntercomDeviceLabel;
     }
 }

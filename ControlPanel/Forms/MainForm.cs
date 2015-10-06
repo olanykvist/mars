@@ -88,6 +88,9 @@ namespace MARS.ControlPanel.Forms
             this.pttCommonDeviceLabel.Text = this.configuration.PttCommonDevice;
             this.pttCommonButtonLabel.Text = this.configuration.PttCommonButton.ToString();
 
+            this.pttIntercomDeviceLabel.Text = this.configuration.PttIntercomDevice;
+            this.pttIntercomButtonLabel.Text = this.configuration.PttIntercomButton.ToString();
+
             this.radioOnePanTrack.Value = (int)(this.configuration.RadioOnePan * 100);
             this.radioTwoPanTrack.Value = (int)(this.configuration.RadioTwoPan * 100);
             this.radioThreePanTrack.Value = (int)(this.configuration.RadioThreePan * 100);
@@ -108,6 +111,9 @@ namespace MARS.ControlPanel.Forms
 
             this.configuration.PttCommonDevice = this.pttCommonDeviceLabel.Text;
             this.configuration.PttCommonButton = Convert.ToInt32(this.pttCommonButtonLabel.Text);
+
+            this.configuration.PttIntercomDevice = this.pttIntercomDeviceLabel.Text;
+            this.configuration.PttIntercomButton = Convert.ToInt32(this.pttIntercomButtonLabel.Text);
 
             this.configuration.RadioOnePan = this.radioOnePanTrack.Value / 100.0f;
             this.configuration.RadioTwoPan = this.radioTwoPanTrack.Value / 100.0f;
@@ -340,6 +346,7 @@ namespace MARS.ControlPanel.Forms
             this.setSelectPttTwoButton.Enabled = !this.setSelectPttTwoButton.Enabled;
             this.setSelectPttThreeButton.Enabled = !this.setSelectPttThreeButton.Enabled;
             this.setPttCommonButton.Enabled = !this.setPttCommonButton.Enabled;
+            this.setPttIntercomButton.Enabled = !this.setPttIntercomButton.Enabled;
         }
 
         private void OnSelectPathButtonClick(object sender, EventArgs e)
@@ -481,6 +488,11 @@ namespace MARS.ControlPanel.Forms
             {
                 this.pttCommonDeviceLabel.Text = assignment.Device;
                 this.pttCommonButtonLabel.Text = assignment.Button.ToString();
+            }
+            else if (assignment.AssignmentName.Equals("INTERCOM_PTT", StringComparison.InvariantCulture))
+            {
+                this.pttIntercomDeviceLabel.Text = assignment.Device;
+                this.pttIntercomButtonLabel.Text = assignment.Button.ToString();
             }
 
             this.ToggleSetSelectPttButtons();

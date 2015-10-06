@@ -71,6 +71,16 @@ namespace MARS.Common
         public int PttCommonButton { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the input device
+        /// </summary>
+        public string PttIntercomDevice { get; set; }
+
+        /// <summary>
+        /// Gets or sets the button index
+        /// </summary>
+        public int PttIntercomButton { get; set; }
+
+        /// <summary>
         /// Gets or sets the radio pan setting
         /// </summary>
         public float RadioOnePan { get; set; }
@@ -107,6 +117,9 @@ namespace MARS.Common
 
             config.PttCommonDevice = Utility.ReadConfigurationString("COMMON_PTT", "Device", string.Empty, path);
             config.PttCommonButton = Utility.ReadConfigurationInteger("COMMON_PTT", "Button", 0, path);
+
+            config.PttIntercomDevice = Utility.ReadConfigurationString("INTERCOM_PTT", "Device", string.Empty, path);
+            config.PttIntercomButton = Utility.ReadConfigurationInteger("INTERCOM_PTT", "Button", 0, path);
 
             config.RadioOnePan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio1", "0", path), CultureInfo.InvariantCulture);
             config.RadioTwoPan = Convert.ToSingle(Utility.ReadConfigurationString("PAN", "Radio2", "0", path), CultureInfo.InvariantCulture);
@@ -145,6 +158,9 @@ namespace MARS.Common
 
             Utility.WriteConfigurationString("COMMON_PTT", "Device", this.PttCommonDevice, path);
             Utility.WriteConfigurationString("COMMON_PTT", "Button", this.PttCommonButton.ToString(), path);
+
+            Utility.WriteConfigurationString("INTERCOM_PTT", "Device", this.PttIntercomDevice, path);
+            Utility.WriteConfigurationString("INTERCOM_PTT", "Button", this.PttIntercomButton.ToString(), path);
 
             Utility.WriteConfigurationString("PAN", "Radio1", this.RadioOnePan.ToString("F", CultureInfo.InvariantCulture), path);
             Utility.WriteConfigurationString("PAN", "Radio2", this.RadioTwoPan.ToString("F", CultureInfo.InvariantCulture), path);
