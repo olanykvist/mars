@@ -71,6 +71,7 @@ namespace MARS
 		void enableVoiceActivation() const;
 		void disableVoiceActivation() const;
 		void selectActiveRadio(int id);
+		void selectIntercom();
 		void useInternalRadios();
 		void useExternalRadios();
 		void setRadioInformation(bool internal, const std::string& name, int radio, int primary, int secondary, Modulation modulation);
@@ -84,6 +85,7 @@ namespace MARS
 		bool usingVAD;
 		bool inGame;
 		bool usingExternal;
+		bool hasIntercom;
 		int selectedRadioIndex;
 		std::vector<Radio> internal;
 		std::vector<Radio> external;

@@ -40,7 +40,8 @@ MARS.unitsWithInternalRadio =
 	["Bf-109K-4"] = true,
 	["Mi-8MT"] = true,
 	["MiG-15bis"] = true,
-	["L-39C"] = true
+	["L-39C"] = true,
+	["L-39ZA"] = true
 }
 
 MARS.data = {}
@@ -179,7 +180,7 @@ MARS.ExportCommon = function()
 		export = MARS.ExportMI8
 	elseif unit == "MiG-15bis" then
 		export = MARS.ExportMIG15
-	elseif unit == "L-39C" then
+	elseif unit == "L-39C" or unit == "L-39ZA" then
 		export = MARS.ExportL39
 	end
 	

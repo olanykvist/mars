@@ -19,7 +19,7 @@ static MARS::Plugin plugin;
 namespace MARS
 {
 	const char* Plugin::NAME = "MARS";
-	const char* Plugin::VERSION = "1.0.1";
+	const char* Plugin::VERSION = "1.1-preview";
 	const char* Plugin::AUTHOR = "Master Arms";
 	const char* Plugin::DESCRIPTION = "MARS, Master Arms Radio System, integrates the radios in DCS World with TeamSpeak for a more realistic radio experience.";
 	const char* Plugin::COMMAND_KEYWORD = "mars";
@@ -31,6 +31,7 @@ namespace MARS
 		, usingVAD(false)
 		, inGame(false)
 		, usingExternal(false)
+		, hasIntercom(false)
 		, selectedRadioIndex(0)
 		, internal()
 		, external()
@@ -347,7 +348,7 @@ namespace MARS
 			return;
 		}
 
-		Radio* radio = nullptr;
+		Radio* receiver = nullptr;
 
 		if (clientId == myId) // I started or stopped talking
 		{
@@ -372,7 +373,7 @@ namespace MARS
 			{
 				if (this->receivers.empty() == false)
 				{
-					radio = this->receivers.at(clientId);
+					receiver = this->receivers.at(clientId);
 				}
 			}
 			catch (std::out_of_range)
@@ -387,11 +388,11 @@ namespace MARS
 			}
 			else if (status == STATUS_NOT_TALKING)
 			{
-				if (radio != nullptr)
+				if (receiver != nullptr)
 				{
-					if (radio->getPrimaryFrequency() != 0)
+					if (receiver->getPrimaryFrequency() != 0)
 					{
-						this->player.Play("ptt_up.raw", radio->getPan(), radio->getVolume());
+						this->player.Play("ptt_up.raw", receiver->getPan(), receiver->getVolume());
 					}
 				}
 			}
@@ -679,6 +680,17 @@ namespace MARS
 				}
 			}
 		}
+
+		if (plugin.hasIntercom)
+		{
+			if (device == plugin.configuration.getPttIntercomDevice())
+			{
+				if (button == plugin.configuration.getPttIntercomButton())
+				{
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_ACTIVE);
+				}
+			}
+		}
 	}
 
 	void Plugin::onButtonUp(const wchar_t* device, int button)
@@ -724,6 +736,17 @@ namespace MARS
 			if (device == plugin.configuration.getPttCommonDevice())
 			{
 				if (button == plugin.configuration.getPttCommonButton())
+				{
+					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
+				}
+			}
+		}
+
+		if (plugin.hasIntercom)
+		{
+			if (device == plugin.configuration.getPttIntercomDevice())
+			{
+				if (button == plugin.configuration.getPttIntercomButton())
 				{
 					plugin.teamspeak.setClientSelfVariableAsInt(connection, CLIENT_INPUT_DEACTIVATED, INPUT_DEACTIVATED);
 				}
@@ -913,9 +936,19 @@ namespace MARS
 			throw "Invalid radio";
 		}
 
-		if (id - 1 != this->selectedRadioIndex)
+		int index = id - 1;
+
+
+		if (index != this->selectedRadioIndex)
 		{
-			this->selectedRadioIndex = id - 1;
+			this->selectedRadioIndex = index;
+
+			if (index < 0) // Invalid radio (intercom?)
+			{
+				this->currentRadio == nullptr;
+				return;
+			}
+
 			if (this->usingExternal)
 			{
 				this->currentRadio = &this->external[this->selectedRadioIndex];
@@ -924,8 +957,17 @@ namespace MARS
 			{
 				this->currentRadio = &this->internal[this->selectedRadioIndex];
 			}
+
 			this->updateMetaData(true);
 		}
+	}
+
+	/// <summary>
+	/// Activates intercom
+	/// </summary>
+	void Plugin::selectIntercom()
+	{
+		this->selectedRadioIndex = 0;
 	}
 
 	/// <summary>
