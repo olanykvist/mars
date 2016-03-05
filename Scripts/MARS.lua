@@ -1,4 +1,4 @@
--- MARS Export Script, v1.0.1
+-- MARS Export Script, v1.1.0
 
 package.path  = package.path..";.\\LuaSocket\\?.lua"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll"
@@ -40,6 +40,12 @@ MARS.unitsWithInternalRadio =
 	["Bf-109K-4"] = true,
 	["Mi-8MT"] = true,
 	["MiG-15bis"] = true,
+	["L-39C"] = true,
+	["L-39ZA"] = true
+}
+
+MARS.unitsWithIntercom =
+{
 	["L-39C"] = true,
 	["L-39ZA"] = true
 }
@@ -605,7 +611,7 @@ MARS.ExportL39 = function()
 	{
 		id = 1,
 		name = "R-832M",
-		primary = MARS.Round(MARS.GetFrequency(20), 5000),
+		primary = MARS.Round(MARS.GetFrequency(19), 5000),
 		secondary = 0,
 		modulation = MARS.modulation.AM
 	}
